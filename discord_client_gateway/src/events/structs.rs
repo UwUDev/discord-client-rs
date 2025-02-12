@@ -1,4 +1,6 @@
-use discord_client_strucs::deserializer::{deserialize_option_string_to_u64, deserialize_string_to_u64};
+use discord_client_strucs::deserializer::{
+    deserialize_option_string_to_u64, deserialize_string_to_u64,
+};
 use discord_client_strucs::structs::{Emoji, Member};
 use serde::Deserialize;
 use serde_json::Value;

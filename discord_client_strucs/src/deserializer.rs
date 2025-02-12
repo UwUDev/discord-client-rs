@@ -1,6 +1,5 @@
 use chrono::{DateTime, Utc};
-use serde::{de, Deserialize, Deserializer};
-
+use serde::{Deserialize, Deserializer, de};
 
 pub fn deserialize_string_to_u64<'de, D>(deserializer: D) -> Result<u64, D::Error>
 where
@@ -10,9 +9,7 @@ where
     s.parse::<u64>().map_err(de::Error::custom)
 }
 
-pub fn deserialize_option_string_to_u64<'de, D>(
-    deserializer: D,
-) -> Result<Option<u64>, D::Error>
+pub fn deserialize_option_string_to_u64<'de, D>(deserializer: D) -> Result<Option<u64>, D::Error>
 where
     D: Deserializer<'de>,
 {
