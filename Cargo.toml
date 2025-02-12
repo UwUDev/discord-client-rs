@@ -4,3 +4,8 @@ members = [
     "discord_client_gateway",
     "discord_client_strucs"
 ]
+
+resolver = "3"
+
+[workspace.dependencies]
+serde = { version = "1.0.217", features = ["derive"] }

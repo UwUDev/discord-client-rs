@@ -353,7 +353,6 @@ dependencies = [
 name = "discord_client_gateway"
 version = "0.1.0"
 dependencies = [
- "chrono",
  "discord_client_strucs",
  "futures-util",
  "rquest",
