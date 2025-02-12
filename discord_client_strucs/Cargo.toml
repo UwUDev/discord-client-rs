@@ -2,6 +2,9 @@
 name = "discord_client_strucs"
 version = "0.1.0"
 edition = "2024"
+authors = ["UwUDev"]
+description = "Discord API/gateway structs with serde support"
+repository = "https://github.com/UwUDev/discord-client-rs"
 
 [lib]
 name = "discord_client_strucs"

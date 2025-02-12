@@ -3,8 +3,8 @@ name = "discord_client_gateway"
 version = "0.1.0"
 edition = "2024"
 authors = ["UwUDev"]
-description = "An undetected and legit discord client gateway for users and NOT for bots"
-repository = "https://github.com/UwUDev/discord_client_gateway"
+description = "Undetected discord client gateway reimplementation"
+repository = "https://github.com/UwUDev/discord-client-rs"
 
 [lib]
 name = "discord_client_gateway"
