@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "discord_client_gateway",
+    "discord_client_strucs"
+]
