@@ -54,7 +54,6 @@ impl GatewayClient {
                             Some(interval) => heartbeat_interval = interval,
                             None => return Err("No heartbeat interval".into()),
                         }
-                        // println!("Heartbeat interval: {}ms", heartbeat_interval);
                     }
                     Err(ZlibDecompressionError::NeedMoreData) => {
                         return Err("Need more data".into());
@@ -135,7 +134,7 @@ impl GatewayClient {
 
                         let text = String::from_utf8(vec).unwrap();
                         let json: Value = serde_json::from_str(&text).unwrap();
-                        // check if the message is the READY event
+
                         if !json["t"].is_null() && json["t"].is_string() {
                             let t = json["t"].as_str().unwrap();
                             if t == "READY" {
