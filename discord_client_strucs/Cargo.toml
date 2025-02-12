@@ -3,6 +3,10 @@ name = "discord_client_strucs"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+name = "discord_client_strucs"
+path = "src/lib.rs"
+
 [dependencies]
 serde = {workspace = true}
 chrono = "0.4.39"
