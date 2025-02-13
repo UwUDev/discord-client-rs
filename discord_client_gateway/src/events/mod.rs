@@ -88,7 +88,8 @@ define_events! {
     dispatch op 0, {
         Ready { t: "READY", type: ReadyEvent },
         MessageCreate { t: "MESSAGE_CREATE", type: MessageCreateEvent },
-        MessageReactionAdd { t: "MESSAGE_REACTION_ADD", type: MessageReactionAddEvent }
+        MessageReactionAdd { t: "MESSAGE_REACTION_ADD", type: MessageReactionAddEvent },
+        PresenceUpdate { t: "PRESENCE_UPDATE", type: PresenceUpdateEvent }
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }

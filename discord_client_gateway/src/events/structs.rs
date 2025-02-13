@@ -1,7 +1,7 @@
 use discord_client_strucs::deserializer::{
     deserialize_option_string_to_u64, deserialize_string_to_u64,
 };
-use discord_client_strucs::structs::{Emoji, Member};
+use discord_client_strucs::structs::{Activity, Emoji, Member};
 use serde::Deserialize;
 use serde_json::Value;
 
@@ -12,6 +12,7 @@ pub enum Event {
     MessageCreate(MessageCreateEvent),
     MessageReactionAdd(MessageReactionAddEvent),
     GatewayReconnect(GatewayReconnectEvent),
+    PresenceUpdate(PresenceUpdateEvent),
     Unknown(UnknownEvent),
 }
 
@@ -58,6 +59,14 @@ pub struct MessageReactionAddEvent {
     pub burst_colors: Option<Vec<String>>,
     #[serde(rename = "type")]
     pub reaction_type: u8,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct PresenceUpdateEvent {
+    pub since: Option<u64>,
+    pub activities: Vec<Activity>,
+    pub status: String,
+    pub afk: Option<bool>,
 }
 
 /// Misc events ///

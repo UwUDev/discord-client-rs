@@ -1,3 +1,4 @@
+use std::io::Write;
 use crate::BoxedResult;
 use crate::events::structs::GatewayPayload;
 use futures_util::stream::SplitStream;
@@ -133,6 +134,21 @@ impl GatewayClient {
                         };
 
                         let text = String::from_utf8(vec).unwrap();
+
+                        // delete event.json if exist
+                        std::fs::remove_file("event.json").unwrap_or_default();
+
+                        // if not exist create event.json
+                        let mut file = std::fs::OpenOptions::new()
+                            .write(true)
+                            .create(true)
+                            .append(false)
+                            .open("event.json")
+                            .unwrap();
+
+                        // write event.json
+                        file.write_all(text.as_bytes()).unwrap();
+
                         let payload: GatewayPayload = serde_json::from_str(&text).unwrap();
                         let event = crate::events::parse_gateway_payload(payload)?;
 
