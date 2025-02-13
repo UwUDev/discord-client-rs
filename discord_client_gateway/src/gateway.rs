@@ -112,7 +112,7 @@ impl GatewayClient {
         })
     }
 
-    pub async fn next_message(&mut self) -> BoxedResult<crate::events::Event> {
+    pub async fn next_event(&mut self) -> BoxedResult<crate::events::Event> {
         let mut rx = self.rx.lock().await;
         let mut decompress = self.zlib_decompressor.lock().await;
 
@@ -133,28 +133,17 @@ impl GatewayClient {
                         };
 
                         let text = String::from_utf8(vec).unwrap();
-                        let json: Value = serde_json::from_str(&text).unwrap();
+                        let payload: GatewayPayload = serde_json::from_str(&text).unwrap();
+                        let event = crate::events::parse_gateway_payload(payload)?;
 
-                        if !json["t"].is_null() && json["t"].is_string() {
-                            let t = json["t"].as_str().unwrap();
-                            if t == "READY" {
-                                let ready: Value = serde_json::from_str(&text).unwrap();
-                                self.session_id =
-                                    Some(ready["d"]["session_id"].as_str().unwrap().to_string());
-                                self.analytics_token = Some(
-                                    ready["d"]["analytics_token"].as_str().unwrap().to_string(),
-                                );
-                                self.auth_session_id_hash = Some(
-                                    ready["d"]["auth_session_id_hash"]
-                                        .as_str()
-                                        .unwrap()
-                                        .to_string(),
-                                );
-                            }
+                        if let crate::events::Event::Ready(ready) = event.clone() {
+                            self.session_id = Some(ready.session_id);
+                            self.analytics_token = Some(ready.analytics_token);
+                            self.auth_session_id_hash = Some(ready.auth_session_id_hash);
                         }
 
-                        let payload: GatewayPayload = serde_json::from_str(&text).unwrap();
-                        return Ok(crate::events::parse_gateway_payload(payload)?);
+
+                        return Ok(event);
                     }
                     _ => {}
                 }

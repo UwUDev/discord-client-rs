@@ -6,7 +6,7 @@ async fn main() {
 
     let mut client = GatewayClient::connect(token).await.unwrap();
     for _ in 0..2 {
-        let event = client.next_message().await.unwrap();
+        let event = client.next_event().await.unwrap();
         println!("{}", event);
     }
     println!("Session ID: {:?}", client.session_id.clone());
@@ -17,7 +17,7 @@ async fn main() {
     );
 
     loop {
-        let event = client.next_message().await.unwrap();
+        let event = client.next_event().await.unwrap();
         println!("{}", event);
     }
 }

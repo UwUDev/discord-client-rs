@@ -8,7 +8,7 @@ macro_rules! define_events {
     ($(
         $variant:ident => $event_str:expr, $event_struct:ty
     ),+ $(,)?) => {
-        #[derive(Debug)]
+        #[derive(Debug, Clone)]
         pub enum Event {
             $(
                 $variant($event_struct),

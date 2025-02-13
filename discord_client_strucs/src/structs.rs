@@ -6,7 +6,7 @@ use crate::deserializer::{
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Emoji {
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub id: Option<u64>,
@@ -21,7 +21,7 @@ pub struct Emoji {
     pub available: Option<bool>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Member {
     pub user: User,
     pub nick: Option<String>,
@@ -43,14 +43,14 @@ pub struct Member {
     pub avatar_decoration_data: Option<AvatarDecorationData>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct AvatarDecorationData {
     pub asset: String,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub sku_id: u64,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct User {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,

@@ -6,7 +6,7 @@ use serde::Deserialize;
 use serde_json::Value;
 
 // Event list
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Event {
     Ready(ReadyEvent),
     MessageCreate(MessageCreateEvent),
@@ -15,7 +15,7 @@ pub enum Event {
 }
 
 // Gateway event payload
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct GatewayPayload {
     pub op: u8,
     pub d: Value,
@@ -25,19 +25,21 @@ pub struct GatewayPayload {
 
 /// Event structs ///
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct ReadyEvent {
     pub session_id: String,
+    pub analytics_token: String,
+    pub auth_session_id_hash: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct MessageCreateEvent {
     pub content: String,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct MessageReactionAddEvent {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub user_id: u64,
@@ -57,7 +59,7 @@ pub struct MessageReactionAddEvent {
     pub reaction_type: u8,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct UnknownEvent {
     pub event_type: String,
     pub data: Value,
