@@ -92,6 +92,8 @@ define_events! {
     dispatch op 0, {
         Ready { t: "READY", type: ReadyEvent },
         MessageCreate { t: "MESSAGE_CREATE", type: MessageCreateEvent },
+        MessageUpdate { t: "MESSAGE_UPDATE", type: MessageUpdateEvent },
+        MessageDelete { t: "MESSAGE_DELETE", type: MessageDeleteEvent },
         MessageReactionAdd { t: "MESSAGE_REACTION_ADD", type: MessageReactionAddEvent },
         PresenceUpdate { t: "PRESENCE_UPDATE", type: PresenceUpdateEvent }
     },

@@ -1,7 +1,7 @@
 use discord_client_strucs::deserializer::{
     deserialize_option_string_to_u64, deserialize_string_to_u64,
 };
-use discord_client_strucs::structs::{Activity, Emoji, Member};
+use discord_client_strucs::structs::{Activity, Emoji, Member, Message, User};
 use serde::Deserialize;
 use serde_json::Value;
 
@@ -36,10 +36,48 @@ pub struct ReadyEvent {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct MessageCreateEvent {
-    pub content: String,
+    #[serde(flatten)]
+    pub base: Message,
+    pub channel_type: u8,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub guild_id: Option<u64>,
+    pub member: Option<Member>,
+    #[serde(rename = "mentions")]
+    pub mentions_with_members: Vec<UserWithMember>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct MessageUpdateEvent {
+    #[serde(flatten)]
+    pub base: Message,
+    pub channel_type: u8,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub guild_id: Option<u64>,
+    pub member: Option<Member>,
+    #[serde(rename = "mentions")]
+    pub mentions_with_members: Vec<UserWithMember>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct MessageDeleteEvent {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub channel_id: u64,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub guild_id: Option<u64>,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct UserWithMember {
+    #[serde(flatten)]
+    pub user: User,
+    pub member: Option<Member>,
+}
+
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct MessageReactionAddEvent {
@@ -49,6 +87,7 @@ pub struct MessageReactionAddEvent {
     pub channel_id: u64,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub message_id: u64,
+    #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub guild_id: Option<u64>,
     pub member: Option<Member>,
