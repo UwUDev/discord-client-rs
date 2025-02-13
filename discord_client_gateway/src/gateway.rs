@@ -150,4 +150,6 @@ impl GatewayClient {
             }
         }
     }
+
+    // todo: bulk guild subscribe
 }

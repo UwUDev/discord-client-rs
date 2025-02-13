@@ -11,6 +11,7 @@ pub enum Event {
     Ready(ReadyEvent),
     MessageCreate(MessageCreateEvent),
     MessageReactionAdd(MessageReactionAddEvent),
+    GatewayReconnect(GatewayReconnectEvent),
     Unknown(UnknownEvent),
 }
 
@@ -59,9 +60,15 @@ pub struct MessageReactionAddEvent {
     pub reaction_type: u8,
 }
 
+/// Misc events ///
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct GatewayReconnectEvent;
+
 #[derive(Debug, Clone)]
 pub struct UnknownEvent {
     pub event_type: String,
     pub data: Value,
     pub op: u8,
 }
+
