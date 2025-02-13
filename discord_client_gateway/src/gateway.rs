@@ -1,4 +1,3 @@
-use std::io::Write;
 use crate::BoxedResult;
 use crate::events::structs::GatewayPayload;
 use futures_util::stream::SplitStream;
@@ -7,6 +6,7 @@ use rquest::Impersonate::Chrome131;
 use rquest::ImpersonateOS::Windows;
 use rquest::{Client, Impersonate, Message, WebSocket};
 use serde_json::Value;
+use std::io::Write;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
@@ -157,7 +157,6 @@ impl GatewayClient {
                             self.analytics_token = Some(ready.analytics_token);
                             self.auth_session_id_hash = Some(ready.auth_session_id_hash);
                         }
-
 
                         return Ok(event);
                     }

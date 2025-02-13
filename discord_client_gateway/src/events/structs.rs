@@ -80,4 +80,3 @@ pub struct UnknownEvent {
     pub data: Value,
     pub op: u8,
 }
-

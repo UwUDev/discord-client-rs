@@ -8,6 +8,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Emoji {
+    #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub id: Option<u64>,
     pub name: Option<String>,
@@ -90,7 +91,7 @@ pub struct Activity {
     pub instance: Option<bool>,
     pub flags: Option<u64>,
     pub id: Option<String>,
-    //pub buttons: Option<Vec<ActivityButton>>,
+    pub buttons: Option<Vec<String>>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -119,10 +120,4 @@ pub struct ActivitySecrets {
     pub spectate: Option<String>,
     #[serde(rename = "match")]
     pub instanced_match: Option<String>,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-pub struct ActivityButton {
-    pub label: String,
-    pub url: String,
 }

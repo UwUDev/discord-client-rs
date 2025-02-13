@@ -47,7 +47,7 @@ macro_rules! define_events {
                     $(
                         Event::$variant_nd(_) => write!(f, "{}", stringify!($variant_nd)),
                     )+
-                    Event::Unknown(unknown) => write!(f, "Unknown: {}", unknown.event_type),
+                    Event::Unknown(unknown) => write!(f, "Unknown ({}): {}",unknown.op, unknown.event_type),
                 }
             }
         }
@@ -76,13 +76,17 @@ macro_rules! define_events {
                         return <$event_struct_nd>::deserialize(payload.d).map(Event::$variant_nd);
                     )+
                 },
-                _ => return Err(serde::de::Error::custom("Unhandled op code")),
+                _ => {
+                    Ok(Event::Unknown(UnknownEvent {
+                        event_type: "UNKNOWN".to_string(),
+                        data: payload.d,
+                        op: payload.op,
+                    }))
+                }
             }
         }
     };
 }
-
-
 
 define_events! {
     dispatch op 0, {
