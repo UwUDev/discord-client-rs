@@ -161,7 +161,7 @@ pub struct Message {
     pub application_id: Option<u64>,
     pub flags: u64,
     pub message_reference: Option<MessageReference>,
-    //pub referenced_message: Option<Message>,
+    pub referenced_message: Option<Box<Message>>,
     pub message_snapshots: Option<Vec<MessageSnapshot>>,
     pub call: Option<MessageCall>,
     pub interaction: Option<MessageInteraction>,
