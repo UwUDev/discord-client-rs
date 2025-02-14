@@ -1,13 +1,15 @@
+use crate::events::structs::call::*;
 use crate::events::structs::channel::thread::{
     ThreadCreateEvent, ThreadDeleteEvent, ThreadListSyncEvent, ThreadUpdateEvent,
 };
-use crate::events::structs::channel::{ChannelCreateEvent, ChannelDeleteEvent, ChannelUpdateEvent};
-use crate::events::structs::gateway::GatewayReconnectEvent;
-use crate::events::structs::message::{MessageCreateEvent, MessageReactionAddEvent};
-use crate::events::structs::presence::PresenceUpdateEvent;
-use crate::events::structs::ready::ReadyEvent;
+use crate::events::structs::channel::*;
+use crate::events::structs::gateway::*;
+use crate::events::structs::message::*;
+use crate::events::structs::presence::*;
+use crate::events::structs::ready::*;
 use serde_json::Value;
 
+pub mod call;
 pub mod channel;
 pub mod gateway;
 pub mod message;
@@ -39,6 +41,9 @@ pub enum Event {
     ThreadUpdate(ThreadUpdateEvent),
     ThreadDelete(ThreadDeleteEvent),
     ThreadListSync(ThreadListSyncEvent),
+
+    // call events
+    CallCreate(CallCreateEvent),
 
     // misc events
     Unknown(UnknownEvent),

@@ -9,6 +9,7 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
 pub mod thread;
+pub mod voice;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Channel {

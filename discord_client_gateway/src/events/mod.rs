@@ -1,14 +1,13 @@
 use crate::events::gateway::GatewayPayload;
+use crate::events::structs::call::CallCreateEvent;
 use crate::events::structs::channel::thread::{
     ThreadCreateEvent, ThreadDeleteEvent, ThreadListSyncEvent, ThreadUpdateEvent,
 };
-use crate::events::structs::channel::{ChannelCreateEvent, ChannelDeleteEvent, ChannelUpdateEvent};
-use crate::events::structs::gateway::GatewayReconnectEvent;
-use crate::events::structs::message::{
-    MessageCreateEvent, MessageDeleteEvent, MessageReactionAddEvent, MessageUpdateEvent,
-};
-use crate::events::structs::presence::PresenceUpdateEvent;
-use crate::events::structs::ready::ReadyEvent;
+use crate::events::structs::channel::*;
+use crate::events::structs::gateway::*;
+use crate::events::structs::message::*;
+use crate::events::structs::presence::*;
+use crate::events::structs::ready::*;
 use crate::events::structs::*;
 use serde::Deserialize;
 
@@ -113,7 +112,8 @@ define_events! {
         ThreadCreate { t: "THREAD_CREATE", type: ThreadCreateEvent },
         ThreadUpdate { t: "THREAD_UPDATE", type: ThreadUpdateEvent },
         ThreadDelete { t: "THREAD_DELETE", type: ThreadDeleteEvent },
-        ThreadListSync { t: "THREAD_LIST_SYNC", type: ThreadListSyncEvent }
+        ThreadListSync { t: "THREAD_LIST_SYNC", type: ThreadListSyncEvent },
+        CallCreate { t: "CALL_CREATE", type: CallCreateEvent }
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }
