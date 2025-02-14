@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use crate::deserializer::{
     deserialize_iso8601_string_to_date, deserialize_option_iso8601_string_to_date,
     deserialize_option_string_to_u64, deserialize_option_string_to_vec_u64,
@@ -6,6 +5,7 @@ use crate::deserializer::{
 };
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
+use std::collections::HashMap;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Emoji {
@@ -507,8 +507,9 @@ pub struct MessageActivity {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct MessageReference {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    pub message_id: u64,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub message_id: Option<u64>, // non existant whet a thread is created (wtf ?)
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub channel_id: u64,
     #[serde(default)]
@@ -726,4 +727,116 @@ pub struct Potion {
     pub emoji: Vec<Emoji>,
     #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
     pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Channel {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
+    #[serde(rename = "type")]
+    pub channel_type: u8,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub guild_id: Option<u64>,
+    pub position: Option<u64>,
+    pub permission_overwrites: Option<Vec<Overwrite>>,
+    pub name: Option<String>,
+    pub topic: Option<String>,
+    pub nsfw: Option<bool>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub last_message_id: Option<u64>,
+    pub bitrate: Option<u32>,
+    pub user_limit: Option<u16>,
+    pub rate_limit_per_user: Option<u32>,
+    pub recipients: Option<Vec<User>>,
+    pub icon: Option<String>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub owner_id: Option<u64>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub application_id: Option<u64>,
+    pub managed: Option<bool>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub parent_id: Option<u64>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    pub last_pin_timestamp: Option<DateTime<Utc>>,
+    pub rtc_region: Option<String>,
+    pub video_quality_mode: Option<u8>,
+    pub message_count: Option<u32>,
+    pub member_count: Option<u32>,
+    pub thread_metadata: Option<ThreadMetadata>,
+    pub member: Option<ThreadMember>,
+    pub default_auto_archive_duration: Option<u32>,
+    pub permissions: Option<String>,
+    pub flags: Option<u64>,
+    pub total_message_sent: Option<u32>,
+    pub available_tags: Option<Vec<Tag>>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
+    pub applied_tags: Option<Vec<u64>>,
+    pub default_reaction_emoji: Option<DefaultReaction>,
+    pub default_thread_rate_limit_per_user: Option<u32>,
+    pub default_sort_order: Option<u8>,
+    pub default_forum_layout: Option<u8>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Overwrite {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
+    #[serde(rename = "type")]
+    pub overwrite_type: u8,
+    pub allow: String,
+    pub deny: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct ThreadMetadata {
+    pub archived: bool,
+    pub auto_archive_duration: u32,
+    #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
+    pub archive_timestamp: DateTime<Utc>,
+    pub locked: bool,
+    pub invitable: Option<bool>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    pub create_timestamp: Option<DateTime<Utc>>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct ThreadMember {
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub id: Option<u64>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub user_id: Option<u64>,
+    #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
+    pub join_timestamp: DateTime<Utc>,
+    pub flags: u64,
+    pub member: Option<Member>
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Tag {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
+    pub name: String,
+    pub moderated: bool,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub emoji_id: Option<u64>,
+    pub emoji_name: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct DefaultReaction {
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub emoji_id: Option<u64>,
+    pub emoji_name: Option<String>,
 }

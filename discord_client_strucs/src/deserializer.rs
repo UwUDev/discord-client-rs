@@ -30,7 +30,7 @@ where
         .collect()
 }
 
-pub(crate) fn deserialize_option_string_to_vec_u64<'de, D>(
+pub fn deserialize_option_string_to_vec_u64<'de, D>(
     deserializer: D,
 ) -> Result<Option<Vec<u64>>, D::Error>
 where

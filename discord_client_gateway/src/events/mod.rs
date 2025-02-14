@@ -95,7 +95,14 @@ define_events! {
         MessageUpdate { t: "MESSAGE_UPDATE", type: MessageUpdateEvent },
         MessageDelete { t: "MESSAGE_DELETE", type: MessageDeleteEvent },
         MessageReactionAdd { t: "MESSAGE_REACTION_ADD", type: MessageReactionAddEvent },
-        PresenceUpdate { t: "PRESENCE_UPDATE", type: PresenceUpdateEvent }
+        PresenceUpdate { t: "PRESENCE_UPDATE", type: PresenceUpdateEvent },
+        ChannelCreate { t: "CHANNEL_CREATE", type: ChannelCreateEvent },
+        ChannelUpdate { t: "CHANNEL_UPDATE", type: ChannelUpdateEvent },
+        ChannelDelete { t: "CHANNEL_DELETE", type: ChannelDeleteEvent },
+        ThreadCreate { t: "THREAD_CREATE", type: ThreadCreateEvent },
+        ThreadUpdate { t: "THREAD_UPDATE", type: ThreadUpdateEvent },
+        ThreadDelete { t: "THREAD_DELETE", type: ThreadDeleteEvent },
+        ThreadListSync { t: "THREAD_LIST_SYNC", type: ThreadListSyncEvent }
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }
