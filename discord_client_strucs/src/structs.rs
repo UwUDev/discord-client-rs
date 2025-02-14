@@ -625,7 +625,7 @@ pub struct MessageInteractionMetadata {
     pub authorizing_integration_owners: Option<HashMap<u64, String>>,
     pub original_response_message_id: Option<u64>,
     pub interacted_message_id: Option<u64>,
-    //pub triggering_interaction_metadata: Option<MessageInteractionMetadata>,
+    pub triggering_interaction_metadata: Option<Box<MessageInteractionMetadata>>,
     pub target_user: Option<User>,
     pub target_message_id: Option<u64>,
 }
