@@ -818,7 +818,7 @@ pub struct ThreadMember {
     #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
     pub join_timestamp: DateTime<Utc>,
     pub flags: u64,
-    pub member: Option<Member>
+    pub member: Option<Member>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
