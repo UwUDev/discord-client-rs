@@ -425,6 +425,7 @@ pub struct EmbedFooter {
 }
 
 #[derive(Debug, Deserialize, Clone)]
+//noinspection DuplicatedCode
 pub struct EmbedImage {
     pub url: String,
     pub proxy_url: Option<String>,
@@ -436,6 +437,7 @@ pub struct EmbedImage {
 }
 
 #[derive(Debug, Deserialize, Clone)]
+//noinspection DuplicatedCode
 pub struct EmbedThumbnail {
     pub url: String,
     pub proxy_url: Option<String>,
@@ -447,6 +449,7 @@ pub struct EmbedThumbnail {
 }
 
 #[derive(Debug, Deserialize, Clone)]
+//noinspection DuplicatedCode
 pub struct EmbedVideo {
     pub url: String,
     pub proxy_url: Option<String>,
