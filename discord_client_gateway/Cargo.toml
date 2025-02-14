@@ -15,7 +15,7 @@ name = "event_printer"
 path = "examples/event_printer.rs"
 
 [dependencies]
-discord_client_strucs = {path = "../discord_client_strucs"}
+discord_client_structs = {path = "../discord_client_structs"}
 futures-util = { version = "0.3.0", default-features = false }
 rquest = { version = "2.0.3", features = ["websocket"] }
 serde_json = "1.0.138"

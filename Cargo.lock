@@ -353,7 +353,7 @@ dependencies = [
 name = "discord_client_gateway"
 version = "0.1.0"
 dependencies = [
- "discord_client_strucs",
+ "discord_client_structs",
  "futures-util",
  "rquest",
  "serde",
@@ -363,7 +363,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "discord_client_strucs"
+name = "discord_client_structs"
 version = "0.1.0"
 dependencies = [
  "chrono",

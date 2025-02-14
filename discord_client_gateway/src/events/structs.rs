@@ -1,10 +1,13 @@
-use discord_client_strucs::deserializer::{
+use discord_client_structs::deserializer::{
     deserialize_option_string_to_u64, deserialize_option_string_to_vec_u64,
     deserialize_string_to_u64,
 };
-use discord_client_strucs::structs::{
-    Activity, Channel, Emoji, Member, Message, ThreadMember, User,
-};
+use discord_client_structs::structs::channel::Channel;
+use discord_client_structs::structs::channel::thread::ThreadMember;
+use discord_client_structs::structs::message::Message;
+use discord_client_structs::structs::misc::Emoji;
+use discord_client_structs::structs::user::activity::Activity;
+use discord_client_structs::structs::user::{Member, User};
 use serde::Deserialize;
 use serde_json::Value;
 

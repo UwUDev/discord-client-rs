@@ -2,7 +2,7 @@
 
 members = [
     "discord_client_gateway",
-    "discord_client_strucs"
+    "discord_client_structs"
 ]
 
 resolver = "3"
