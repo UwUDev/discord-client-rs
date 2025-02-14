@@ -47,7 +47,7 @@ where
     }
 }
 
-pub(crate) fn deserialize_iso8601_string_to_date<'de, D>(
+pub fn deserialize_iso8601_string_to_date<'de, D>(
     deserializer: D,
 ) -> Result<DateTime<Utc>, D::Error>
 where
@@ -59,7 +59,7 @@ where
         .map_err(de::Error::custom)
 }
 
-pub(crate) fn deserialize_option_iso8601_string_to_date<'de, D>(
+pub fn deserialize_option_iso8601_string_to_date<'de, D>(
     deserializer: D,
 ) -> Result<Option<DateTime<Utc>>, D::Error>
 where

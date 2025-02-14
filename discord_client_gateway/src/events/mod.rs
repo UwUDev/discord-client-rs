@@ -1,3 +1,14 @@
+use crate::events::gateway::GatewayPayload;
+use crate::events::structs::channel::thread::{
+    ThreadCreateEvent, ThreadDeleteEvent, ThreadListSyncEvent, ThreadUpdateEvent,
+};
+use crate::events::structs::channel::{ChannelCreateEvent, ChannelDeleteEvent, ChannelUpdateEvent};
+use crate::events::structs::gateway::GatewayReconnectEvent;
+use crate::events::structs::message::{
+    MessageCreateEvent, MessageDeleteEvent, MessageReactionAddEvent, MessageUpdateEvent,
+};
+use crate::events::structs::presence::PresenceUpdateEvent;
+use crate::events::structs::ready::ReadyEvent;
 use crate::events::structs::*;
 use serde::Deserialize;
 

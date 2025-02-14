@@ -1,5 +1,5 @@
 use crate::BoxedResult;
-use crate::events::structs::GatewayPayload;
+use crate::events::structs::gateway::GatewayPayload;
 use futures_util::stream::SplitStream;
 use futures_util::{SinkExt, StreamExt, TryStreamExt};
 use rquest::Impersonate::Chrome131;
