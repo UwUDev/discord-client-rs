@@ -7,6 +7,7 @@ use crate::events::structs::gateway::*;
 use crate::events::structs::message::*;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
+use crate::events::structs::guild::*;
 use serde_json::Value;
 
 pub mod call;
@@ -15,6 +16,7 @@ pub mod gateway;
 pub mod message;
 pub mod presence;
 pub mod ready;
+pub mod guild;
 
 #[derive(Debug, Clone)]
 pub enum Event {
@@ -44,6 +46,9 @@ pub enum Event {
 
     // call events
     CallCreate(CallCreateEvent),
+
+    // guild events
+    PassiveUpdateV2(PassiveUpdateV2Event),
 
     // misc events
     Unknown(UnknownEvent),

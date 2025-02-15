@@ -8,6 +8,7 @@ use crate::events::structs::gateway::*;
 use crate::events::structs::message::*;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
+use crate::events::structs::guild::*;
 use crate::events::structs::*;
 use serde::Deserialize;
 
@@ -113,7 +114,8 @@ define_events! {
         ThreadUpdate { t: "THREAD_UPDATE", type: ThreadUpdateEvent },
         ThreadDelete { t: "THREAD_DELETE", type: ThreadDeleteEvent },
         ThreadListSync { t: "THREAD_LIST_SYNC", type: ThreadListSyncEvent },
-        CallCreate { t: "CALL_CREATE", type: CallCreateEvent }
+        CallCreate { t: "CALL_CREATE", type: CallCreateEvent },
+        PassiveUpdateV2 { t: "PASSIVE_UPDATE_V2", type: PassiveUpdateV2Event }
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }
