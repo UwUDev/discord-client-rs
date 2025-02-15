@@ -29,7 +29,6 @@ async fn main() {
         client.auth_session_id_hash.clone()
     );
 
-    // todo: USER_SETTINGS_PROTO_UPDATE
     // todo: GUILD_INTEGRATIONS_UPDATE
     // todo: INTEGRATIONS_UPDATE
 

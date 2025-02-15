@@ -90,7 +90,7 @@ pub struct Message {
 pub struct MessageActivity {
     #[serde(rename = "type")]
     pub activity_type: u8,
-    pub session_id: String,
+    pub session_id: Option<String>,
     pub party_id: Option<String>,
 }
 
