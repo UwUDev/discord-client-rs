@@ -1,5 +1,5 @@
 use crate::deserializer::deserialize_string_to_vec_u64;
-use crate::structs::channel::deserialize_string_to_u64;
+use crate::deserializer::deserialize_string_to_u64;
 use serde::Deserialize;
 #[derive(Debug, Deserialize, Clone)]
 pub struct Summary {
