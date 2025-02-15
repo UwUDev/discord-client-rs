@@ -1,5 +1,5 @@
 use crate::deserializer::{
-    deserialize_iso8601_string_to_date, deserialize_option_iso8601_string_to_date,
+    deserialize_option_iso8601_string_to_date,
     deserialize_option_string_to_u64, deserialize_string_to_u64, deserialize_string_to_vec_u64,
 };
 use crate::structs::application::IntegrationApplication;
@@ -114,8 +114,9 @@ pub struct MessageForwardOnly {
 #[derive(Debug, Deserialize, Clone)]
 pub struct MessageSnapshot {
     pub content: Option<String>,
-    #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
-    pub timestamp: DateTime<Utc>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    pub timestamp: Option<DateTime<Utc>>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
     pub edited_timestamp: Option<DateTime<Utc>>,

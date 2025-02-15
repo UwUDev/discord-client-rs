@@ -31,6 +31,9 @@ async fn main() {
 
     // todo: GUILD_INTEGRATIONS_UPDATE
     // todo: INTEGRATIONS_UPDATE
+    // todo: THREAD_MEMBERS_UPDATE
+    // todo: MESSAGE_DELETE_BULK
+    // todo: READY_SUPPLEMENTAL
 
     loop {
         let event = client.next_event().await.unwrap();
