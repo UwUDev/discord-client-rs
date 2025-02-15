@@ -7,8 +7,7 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize, Clone)]
 pub struct Embed {
     pub title: Option<String>,
-    #[serde(rename = "type")]
-    pub embed_type: String,
+    pub r#type: String,
     pub description: Option<String>,
     pub url: Option<String>,
     #[serde(default)]

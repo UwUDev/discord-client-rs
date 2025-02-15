@@ -7,8 +7,7 @@ use std::collections::HashMap;
 pub struct MessageInteraction {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,
-    #[serde(rename = "type")]
-    pub interaction_type: u8,
+    pub r#type: u8,
     pub name: String,
     pub user: User,
 }
@@ -17,8 +16,7 @@ pub struct MessageInteraction {
 pub struct MessageInteractionMetadata {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,
-    #[serde(rename = "type")]
-    pub interaction_type: u8,
+    pub r#type: u8,
     pub name: Option<String>,
     pub command_type: Option<u8>,
     pub ephemerality_reason: Option<u8>,

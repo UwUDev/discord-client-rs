@@ -16,8 +16,7 @@ pub mod voice;
 pub struct Channel {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,
-    #[serde(rename = "type")]
-    pub channel_type: u8,
+    pub r#type: u8,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub guild_id: Option<u64>,
@@ -71,8 +70,7 @@ pub struct Channel {
 pub struct PartialChannel {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,
-    #[serde(rename = "type")]
-    pub channel_type: u8,
+    pub r#type: u8,
     pub name: Option<String>,
     pub recipients: Option<Vec<User>>,
     pub icon: Option<String>,

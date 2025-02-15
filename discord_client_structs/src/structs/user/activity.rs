@@ -9,8 +9,7 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize, Clone)]
 pub struct Activity {
     pub name: String,
-    #[serde(rename = "type")]
-    pub activity_type: u8,
+    pub r#type: u8,
     pub url: Option<String>,
     pub created_at: u64,
     pub timestamps: Option<ActivityTimestamp>,

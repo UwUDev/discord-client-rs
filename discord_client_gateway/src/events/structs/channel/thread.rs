@@ -28,8 +28,7 @@ pub struct ThreadDeleteEvent {
     pub guild_id: Option<u64>,
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub parent_id: Option<u64>,
-    #[serde(rename = "type")]
-    pub thread_type: u8,
+    pub r#type: u8,
 }
 
 #[derive(Debug, Deserialize, Clone)]

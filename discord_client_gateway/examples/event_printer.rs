@@ -36,7 +36,7 @@ async fn main() {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
         if let Event::Unknown(unknown) = event {
-            if unknown.event_type == "USER_SETTINGS_PROTO_UPDATE" {
+            if unknown.r#type == "USER_SETTINGS_PROTO_UPDATE" {
                 exit(0);
             }
         }

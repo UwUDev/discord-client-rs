@@ -57,8 +57,7 @@ pub struct Message {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub webhook_id: Option<u64>,
-    #[serde(rename = "type")]
-    pub message_type: u8,
+    pub r#type: u8,
     pub activity: Option<MessageActivity>,
     pub application: Option<IntegrationApplication>,
     #[serde(default)]
@@ -88,8 +87,7 @@ pub struct Message {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct MessageActivity {
-    #[serde(rename = "type")]
-    pub activity_type: u8,
+    pub r#type: u8,
     pub session_id: Option<String>,
     pub party_id: Option<String>,
 }
@@ -98,7 +96,7 @@ pub struct MessageActivity {
 pub struct MessageReference {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    pub message_id: Option<u64>, // non existant whet a thread is created (wtf ?)
+    pub message_id: Option<u64>, // non-existent when a thread is created (wtf ?)
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub channel_id: u64,
     #[serde(default)]
@@ -126,8 +124,7 @@ pub struct MessageSnapshot {
     pub mention_roles: Vec<u64>,
     pub attachments: Vec<Attachment>,
     pub embeds: Vec<Embed>,
-    #[serde(rename = "type")]
-    pub message_type: u8,
+    pub r#type: u8,
     pub flags: u64,
     pub components: Option<Vec<MessageComponent>>,
     pub sticker_items: Option<Vec<StickerItem>>,
@@ -136,8 +133,7 @@ pub struct MessageSnapshot {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct MessageComponent {
-    #[serde(rename = "type")]
-    pub component_type: u8,
+    pub r#type: u8,
     pub custom_id: Option<String>,
     pub disabled: Option<bool>,
     pub style: Option<u8>,

@@ -325,7 +325,6 @@ pub struct AuditEntryInfo {
     #[serde(default)]
     pub role_name: Option<String>,
     #[serde(default)]
-    #[serde(rename = "type")]
-    pub entry_type: Option<String>,
+    pub r#type: Option<String>,
     pub status: String,
 }

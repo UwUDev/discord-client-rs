@@ -23,8 +23,7 @@ pub struct MessageReactionAddEvent {
     pub message_author_id: Option<u64>,
     pub burst: bool,
     pub burst_colors: Option<Vec<String>>,
-    #[serde(rename = "type")]
-    pub reaction_type: u8,
+    pub r#type: u8,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -39,8 +38,7 @@ pub struct MessageReactionRemoveEvent {
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub guild_id: Option<u64>,
     pub emoji: Emoji,
-    #[serde(rename = "type")]
-    pub reaction_type: u8,
+    pub r#type: u8,
 }
 
 #[derive(Debug, Deserialize, Clone)]

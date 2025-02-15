@@ -5,8 +5,7 @@ use serde::Deserialize;
 pub struct Summary {
     #[serde(rename = "unsafe")]
     pub is_unsafe: bool,
-    #[serde(rename = "type")]
-    pub summary_type: u8,
+    pub r#type: u8,
     pub topic: String,
     pub summ_short: String,
     #[serde(deserialize_with = "deserialize_string_to_u64")]

@@ -10,7 +10,7 @@ impl<'de> Deserialize<'de> for UnknownEvent {
         D: Deserializer<'de>,
     {
         let v = Value::deserialize(deserializer)?;
-        let event_type = v
+        let r#type = v
             .get("t")
             .and_then(Value::as_str)
             .unwrap_or("UNKNOWN")
@@ -18,7 +18,7 @@ impl<'de> Deserialize<'de> for UnknownEvent {
         let data = v.get("d").cloned().unwrap_or(Value::Null);
         let op = v.get("op").and_then(Value::as_u64).unwrap_or(0) as u8;
         Ok(UnknownEvent {
-            event_type,
+            r#type,
             data,
             op,
         })

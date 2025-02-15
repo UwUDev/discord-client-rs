@@ -91,7 +91,7 @@ pub enum Event {
 
 #[derive(Debug, Clone)]
 pub struct UnknownEvent {
-    pub event_type: String,
+    pub r#type: String,
     pub data: Value,
     pub op: u8,
 }

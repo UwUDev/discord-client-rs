@@ -5,8 +5,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct MessagePurchaseNotification {
-    #[serde(rename = "type")]
-    pub purchase_type: u8,
+    pub r#type: u8,
     pub guild_product_purchase: Option<GuildProductPurchase>,
 }
 

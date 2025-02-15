@@ -60,7 +60,7 @@ macro_rules! define_events {
                             Event::$nd_variant(_) => stringify!($nd_variant),
                         )+
                     )*
-                    Event::Unknown(unknown) => &unknown.event_type,
+                    Event::Unknown(unknown) => &unknown.r#type,
                 }
             }
         }
@@ -76,7 +76,7 @@ macro_rules! define_events {
                             Event::$nd_variant(_) => write!(f, "{}", stringify!($nd_variant)),
                         )+
                     )*
-                    Event::Unknown(unknown) => write!(f, "Unknown ({}): {}", unknown.op, unknown.event_type),
+                    Event::Unknown(unknown) => write!(f, "Unknown ({}): {}", unknown.op, unknown.r#type),
                 }
             }
         }
@@ -89,7 +89,7 @@ macro_rules! define_events {
                         Some($t) => <$event_struct>::deserialize(payload.d).map(Event::$variant),
                     )+
                     Some(other) => Ok(Event::Unknown(UnknownEvent {
-                        event_type: other.to_string(),
+                        r#type: other.to_string(),
                         data: payload.d,
                         op: payload.op,
                     })),
@@ -103,7 +103,7 @@ macro_rules! define_events {
                             Ok(data) => Ok(Event::$nd_variant(data)),
                         )+
                         Err(_) => Ok(Event::Unknown(UnknownEvent {
-                            event_type: "UNKNOWN_NON_DISPATCH".to_string(),
+                            r#type: "UNKNOWN_NON_DISPATCH".to_string(),
                             data: payload.d,
                             op: payload.op,
                         })),
@@ -112,7 +112,7 @@ macro_rules! define_events {
 
                 // Unknown opcodes
                 _ => Ok(Event::Unknown(UnknownEvent {
-                    event_type: "UNKNOWN_OP".to_string(),
+                    r#type: "UNKNOWN_OP".to_string(),
                     data: payload.d,
                     op: payload.op,
                 })),
