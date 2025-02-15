@@ -20,7 +20,6 @@ async fn main() {
 
     // todo: CONTENT_INVENTORY_INBOX_STALE
     // todo: USER_SETTINGS_PROTO_UPDATE
-    // todo: MESSAGE_REACTION_REMOVE
     // todo: GUILD_INTEGRATIONS_UPDATE
     // todo: INTEGRATIONS_UPDATE
     // todo: SESSIONS_REPLACE
@@ -29,13 +28,13 @@ async fn main() {
     loop {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
-        if let Event::Unknown(unknown) = event {
+        /*if let Event::Unknown(unknown) = event {
             if unknown.event_type == "SESSIONS_REPLACE" {
                 exit(0);
             }
-        }
-        /*if let Event::GatewayReconnect(_)= event {
-            exit(0);
         }*/
+        if let Event::GatewayReconnect(_)= event {
+            exit(0);
+        }
     }
 }

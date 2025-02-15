@@ -21,7 +21,7 @@ pub struct Channel {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub guild_id: Option<u64>,
-    pub position: Option<u64>,
+    pub position: Option<i64>,
     pub permission_overwrites: Option<Vec<Overwrite>>,
     pub name: Option<String>,
     pub topic: Option<String>,
