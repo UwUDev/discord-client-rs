@@ -9,6 +9,7 @@ use crate::events::structs::channel::voice::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
 use crate::events::structs::guild::*;
+use crate::events::structs::message::poll::*;
 use crate::events::structs::message::*;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
@@ -140,6 +141,8 @@ define_events! {
         VoiceChannelStatusUpdate { t: "VOICE_CHANNEL_STATUS_UPDATE", type: VoiceChannelStatusUpdateEvent },
         TypingStart { t: "TYPING_START", type: TypingStartEvent },
         SessionReplace { t: "SESSIONS_REPLACE", type: SessionsReplaceEvent },
+        MessagePollVoteAdd { t: "MESSAGE_POLL_VOTE_ADD", type: MessagePollVoteAddEvent },
+        MessagePollVoteRemove { t: "MESSAGE_POLL_VOTE_REMOVE", type: MessagePollVoteRemoveEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }

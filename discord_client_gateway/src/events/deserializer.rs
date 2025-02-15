@@ -1,8 +1,8 @@
 use crate::events::structs::UnknownEvent;
+use crate::events::structs::gateway::SessionsReplaceEvent;
+use discord_client_structs::structs::user::session::Session;
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
-use discord_client_structs::structs::user::session::Session;
-use crate::events::structs::gateway::SessionsReplaceEvent;
 
 impl<'de> Deserialize<'de> for UnknownEvent {
     fn deserialize<D>(deserializer: D) -> Result<UnknownEvent, D::Error>

@@ -6,6 +6,8 @@ use discord_client_structs::structs::misc::Emoji;
 use discord_client_structs::structs::user::{Member, User};
 use serde::Deserialize;
 
+pub mod poll;
+
 #[derive(Debug, Deserialize, Clone)]
 //noinspection DuplicatedCode
 pub struct MessageCreateEvent {
