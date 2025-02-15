@@ -128,6 +128,7 @@ define_events! {
         MessageDelete { t: "MESSAGE_DELETE", type: MessageDeleteEvent },
         MessageReactionAdd { t: "MESSAGE_REACTION_ADD", type: MessageReactionAddEvent },
         MessageReactionRemove { t: "MESSAGE_REACTION_REMOVE", type: MessageReactionRemoveEvent },
+        MessageReactionAddMany { t: "MESSAGE_REACTION_ADD_MANY", type: MessageReactionAddManyEvent },
         PresenceUpdate { t: "PRESENCE_UPDATE", type: PresenceUpdateEvent },
         ChannelCreate { t: "CHANNEL_CREATE", type: ChannelCreateEvent },
         ChannelUpdate { t: "CHANNEL_UPDATE", type: ChannelUpdateEvent },

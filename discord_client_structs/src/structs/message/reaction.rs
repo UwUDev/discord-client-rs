@@ -1,3 +1,4 @@
+use crate::structs::message::deserialize_string_to_vec_u64;
 use crate::structs::misc::Emoji;
 use serde::Deserialize;
 
@@ -15,4 +16,11 @@ pub struct Reaction {
 pub struct ReactionCountDetails {
     pub normal: u64,
     pub burst: u64,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct DebouncedReaction {
+    #[serde(deserialize_with = "deserialize_string_to_vec_u64")]
+    pub users: Vec<u64>,
+    pub emoji: Emoji,
 }

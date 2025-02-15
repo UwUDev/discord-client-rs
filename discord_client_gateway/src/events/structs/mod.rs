@@ -31,6 +31,7 @@ pub enum Event {
     MessageCreate(MessageCreateEvent),
     MessageReactionAdd(MessageReactionAddEvent),
     MessageReactionRemove(MessageReactionRemoveEvent),
+    MessageReactionAddMany(MessageReactionAddManyEvent),
 
     // gateway events
     GatewayReconnect(GatewayReconnectEvent),
