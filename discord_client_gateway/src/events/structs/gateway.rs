@@ -1,3 +1,4 @@
+use discord_client_structs::structs::user::session::Session;
 use serde::Deserialize;
 use serde_json::Value;
 
@@ -14,3 +15,8 @@ pub struct GatewayReconnectEvent;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct HeartbeatAckEvent;
+
+#[derive(Debug, Clone)]
+pub struct SessionsReplaceEvent {
+    pub sessions: Vec<Session>,
+}

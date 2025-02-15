@@ -1,7 +1,7 @@
 use discord_client_structs::deserializer::deserialize_option_string_to_u64;
 use discord_client_structs::deserializer::deserialize_string_to_u64;
-use serde::{Deserialize};
 use discord_client_structs::structs::channel::voice::VoiceState;
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct VoiceStateUpdateEvent {

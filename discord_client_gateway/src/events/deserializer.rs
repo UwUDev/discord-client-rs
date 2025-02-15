@@ -1,6 +1,8 @@
 use crate::events::structs::UnknownEvent;
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
+use discord_client_structs::structs::user::session::Session;
+use crate::events::structs::gateway::SessionsReplaceEvent;
 
 impl<'de> Deserialize<'de> for UnknownEvent {
     fn deserialize<D>(deserializer: D) -> Result<UnknownEvent, D::Error>
@@ -20,5 +22,16 @@ impl<'de> Deserialize<'de> for UnknownEvent {
             data,
             op,
         })
+    }
+}
+
+// The event is an array not an object...
+impl<'de> Deserialize<'de> for SessionsReplaceEvent {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let sessions = Vec::<Session>::deserialize(deserializer)?;
+        Ok(SessionsReplaceEvent { sessions })
     }
 }

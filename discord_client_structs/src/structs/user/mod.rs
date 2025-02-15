@@ -1,11 +1,12 @@
-pub mod activity;
-
 use crate::deserializer::{
     deserialize_iso8601_string_to_date, deserialize_option_iso8601_string_to_date,
     deserialize_string_to_u64, deserialize_string_to_vec_u64,
 };
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
+
+pub mod activity;
+pub mod session;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct User {

@@ -139,6 +139,7 @@ define_events! {
         VoiceStateUpdate { t: "VOICE_STATE_UPDATE", type: VoiceStateUpdateEvent },
         VoiceChannelStatusUpdate { t: "VOICE_CHANNEL_STATUS_UPDATE", type: VoiceChannelStatusUpdateEvent },
         TypingStart { t: "TYPING_START", type: TypingStartEvent },
+        SessionReplace { t: "SESSIONS_REPLACE", type: SessionsReplaceEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }

@@ -32,6 +32,8 @@ pub enum Event {
 
     // gateway events
     GatewayReconnect(GatewayReconnectEvent),
+    SessionsReplace(SessionsReplaceEvent),
+    HeartbeatAck(HeartbeatAckEvent),
 
     // presence events
     PresenceUpdate(PresenceUpdateEvent),

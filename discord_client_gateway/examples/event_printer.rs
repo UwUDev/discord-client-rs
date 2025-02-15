@@ -33,7 +33,7 @@ async fn main() {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
         if let Event::Unknown(unknown) = event {
-            if unknown.event_type == "TYPING_START" {
+            if unknown.event_type == "SESSIONS_REPLACE" {
                 exit(0);
             }
         }
