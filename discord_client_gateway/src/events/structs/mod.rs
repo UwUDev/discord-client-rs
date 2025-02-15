@@ -2,21 +2,22 @@ use crate::events::structs::call::*;
 use crate::events::structs::channel::thread::{
     ThreadCreateEvent, ThreadDeleteEvent, ThreadListSyncEvent, ThreadUpdateEvent,
 };
+use crate::events::structs::channel::summary::*;
+use crate::events::structs::presence::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
 use crate::events::structs::message::*;
-use crate::events::structs::presence::*;
-use crate::events::structs::ready::*;
 use crate::events::structs::guild::*;
+use crate::events::structs::ready::*;
 use serde_json::Value;
 
 pub mod call;
 pub mod channel;
 pub mod gateway;
+pub mod guild;
 pub mod message;
 pub mod presence;
 pub mod ready;
-pub mod guild;
 
 #[derive(Debug, Clone)]
 pub enum Event {
@@ -37,6 +38,7 @@ pub enum Event {
     ChannelCreate(ChannelCreateEvent),
     ChannelUpdate(ChannelUpdateEvent),
     ChannelDelete(ChannelDeleteEvent),
+    ConversationSummaryUpdate(ConversationSummaryUpdateEvent),
 
     // thread events
     ThreadCreate(ThreadCreateEvent),

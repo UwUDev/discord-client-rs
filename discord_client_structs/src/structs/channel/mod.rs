@@ -8,6 +8,7 @@ use crate::structs::user::User;
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
+pub mod summary;
 pub mod thread;
 pub mod voice;
 
