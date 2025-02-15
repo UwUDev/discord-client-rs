@@ -1,4 +1,5 @@
 use crate::deserializer::deserialize_string_to_u64;
+use crate::structs::message::deserialize_option_string_to_u64;
 use crate::structs::user::User;
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -26,5 +27,7 @@ pub struct MessageInteractionMetadata {
     pub interacted_message_id: Option<u64>,
     pub triggering_interaction_metadata: Option<Box<MessageInteractionMetadata>>,
     pub target_user: Option<User>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub target_message_id: Option<u64>,
 }
