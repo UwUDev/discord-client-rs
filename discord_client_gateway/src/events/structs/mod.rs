@@ -71,6 +71,7 @@ pub enum Event {
     GuildCreate(GuildCreateEvent),
     GuildUpdate(GuildUpdateEvent),
     GuildDelete(GuildDeleteEvent),
+    GuildAuditLogEntryCreate(GuildAuditLogEntryCreateEvent),
 
     // typing events
     TypingStart(TypingStartEvent),

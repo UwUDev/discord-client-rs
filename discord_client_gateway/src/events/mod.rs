@@ -153,6 +153,7 @@ define_events! {
         GuildCreate { t: "GUILD_CREATE", type: GuildCreateEvent },
         GuildUpdate { t: "GUILD_UPDATE", type: GuildUpdateEvent },
         GuildDelete { t: "GUILD_DELETE", type: GuildDeleteEvent },
+        GuildAuditLogEntryCreate { t: "GUILD_AUDIT_LOG_ENTRY_CREATE", type: GuildAuditLogEntryCreateEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }

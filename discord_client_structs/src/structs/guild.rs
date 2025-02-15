@@ -267,3 +267,74 @@ pub struct UnavailableGuild {
     pub unavailable: Option<bool>,
     pub geo_restricted: Option<bool>,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct AuditLogEntry {
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub target_id: Option<u64>,
+    #[serde(default)]
+    pub changes: Option<Vec<AuditLogChange>>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub user_id: Option<u64>,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
+    pub action_type: u8,
+    #[serde(default)]
+    pub options: Option<AuditEntryInfo>,
+    #[serde(default)]
+    pub reason: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct AuditLogChange {
+    #[serde(default)]
+    pub new_value: Option<Vec<AuditValue>>,
+    #[serde(default)]
+    pub old_value: Option<Vec<AuditValue>>,
+    pub key: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct AuditValue {
+    #[serde(default)]
+    pub name: Option<String>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub id: Option<u64>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct AuditEntryInfo {
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub application_id: Option<u64>,
+    #[serde(default)]
+    pub auto_moderation_rule_name: Option<String>,
+    #[serde(default)]
+    pub auto_moderation_rule_trigger_type: Option<String>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub channel_id: Option<u64>,
+    #[serde(default)]
+    pub count: Option<String>,
+    #[serde(default)]
+    pub delete_member_days: Option<String>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub id: Option<u64>,
+    #[serde(default)]
+    pub integration_type: Option<String>,
+    #[serde(default)]
+    pub members_removed: Option<String>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub message_id: Option<u64>,
+    #[serde(default)]
+    pub role_name: Option<String>,
+    #[serde(default)]
+    #[serde(rename = "type")]
+    pub entry_type: Option<String>,
+    pub status: String,
+}
