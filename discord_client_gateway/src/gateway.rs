@@ -163,5 +163,9 @@ impl GatewayClient {
         }
     }
 
-    // todo: bulk guild subscribe
+    pub async fn reconnect(&mut self) -> BoxedResult<()> {
+        let new_client = Self::connect(self.token.clone()).await?;
+        *self = new_client;
+        Ok(())
+    }
 }
