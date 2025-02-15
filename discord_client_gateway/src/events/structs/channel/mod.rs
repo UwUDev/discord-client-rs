@@ -3,6 +3,7 @@ use serde::Deserialize;
 pub mod summary;
 pub mod thread;
 pub mod voice;
+pub mod typing;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct ChannelCreateEvent {

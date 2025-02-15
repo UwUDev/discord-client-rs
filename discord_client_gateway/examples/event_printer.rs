@@ -18,13 +18,27 @@ async fn main() {
         client.auth_session_id_hash.clone()
     );
 
+    // todo: SESSION_REPLACE
+    // todo: MESSAGE_POLL_VOTE_ADD
+    // todo: MESSAGE_POLL_VOTE_REMOVE
+    // todo: CONTENT_INVENTORY_INBOX_STALE
+    // todo: USER_SETTINGS_PROTO_UPDATE
+    // todo: MESSAGE_REACTION_REMOVE
+    // todo: GUILD_INTEGRATIONS_UPDATE
+    // todo: INTEGRATIONS_UPDATE
+    // todo: SESSIONS_REPLACE
+    // todo: MESSAGE_ACK (read/unread)
+
     loop {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
         if let Event::Unknown(unknown) = event {
-            if unknown.event_type == "VOICE_CHANNEL_STATUS_UPDATE" {
+            if unknown.event_type == "TYPING_START" {
                 exit(0);
             }
         }
+        /*if let Event::GatewayReconnect(_)= event {
+            exit(0);
+        }*/
     }
 }

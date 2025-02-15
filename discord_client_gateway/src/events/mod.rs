@@ -4,6 +4,7 @@ use crate::events::structs::channel::summary::ConversationSummaryUpdateEvent;
 use crate::events::structs::channel::thread::{
     ThreadCreateEvent, ThreadDeleteEvent, ThreadListSyncEvent, ThreadUpdateEvent,
 };
+use crate::events::structs::channel::typing::TypingStartEvent;
 use crate::events::structs::channel::voice::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
@@ -137,6 +138,7 @@ define_events! {
         ConversationSummaryUpdate { t: "CONVERSATION_SUMMARY_UPDATE", type: ConversationSummaryUpdateEvent },
         VoiceStateUpdate { t: "VOICE_STATE_UPDATE", type: VoiceStateUpdateEvent },
         VoiceChannelStatusUpdate { t: "VOICE_CHANNEL_STATUS_UPDATE", type: VoiceChannelStatusUpdateEvent },
+        TypingStart { t: "TYPING_START", type: TypingStartEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }

@@ -3,6 +3,7 @@ use crate::events::structs::channel::summary::*;
 use crate::events::structs::channel::thread::{
     ThreadCreateEvent, ThreadDeleteEvent, ThreadListSyncEvent, ThreadUpdateEvent,
 };
+use crate::events::structs::channel::typing::*;
 use crate::events::structs::channel::voice::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
@@ -56,6 +57,9 @@ pub enum Event {
 
     // guild events
     PassiveUpdateV2(PassiveUpdateV2Event),
+
+    // typing events
+    TypingStart(TypingStartEvent),
 
     // misc events
     Unknown(UnknownEvent),
