@@ -1,4 +1,6 @@
+use discord_client_gateway::events::Event;
 use discord_client_gateway::gateway::GatewayClient;
+use std::process::exit;
 
 #[tokio::main]
 async fn main() {
@@ -16,8 +18,15 @@ async fn main() {
         client.auth_session_id_hash.clone()
     );
 
+    // todo: VOICE_STATE_UPDATE
+
     loop {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
+        if let Event::Unknown(unknown) = event {
+            if unknown.op == 11 {
+                exit(0);
+            }
+        }
     }
 }

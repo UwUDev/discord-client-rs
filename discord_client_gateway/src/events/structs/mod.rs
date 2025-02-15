@@ -1,13 +1,13 @@
 use crate::events::structs::call::*;
+use crate::events::structs::channel::summary::*;
 use crate::events::structs::channel::thread::{
     ThreadCreateEvent, ThreadDeleteEvent, ThreadListSyncEvent, ThreadUpdateEvent,
 };
-use crate::events::structs::channel::summary::*;
-use crate::events::structs::presence::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
-use crate::events::structs::message::*;
 use crate::events::structs::guild::*;
+use crate::events::structs::message::*;
+use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use serde_json::Value;
 

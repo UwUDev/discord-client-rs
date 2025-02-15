@@ -1,5 +1,6 @@
 use crate::events::gateway::GatewayPayload;
 use crate::events::structs::call::CallCreateEvent;
+use crate::events::structs::channel::summary::ConversationSummaryUpdateEvent;
 use crate::events::structs::channel::thread::{
     ThreadCreateEvent, ThreadDeleteEvent, ThreadListSyncEvent, ThreadUpdateEvent,
 };
@@ -11,7 +12,6 @@ use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::*;
 use serde::Deserialize;
-use crate::events::structs::channel::summary::ConversationSummaryUpdateEvent;
 
 pub(crate) mod deserializer;
 pub mod structs;
@@ -19,20 +19,28 @@ pub mod structs;
 macro_rules! define_events {
     (
         dispatch op $dispatch_op:expr, {
-            $( $variant:ident { t: $t:expr, type: $event_struct:ty } ),+
-        },
-        non_dispatch op $non_dispatch_op:expr, {
-            $( $variant_nd:ident { type: $event_struct_nd:ty } ),+
-        },
+            $( $variant:ident { t: $t:expr, type: $event_struct:ty } ),+ $(,)?
+        }
+        $(
+            , non_dispatch op $nd_op:expr, {
+                $( $nd_variant:ident { type: $nd_struct:ty } ),+ $(,)?
+            }
+        )*
     ) => {
         #[derive(Debug, Clone)]
         pub enum Event {
+            // Dispatch events
             $(
                 $variant($event_struct),
             )+
+
+            // Non-dispatch events
             $(
-                $variant_nd($event_struct_nd),
-            )+
+                $(
+                    $nd_variant($nd_struct),
+                )+
+            )*
+
             Unknown(UnknownEvent),
         }
 
@@ -43,8 +51,10 @@ macro_rules! define_events {
                         Event::$variant(_) => $t,
                     )+
                     $(
-                        Event::$variant_nd(_) => stringify!($variant_nd),
-                    )+
+                        $(
+                            Event::$nd_variant(_) => stringify!($nd_variant),
+                        )+
+                    )*
                     Event::Unknown(unknown) => &unknown.event_type,
                 }
             }
@@ -57,44 +67,50 @@ macro_rules! define_events {
                         Event::$variant(_) => write!(f, "{}", $t),
                     )+
                     $(
-                        Event::$variant_nd(_) => write!(f, "{}", stringify!($variant_nd)),
-                    )+
-                    Event::Unknown(unknown) => write!(f, "Unknown ({}): {}",unknown.op, unknown.event_type),
+                        $(
+                            Event::$nd_variant(_) => write!(f, "{}", stringify!($nd_variant)),
+                        )+
+                    )*
+                    Event::Unknown(unknown) => write!(f, "Unknown ({}): {}", unknown.op, unknown.event_type),
                 }
             }
         }
 
         pub fn parse_gateway_payload(payload: GatewayPayload) -> Result<Event, serde_json::Error> {
             match payload.op {
-                $dispatch_op => {
-                    match payload.t.as_deref() {
-                        $(
-                            Some($t) => {
-                                return <$event_struct>::deserialize(payload.d).map(Event::$variant);
-                            },
-                        )+
-                        Some(other) => {
-                            Ok(Event::Unknown(UnknownEvent {
-                                event_type: other.to_string(),
-                                data: payload.d,
-                                op: payload.op,
-                            }))
-                        },
-                        None => return Err(serde::de::Error::custom("Dispatch event missing 't' field")),
-                    }
-                },
-                $non_dispatch_op => {
+                // Dispatch events
+                $dispatch_op => match payload.t.as_deref() {
                     $(
-                        return <$event_struct_nd>::deserialize(payload.d).map(Event::$variant_nd);
+                        Some($t) => <$event_struct>::deserialize(payload.d).map(Event::$variant),
                     )+
-                },
-                _ => {
-                    Ok(Event::Unknown(UnknownEvent {
-                        event_type: "UNKNOWN".to_string(),
+                    Some(other) => Ok(Event::Unknown(UnknownEvent {
+                        event_type: other.to_string(),
                         data: payload.d,
                         op: payload.op,
-                    }))
-                }
+                    })),
+                    None => Err(serde::de::Error::custom("Dispatch event missing 't' field")),
+                },
+
+                // Non-dispatch events
+                $(
+                    $nd_op => match serde_json::from_value(payload.d.clone()) {
+                        $(
+                            Ok(data) => Ok(Event::$nd_variant(data)),
+                        )+
+                        Err(_) => Ok(Event::Unknown(UnknownEvent {
+                            event_type: "UNKNOWN_NON_DISPATCH".to_string(),
+                            data: payload.d,
+                            op: payload.op,
+                        })),
+                    },
+                )*
+
+                // Unknown opcodes
+                _ => Ok(Event::Unknown(UnknownEvent {
+                    event_type: "UNKNOWN_OP".to_string(),
+                    data: payload.d,
+                    op: payload.op,
+                })),
             }
         }
     };
@@ -122,4 +138,7 @@ define_events! {
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }
     },
+    non_dispatch op 11, {
+        HeartbeatAck { type: HeartbeatAckEvent }
+    }
 }

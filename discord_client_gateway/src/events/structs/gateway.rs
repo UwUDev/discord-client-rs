@@ -11,3 +11,6 @@ pub struct GatewayPayload {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct GatewayReconnectEvent;
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct HeartbeatAckEvent;
