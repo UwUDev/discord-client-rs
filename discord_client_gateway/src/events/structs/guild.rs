@@ -1,12 +1,13 @@
-use discord_client_structs::deserializer::deserialize_option_iso8601_string_to_date;
+use chrono::{DateTime, Utc};
 use discord_client_structs::deserializer::deserialize_iso8601_string_to_date;
+use discord_client_structs::deserializer::deserialize_option_iso8601_string_to_date;
 use discord_client_structs::deserializer::deserialize_string_to_u64;
 use discord_client_structs::deserializer::deserialize_string_to_vec_u64;
 use discord_client_structs::structs::channel::UpdatedChannel;
 use discord_client_structs::structs::channel::voice::VoiceState;
+use discord_client_structs::structs::guild::{GatewayGuild, Guild, UnavailableGuild};
 use discord_client_structs::structs::user::{AvatarDecorationData, Member, User};
 use serde::Deserialize;
-use chrono::{DateTime, Utc};
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct PassiveUpdateV2Event {
@@ -55,4 +56,32 @@ pub struct GuildMemberRemoveEvent {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub guild_id: u64,
     pub user: User,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct GuildCreateEvent {
+    #[serde(flatten)]
+    pub guild: GatewayGuild,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct GuildUpdateEvent {
+    #[serde(flatten)]
+    pub guild: Guild,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct GuildDeleteEvent {
+    #[serde(flatten)]
+    pub guild: UnavailableGuild,
+}
+
+impl GuildDeleteEvent {
+    pub fn is_unavailable(&self) -> bool {
+        self.guild.unavailable.is_some()
+    }
+
+    pub fn user_left(&self) -> bool {
+        self.guild.unavailable.is_none()
+    }
 }

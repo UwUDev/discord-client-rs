@@ -259,3 +259,11 @@ pub struct GameActivity {
     pub activity_level: u32,
     pub activity_score: u32,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct UnavailableGuild {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
+    pub unavailable: Option<bool>,
+    pub geo_restricted: Option<bool>,
+}

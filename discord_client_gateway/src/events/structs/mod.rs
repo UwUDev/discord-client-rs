@@ -68,6 +68,7 @@ pub enum Event {
     GuildMemberUpdate(GuildMemberUpdateEvent),
     GuildMemberAdd(GuildMemberAddEvent),
     GuildMemberRemove(GuildMemberRemoveEvent),
+    GuildCreate(GuildCreateEvent),
 
     // typing events
     TypingStart(TypingStartEvent),

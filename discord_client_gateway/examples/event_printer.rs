@@ -39,7 +39,7 @@ async fn main() {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
         if let Event::Unknown(unknown) = event {
-            if unknown.event_type == "MESSAGE_ACK" {
+            if unknown.event_type == "GUILD_CREATE" {
                 exit(0);
             }
         }
