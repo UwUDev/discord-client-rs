@@ -18,9 +18,6 @@ async fn main() {
         client.auth_session_id_hash.clone()
     );
 
-    // todo: SESSION_REPLACE
-    // todo: MESSAGE_POLL_VOTE_ADD
-    // todo: MESSAGE_POLL_VOTE_REMOVE
     // todo: CONTENT_INVENTORY_INBOX_STALE
     // todo: USER_SETTINGS_PROTO_UPDATE
     // todo: MESSAGE_REACTION_REMOVE

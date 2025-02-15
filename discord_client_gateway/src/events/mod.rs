@@ -15,6 +15,7 @@ use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::*;
 use serde::Deserialize;
+use crate::events::structs::message::reaction::*;
 
 pub(crate) mod deserializer;
 pub mod structs;
@@ -126,6 +127,7 @@ define_events! {
         MessageUpdate { t: "MESSAGE_UPDATE", type: MessageUpdateEvent },
         MessageDelete { t: "MESSAGE_DELETE", type: MessageDeleteEvent },
         MessageReactionAdd { t: "MESSAGE_REACTION_ADD", type: MessageReactionAddEvent },
+        MessageReactionRemove { t: "MESSAGE_REACTION_REMOVE", type: MessageReactionRemoveEvent },
         PresenceUpdate { t: "PRESENCE_UPDATE", type: PresenceUpdateEvent },
         ChannelCreate { t: "CHANNEL_CREATE", type: ChannelCreateEvent },
         ChannelUpdate { t: "CHANNEL_UPDATE", type: ChannelUpdateEvent },

@@ -13,6 +13,7 @@ use crate::events::structs::message::*;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use serde_json::Value;
+use crate::events::structs::message::reaction::*;
 
 pub mod call;
 pub mod channel;
@@ -29,6 +30,7 @@ pub enum Event {
     // message events
     MessageCreate(MessageCreateEvent),
     MessageReactionAdd(MessageReactionAddEvent),
+    MessageReactionRemove(MessageReactionRemoveEvent),
 
     // gateway events
     GatewayReconnect(GatewayReconnectEvent),
