@@ -39,7 +39,7 @@ pub struct Message {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub channel_id: u64,
     pub author: User,
-    pub content: String,
+    pub content: Option<String>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
     pub edited_timestamp: Option<DateTime<Utc>>,
@@ -113,7 +113,7 @@ pub struct MessageForwardOnly {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct MessageSnapshot {
-    pub content: String,
+    pub content: Option<String>,
     #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
     pub timestamp: DateTime<Utc>,
     #[serde(default)]
