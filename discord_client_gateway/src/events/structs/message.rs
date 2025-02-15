@@ -58,6 +58,7 @@ pub struct MessageReactionAddEvent {
     pub guild_id: Option<u64>,
     pub member: Option<Member>,
     pub emoji: Emoji,
+    #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub message_author_id: Option<u64>,
     pub burst: bool,
