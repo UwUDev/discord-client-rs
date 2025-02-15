@@ -31,7 +31,8 @@ pub struct GatewayGuild {
     pub default_message_notifications: Option<u8>,
     pub explicit_content_filter: Option<u8>,
     pub roles: Option<Vec<Role>>,
-    pub emojis: Vec<Emoji>,
+    #[serde(default)]
+    pub emojis: Option<Vec<Emoji>>,
     #[serde(default)]
     pub features: Option<Vec<String>>,
     pub mfa_level: Option<u8>,
