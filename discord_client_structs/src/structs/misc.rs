@@ -31,3 +31,9 @@ pub struct Emoji {
     pub animated: Option<bool>,
     pub available: Option<bool>,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct UserSettingsProto {
+    pub r#type: u64,
+    pub proto: String,
+}

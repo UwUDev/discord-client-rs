@@ -85,6 +85,7 @@ pub enum Event {
 
     // misc events
     ContentInventoryInboxStale(ContentInventoryInboxStaleEvent),
+    UserSettingsProtoUpdate(UserSettingsProtoUpdateEvent),
     Unknown(UnknownEvent),
 }
 

@@ -12,7 +12,7 @@ use crate::events::structs::guild::*;
 use crate::events::structs::message::poll::*;
 use crate::events::structs::message::reaction::*;
 use crate::events::structs::message::*;
-use crate::events::structs::misc::ContentInventoryInboxStaleEvent;
+use crate::events::structs::misc::*;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::*;
@@ -156,6 +156,7 @@ define_events! {
         GuildDelete { t: "GUILD_DELETE", type: GuildDeleteEvent },
         GuildAuditLogEntryCreate { t: "GUILD_AUDIT_LOG_ENTRY_CREATE", type: GuildAuditLogEntryCreateEvent },
         ContentInventoryInboxStale { t: "CONTENT_INVENTORY_INBOX_STALE", type: ContentInventoryInboxStaleEvent },
+        UserSettingsProtoUpdate { t: "USER_SETTINGS_PROTO_UPDATE", type: UserSettingsProtoUpdateEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }
