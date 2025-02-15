@@ -4,6 +4,7 @@ use crate::events::structs::channel::summary::ConversationSummaryUpdateEvent;
 use crate::events::structs::channel::thread::{
     ThreadCreateEvent, ThreadDeleteEvent, ThreadListSyncEvent, ThreadUpdateEvent,
 };
+use crate::events::structs::channel::voice::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
 use crate::events::structs::guild::*;
@@ -133,7 +134,9 @@ define_events! {
         ThreadListSync { t: "THREAD_LIST_SYNC", type: ThreadListSyncEvent },
         CallCreate { t: "CALL_CREATE", type: CallCreateEvent },
         PassiveUpdateV2 { t: "PASSIVE_UPDATE_V2", type: PassiveUpdateV2Event },
-        ConversationSummaryUpdate { t: "CONVERSATION_SUMMARY_UPDATE", type: ConversationSummaryUpdateEvent }
+        ConversationSummaryUpdate { t: "CONVERSATION_SUMMARY_UPDATE", type: ConversationSummaryUpdateEvent },
+        VoiceStateUpdate { t: "VOICE_STATE_UPDATE", type: VoiceStateUpdateEvent },
+        VoiceChannelStatusUpdate { t: "VOICE_CHANNEL_STATUS_UPDATE", type: VoiceChannelStatusUpdateEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }

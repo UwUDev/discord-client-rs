@@ -18,13 +18,11 @@ async fn main() {
         client.auth_session_id_hash.clone()
     );
 
-    // todo: VOICE_STATE_UPDATE
-
     loop {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
         if let Event::Unknown(unknown) = event {
-            if unknown.op == 11 {
+            if unknown.event_type == "VOICE_CHANNEL_STATUS_UPDATE" {
                 exit(0);
             }
         }

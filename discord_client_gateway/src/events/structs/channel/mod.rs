@@ -2,6 +2,7 @@ use discord_client_structs::structs::channel::Channel;
 use serde::Deserialize;
 pub mod summary;
 pub mod thread;
+pub mod voice;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct ChannelCreateEvent {

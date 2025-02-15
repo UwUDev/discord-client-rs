@@ -1,5 +1,6 @@
 use crate::structs::channel::deserialize_option_iso8601_string_to_date;
 use crate::structs::channel::deserialize_string_to_u64;
+use crate::structs::channel::deserialize_option_string_to_u64;
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
@@ -17,6 +18,6 @@ pub struct VoiceState {
     pub request_to_speak_timestamp: Option<DateTime<Utc>>,
     pub mute: bool,
     pub deaf: bool,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    pub channel_id: u64,
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub channel_id: Option<u64>, // null on left voice channel event
 }

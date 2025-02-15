@@ -3,6 +3,7 @@ use crate::events::structs::channel::summary::*;
 use crate::events::structs::channel::thread::{
     ThreadCreateEvent, ThreadDeleteEvent, ThreadListSyncEvent, ThreadUpdateEvent,
 };
+use crate::events::structs::channel::voice::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
 use crate::events::structs::guild::*;
@@ -48,6 +49,10 @@ pub enum Event {
 
     // call events
     CallCreate(CallCreateEvent),
+
+    // voice events
+    VoiceStateUpdate(VoiceStateUpdateEvent),
+    VoiceChannelStatusUpdate(VoiceChannelStatusUpdateEvent),
 
     // guild events
     PassiveUpdateV2(PassiveUpdateV2Event),
