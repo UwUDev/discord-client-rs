@@ -40,5 +40,6 @@ pub struct ThreadListSyncEvent {
     #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
     pub channel_ids: Option<Vec<u64>>,
     pub threads: Vec<Channel>,
-    pub members: Vec<ThreadMember>,
+    #[serde(default)]
+    pub members: Option<Vec<ThreadMember>>,
 }

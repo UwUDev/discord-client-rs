@@ -14,12 +14,13 @@ pub struct StickerItem {
 pub struct Sticker {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,
+    #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub pack_id: Option<u64>,
     pub name: String,
     pub description: Option<String>,
     pub tags: String,
-    pub sticker_type: u8,
+    pub sticker_type: Option<u8>,
     pub format_type: u8,
     pub available: Option<bool>,
     #[serde(default)]

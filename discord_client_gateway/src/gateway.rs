@@ -1,12 +1,13 @@
 use crate::BoxedResult;
 use crate::events::structs::gateway::GatewayPayload;
-use futures_util::stream::SplitStream;
+use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt, TryStreamExt};
 use rquest::Impersonate::Chrome131;
 use rquest::ImpersonateOS::Windows;
 use rquest::{Client, Impersonate, Message, WebSocket};
 use serde_json::Value;
 use std::io::Write;
+use std::str::FromStr;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
@@ -14,6 +15,7 @@ use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
 pub struct GatewayClient {
     pub token: String,
     rx: Arc<Mutex<SplitStream<WebSocket>>>,
+    tx: Arc<tokio::sync::Mutex<SplitSink<WebSocket, rquest::Message>>>,
     zlib_decompressor: Arc<Mutex<ZlibStreamDecompressor>>,
     pub heartbeat_interval: u64,
     pub session_id: Option<String>,
@@ -105,6 +107,7 @@ impl GatewayClient {
         Ok(Self {
             token,
             rx: Arc::new(Mutex::new(rx)),
+            tx,
             zlib_decompressor: Arc::new(Mutex::new(decompress)),
             heartbeat_interval,
             session_id: None,
@@ -167,5 +170,28 @@ impl GatewayClient {
         let new_client = Self::connect(self.token.clone()).await?;
         *self = new_client;
         Ok(())
+    }
+
+    pub async fn bulk_guild_subscribe(&mut self, guild_ids: Vec<u64>) -> BoxedResult<()> {
+        let op_37 = Self::create_op_37(guild_ids);
+        self.tx.lock().await.send(Message::Text(op_37)).await?;
+        Ok(())
+    }
+
+    fn create_op_37(guild_ids: Vec<u64>) -> String {
+        let mut payload = Value::from_str(r#"{"op":37,"d":{"subscriptions":{}}}"#).unwrap();
+        let guild_payload = Value::from_str(
+            r#"{"typing":true,"threads":true,"activities":true,"member_updates":true}"#,
+        )
+            .unwrap();
+
+        for guild_id in guild_ids {
+            payload["d"]["subscriptions"]
+                .as_object_mut()
+                .unwrap()
+                .insert(guild_id.to_string(), guild_payload.clone());
+        }
+
+        payload.to_string()
     }
 }

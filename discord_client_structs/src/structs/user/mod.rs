@@ -7,6 +7,7 @@ use serde::Deserialize;
 
 pub mod activity;
 pub mod session;
+pub mod presence;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct User {

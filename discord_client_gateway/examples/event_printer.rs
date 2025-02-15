@@ -10,6 +10,17 @@ async fn main() {
     for _ in 0..2 {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
+
+        if let Event::Ready(ready)= event {
+            let mut ids: Vec<u64> = Vec::new();
+            let guilds = ready.guilds;
+            for guild in guilds {
+                let guild_id = guild.id;
+                ids.push(guild_id);
+            }
+
+            client.bulk_guild_subscribe(ids).await.unwrap();
+        }
     }
     println!("Session ID: {:?}", client.session_id.clone());
     println!("Analytics Token: {:?}", client.analytics_token.clone());
@@ -18,6 +29,8 @@ async fn main() {
         client.auth_session_id_hash.clone()
     );
 
+    // todo: GUILD_MEMBER_UPDATE
+    // todo: MESSAGE_REACTION_ADD_MANY
     // todo: CONTENT_INVENTORY_INBOX_STALE
     // todo: USER_SETTINGS_PROTO_UPDATE
     // todo: GUILD_INTEGRATIONS_UPDATE

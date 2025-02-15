@@ -21,16 +21,16 @@ use crate::structs::user::User;
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
-mod attachment;
-mod call;
+pub mod attachment;
+pub mod call;
 pub mod embed;
-mod interaction;
+pub mod interaction;
 pub mod poll;
-mod purchase;
+pub mod purchase;
 pub mod reaction;
-mod select;
-mod soundboard;
-mod sticker;
+pub mod select;
+pub mod soundboard;
+pub mod sticker;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Message {
