@@ -151,6 +151,8 @@ define_events! {
         GuildMemberAdd { t: "GUILD_MEMBER_ADD", type: GuildMemberAddEvent },
         GuildMemberRemove { t: "GUILD_MEMBER_REMOVE", type: GuildMemberRemoveEvent },
         GuildCreate { t: "GUILD_CREATE", type: GuildCreateEvent },
+        GuildUpdate { t: "GUILD_UPDATE", type: GuildUpdateEvent },
+        GuildDelete { t: "GUILD_DELETE", type: GuildDeleteEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }
