@@ -1131,9 +1131,9 @@ checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
 name = "rquest"
-version = "2.0.3"
+version = "2.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "592e7402634202bf1b2f7d948d30ab0b9b81e95b496f883ee56c1e90ba3d3106"
+checksum = "696a06e7772945b5da6993324bd7503a7e6fc7b001edabe21956b08d8544b386"
 dependencies = [
  "antidote",
  "async-tungstenite",
