@@ -30,8 +30,6 @@ async fn main() {
     );
 
     // todo: MESSAGE_REACTION_ADD_MANY
-    // todo: GUILD_MEMBER_REMOVE
-    // todo: GUILD_MEMBER_ADD
     // todo: CONTENT_INVENTORY_INBOX_STALE
     // todo: USER_SETTINGS_PROTO_UPDATE
     // todo: GUILD_INTEGRATIONS_UPDATE

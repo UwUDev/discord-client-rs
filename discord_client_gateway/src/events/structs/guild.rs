@@ -41,3 +41,18 @@ pub struct GuildMemberUpdateEvent {
     pub communication_disabled_until: Option<DateTime<Utc>>,
     pub flags: u64,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct GuildMemberAddEvent {
+    #[serde(flatten)]
+    pub member: Member,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub guild_id: u64,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct GuildMemberRemoveEvent {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub guild_id: u64,
+    pub user: User,
+}

@@ -62,6 +62,8 @@ pub enum Event {
     // guild events
     PassiveUpdateV2(PassiveUpdateV2Event),
     GuildMemberUpdate(GuildMemberUpdateEvent),
+    GuildMemberAdd(GuildMemberAddEvent),
+    GuildMemberRemove(GuildMemberRemoveEvent),
 
     // typing events
     TypingStart(TypingStartEvent),
