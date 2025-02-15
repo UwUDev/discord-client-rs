@@ -6,8 +6,8 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
 pub mod activity;
-pub mod session;
 pub mod presence;
+pub mod session;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct User {

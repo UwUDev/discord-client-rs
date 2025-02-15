@@ -183,7 +183,7 @@ impl GatewayClient {
         let guild_payload = Value::from_str(
             r#"{"typing":true,"threads":true,"activities":true,"member_updates":true}"#,
         )
-            .unwrap();
+        .unwrap();
 
         for guild_id in guild_ids {
             payload["d"]["subscriptions"]

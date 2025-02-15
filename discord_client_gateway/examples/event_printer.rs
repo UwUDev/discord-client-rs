@@ -11,7 +11,7 @@ async fn main() {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
 
-        if let Event::Ready(ready)= event {
+        if let Event::Ready(ready) = event {
             let mut ids: Vec<u64> = Vec::new();
             let guilds = ready.guilds;
             for guild in guilds {
@@ -29,7 +29,6 @@ async fn main() {
         client.auth_session_id_hash.clone()
     );
 
-    // todo: CONTENT_INVENTORY_INBOX_STALE
     // todo: USER_SETTINGS_PROTO_UPDATE
     // todo: GUILD_INTEGRATIONS_UPDATE
     // todo: INTEGRATIONS_UPDATE

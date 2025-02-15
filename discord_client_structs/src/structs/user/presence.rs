@@ -1,7 +1,7 @@
 use crate::deserializer::deserialize_option_string_to_u64;
-use serde::Deserialize;
-use crate::structs::user::activity::Activity;
 use crate::structs::user::User;
+use crate::structs::user::activity::Activity;
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Presence {

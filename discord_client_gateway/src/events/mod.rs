@@ -10,12 +10,13 @@ use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
 use crate::events::structs::guild::*;
 use crate::events::structs::message::poll::*;
+use crate::events::structs::message::reaction::*;
 use crate::events::structs::message::*;
+use crate::events::structs::misc::ContentInventoryInboxStaleEvent;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::*;
 use serde::Deserialize;
-use crate::events::structs::message::reaction::*;
 
 pub(crate) mod deserializer;
 pub mod structs;
@@ -154,6 +155,7 @@ define_events! {
         GuildUpdate { t: "GUILD_UPDATE", type: GuildUpdateEvent },
         GuildDelete { t: "GUILD_DELETE", type: GuildDeleteEvent },
         GuildAuditLogEntryCreate { t: "GUILD_AUDIT_LOG_ENTRY_CREATE", type: GuildAuditLogEntryCreateEvent },
+        ContentInventoryInboxStale { t: "CONTENT_INVENTORY_INBOX_STALE", type: ContentInventoryInboxStaleEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }

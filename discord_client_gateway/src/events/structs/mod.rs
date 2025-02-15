@@ -9,19 +9,22 @@ use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
 use crate::events::structs::guild::*;
 use crate::events::structs::message::poll::*;
+use crate::events::structs::message::reaction::*;
 use crate::events::structs::message::*;
+use crate::events::structs::misc::*;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use serde_json::Value;
-use crate::events::structs::message::reaction::*;
 
 pub mod call;
 pub mod channel;
 pub mod gateway;
 pub mod guild;
 pub mod message;
+pub mod misc;
 pub mod presence;
 pub mod ready;
+
 #[derive(Debug, Clone)]
 pub enum Event {
     // Ready events
@@ -81,6 +84,7 @@ pub enum Event {
     MessagePollVoteRemove(MessagePollVoteRemoveEvent),
 
     // misc events
+    ContentInventoryInboxStale(ContentInventoryInboxStaleEvent),
     Unknown(UnknownEvent),
 }
 

@@ -1,14 +1,14 @@
 use crate::deserializer::deserialize_option_iso8601_string_to_date;
-use crate::deserializer::deserialize_string_to_u64;
 use crate::deserializer::deserialize_option_string_to_u64;
-use chrono::{DateTime, Utc};
-use serde::Deserialize;
+use crate::deserializer::deserialize_string_to_u64;
 use crate::structs::channel::Channel;
 use crate::structs::channel::voice::VoiceState;
 use crate::structs::message::sticker::Sticker;
 use crate::structs::misc::Emoji;
 use crate::structs::user::Member;
 use crate::structs::user::presence::Presence;
+use chrono::{DateTime, Utc};
+use serde::Deserialize;
 
 // todo: refactor
 
