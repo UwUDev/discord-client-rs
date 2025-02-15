@@ -290,21 +290,12 @@ pub struct AuditLogEntry {
 #[derive(Debug, Deserialize, Clone)]
 pub struct AuditLogChange {
     #[serde(default)]
-    pub new_value: Option<Vec<AuditValue>>,
+    // can be an object, array, string, number and even boolean 💀
+    pub new_value: Option<serde_json::Value>,
     #[serde(default)]
-    pub old_value: Option<Vec<AuditValue>>,
+    pub old_value: Option<serde_json::Value>,
     pub key: String,
 }
-
-#[derive(Debug, Deserialize, Clone)]
-pub struct AuditValue {
-    #[serde(default)]
-    pub name: Option<String>,
-    #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    pub id: Option<u64>,
-}
-
 #[derive(Debug, Deserialize, Clone)]
 pub struct AuditEntryInfo {
     #[serde(default)]
