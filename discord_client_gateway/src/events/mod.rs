@@ -145,6 +145,7 @@ define_events! {
         SessionReplace { t: "SESSIONS_REPLACE", type: SessionsReplaceEvent },
         MessagePollVoteAdd { t: "MESSAGE_POLL_VOTE_ADD", type: MessagePollVoteAddEvent },
         MessagePollVoteRemove { t: "MESSAGE_POLL_VOTE_REMOVE", type: MessagePollVoteRemoveEvent },
+        GuildMemberUpdate { t: "GUILD_MEMBER_UPDATE", type: GuildMemberUpdateEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }

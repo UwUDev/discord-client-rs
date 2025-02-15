@@ -29,8 +29,9 @@ async fn main() {
         client.auth_session_id_hash.clone()
     );
 
-    // todo: GUILD_MEMBER_UPDATE
     // todo: MESSAGE_REACTION_ADD_MANY
+    // todo: GUILD_MEMBER_REMOVE
+    // todo: GUILD_MEMBER_ADD
     // todo: CONTENT_INVENTORY_INBOX_STALE
     // todo: USER_SETTINGS_PROTO_UPDATE
     // todo: GUILD_INTEGRATIONS_UPDATE
