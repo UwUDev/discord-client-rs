@@ -5,7 +5,7 @@ use discord_client_structs::structs::guild::experiment::GuildExperiment;
 use discord_client_structs::structs::guild::user::UserGuildSettings;
 use discord_client_structs::structs::guild::{GatewayGuild, GuildJoinRequest};
 use discord_client_structs::structs::misc::{TutorialIndicators, Versioned};
-use discord_client_structs::structs::user::User;
+use discord_client_structs::structs::user::{Member, User};
 use discord_client_structs::structs::user::connection::Connection;
 use discord_client_structs::structs::user::experiment::UserExperiment;
 use discord_client_structs::structs::user::presence::{MergedPresences, Presence};
@@ -39,6 +39,7 @@ pub struct ReadyEvent {
     #[serde(default)]
     pub presences: Vec<Presence>,
     pub merged_presences: Option<MergedPresences>,
+    pub merged_members: Option<Vec<Vec<Member>>>,
     #[serde(default)]
     pub users: Option<Vec<User>>,
     pub application: Option<GatewayApplication>,
