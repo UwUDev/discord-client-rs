@@ -1,18 +1,18 @@
-use discord_client_structs::structs::gateway::GatewayApplication;
 use discord_client_structs::deserializer::deserialize_map_of_u64_string;
 use discord_client_structs::structs::channel::Channel;
-use discord_client_structs::structs::guild::{GatewayGuild, GuildJoinRequest};
-use discord_client_structs::structs::user::connection::Connection;
-use discord_client_structs::structs::user::relationship::{GameRelationship, Relationship};
-use discord_client_structs::structs::user::User;
-use serde::Deserialize;
-use std::collections::HashMap;
+use discord_client_structs::structs::gateway::GatewayApplication;
 use discord_client_structs::structs::guild::experiment::GuildExperiment;
 use discord_client_structs::structs::guild::user::UserGuildSettings;
+use discord_client_structs::structs::guild::{GatewayGuild, GuildJoinRequest};
 use discord_client_structs::structs::misc::{TutorialIndicators, Versioned};
+use discord_client_structs::structs::user::User;
+use discord_client_structs::structs::user::connection::Connection;
 use discord_client_structs::structs::user::experiment::UserExperiment;
 use discord_client_structs::structs::user::presence::{MergedPresences, Presence};
+use discord_client_structs::structs::user::relationship::{GameRelationship, Relationship};
 use discord_client_structs::structs::user::session::Session;
+use serde::Deserialize;
+use std::collections::HashMap;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct ReadyEvent {

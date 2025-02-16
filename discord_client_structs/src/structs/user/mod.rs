@@ -6,11 +6,11 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
 pub mod activity;
-pub mod presence;
-pub mod session;
-pub mod relationship;
 pub mod connection;
 pub mod experiment;
+pub mod presence;
+pub mod relationship;
+pub mod session;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct User {

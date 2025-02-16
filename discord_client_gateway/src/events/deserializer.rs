@@ -17,11 +17,7 @@ impl<'de> Deserialize<'de> for UnknownEvent {
             .to_string();
         let data = v.get("d").cloned().unwrap_or(Value::Null);
         let op = v.get("op").and_then(Value::as_u64).unwrap_or(0) as u8;
-        Ok(UnknownEvent {
-            r#type,
-            data,
-            op,
-        })
+        Ok(UnknownEvent { r#type, data, op })
     }
 }
 

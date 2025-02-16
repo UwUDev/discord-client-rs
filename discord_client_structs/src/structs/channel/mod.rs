@@ -8,10 +8,10 @@ use crate::structs::user::User;
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
+pub mod overrides;
 pub mod summary;
 pub mod thread;
 pub mod voice;
-pub mod overrides;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Channel {

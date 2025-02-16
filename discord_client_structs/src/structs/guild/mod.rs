@@ -6,8 +6,8 @@ use crate::structs::channel::Channel;
 use crate::structs::channel::voice::VoiceState;
 use crate::structs::message::sticker::Sticker;
 use crate::structs::misc::Emoji;
-use crate::structs::user::{Member, User};
 use crate::structs::user::presence::Presence;
+use crate::structs::user::{Member, User};
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 

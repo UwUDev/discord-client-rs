@@ -32,13 +32,6 @@ pub struct Account {
     pub name: String,
 }
 
-// Integration Guild Structure
-//
-// Field	Type	Description
-// id	snowflake	The ID of the guild
-// name	string	The name of the guild (2-100 characters)
-// icon	?string	The guild's icon hash
-
 #[derive(Debug, Deserialize, Clone)]
 pub struct IntegrationGuild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

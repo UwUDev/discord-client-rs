@@ -1,5 +1,5 @@
-use serde::Deserialize;
 use crate::structs::user::User;
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Relationship {
