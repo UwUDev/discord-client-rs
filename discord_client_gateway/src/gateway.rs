@@ -15,16 +15,18 @@ use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
 pub struct GatewayClient {
     pub token: String,
     rx: Arc<Mutex<SplitStream<WebSocket>>>,
-    tx: Arc<tokio::sync::Mutex<SplitSink<WebSocket, rquest::Message>>>,
+    tx: Arc<Mutex<SplitSink<WebSocket, Message>>>,
     zlib_decompressor: Arc<Mutex<ZlibStreamDecompressor>>,
     pub heartbeat_interval: u64,
     pub session_id: Option<String>,
     pub analytics_token: Option<String>,
     pub auth_session_id_hash: Option<String>,
+    capabilities: u32,
+    build_number: u32,
 }
 
 impl GatewayClient {
-    pub async fn connect(token: String) -> BoxedResult<Self> {
+    pub async fn connect(token: String, capabilities: u32, build_number: u32) -> BoxedResult<Self> {
         let imp = Impersonate::builder()
             .impersonate_os(Windows)
             .impersonate(Chrome131)
@@ -71,9 +73,10 @@ impl GatewayClient {
         let token_var = token.clone();
         tokio::spawn(async move {
             let message = format!(
-                // todo: build_number
-                r#"{{"op":2,"d":{{"token":"{}","capabilities":53607934,"properties":{{"os":"Windows","browser":"Chrome","device":"","system_locale":"en-US","browser_user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36","browser_version":"131.0.0.0","os_version":"10","referrer":"","referring_domain":"","referrer_current":"","referring_domain_current":"","release_channel":"stable","client_build_number":307392,"client_event_source":null,"design_id":0}},"presence":{{"status":"unknown","since":0,"activities":[],"afk":false}},"compress":false,"client_state":{{"guild_versions":{{}}}}}}}}"#,
-                token_var
+                r#"{{"op":2,"d":{{"token":"{}","capabilities":{},"properties":{{"os":"Windows","browser":"Chrome","device":"","system_locale":"en-US","browser_user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36","browser_version":"131.0.0.0","os_version":"10","referrer":"","referring_domain":"","referrer_current":"","referring_domain_current":"","release_channel":"stable","client_build_number":{},"client_event_source":null,"design_id":0}},"presence":{{"status":"unknown","since":0,"activities":[],"afk":false}},"compress":false,"client_state":{{"guild_versions":{{}}}}}}}}"#,
+                token_var,
+                capabilities,
+                build_number
             );
 
             tx_clone
@@ -113,6 +116,8 @@ impl GatewayClient {
             session_id: None,
             analytics_token: None,
             auth_session_id_hash: None,
+            capabilities,
+            build_number,
         })
     }
 
@@ -167,7 +172,11 @@ impl GatewayClient {
     }
 
     pub async fn reconnect(&mut self) -> BoxedResult<()> {
-        let new_client = Self::connect(self.token.clone()).await?;
+        let new_client = Self::connect(
+            self.token.clone(),
+            self.capabilities,
+            self.build_number,
+        ).await?;
         *self = new_client;
         Ok(())
     }
