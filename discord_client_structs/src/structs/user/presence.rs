@@ -22,3 +22,9 @@ pub struct ClientStatus {
     pub web: Option<String>,
     pub embedded: Option<String>,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct MergedPresences {
+    pub friends: Vec<Presence>,
+    pub guilds: Vec<Vec<Presence>>,
+}

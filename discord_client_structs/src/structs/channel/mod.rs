@@ -11,6 +11,7 @@ use serde::Deserialize;
 pub mod summary;
 pub mod thread;
 pub mod voice;
+pub mod overrides;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Channel {

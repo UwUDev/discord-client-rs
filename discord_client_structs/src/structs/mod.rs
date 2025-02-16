@@ -5,3 +5,4 @@ pub mod message;
 pub mod misc;
 pub mod permission;
 pub mod user;
+pub mod gateway;

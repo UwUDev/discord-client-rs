@@ -1,3 +1,4 @@
+use crate::deserializer::deserialize_iso8601_string_to_date;
 use crate::deserializer::deserialize_option_iso8601_string_to_date;
 use crate::deserializer::deserialize_option_string_to_u64;
 use crate::deserializer::deserialize_string_to_u64;
@@ -5,11 +6,13 @@ use crate::structs::channel::Channel;
 use crate::structs::channel::voice::VoiceState;
 use crate::structs::message::sticker::Sticker;
 use crate::structs::misc::Emoji;
-use crate::structs::user::Member;
+use crate::structs::user::{Member, User};
 use crate::structs::user::presence::Presence;
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
+pub mod experiment;
+pub mod user;
 // todo: refactor
 
 #[derive(Debug, Deserialize, Clone)]
@@ -327,4 +330,55 @@ pub struct AuditEntryInfo {
     #[serde(default)]
     pub r#type: Option<String>,
     pub status: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct GuildJoinRequest {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub join_request_id: u64,
+    #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
+    pub created_at: DateTime<Utc>,
+    pub application_status: String,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub guild_id: u64,
+    #[serde(default)]
+    pub form_responses: Option<Vec<MemberVerificationFormField>>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    pub last_seen: Option<DateTime<Utc>>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub actioned_at: Option<u64>,
+    #[serde(default)]
+    pub actioned_by_user: Option<User>,
+    #[serde(default)]
+    pub rejection_reason: Option<String>,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub user_id: u64,
+    #[serde(default)]
+    pub user: Option<User>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub interview_channel_id: Option<u64>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct MemberVerificationFormField {
+    pub field_type: String,
+    pub label: String,
+    #[serde(default)]
+    pub choices: Option<Vec<String>>,
+    #[serde(default)]
+    pub values: Option<Vec<String>>,
+    #[serde(default)]
+    pub response: Option<serde_json::Value>,
+    pub required: bool,
+    #[serde(default)]
+    pub description: Option<String>,
+    #[serde(default)]
+    pub automations: Option<Vec<String>>,
+    #[serde(default)]
+    pub placeholder: Option<String>,
 }

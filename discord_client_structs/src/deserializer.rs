@@ -73,3 +73,16 @@ where
         None => Ok(None),
     }
 }
+
+// deserialize_map_of_u64_string returns a Map<u64, String> from a JSON object. (u64 is a string)
+pub fn deserialize_map_of_u64_string<'de, D>(deserializer: D) -> Result<std::collections::HashMap<u64, String>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let map: std::collections::HashMap<String, String> = std::collections::HashMap::<String, String>::deserialize(deserializer)?;
+    let mut new_map = std::collections::HashMap::new();
+    for (k, v) in map {
+        new_map.insert(k.parse::<u64>().map_err(de::Error::custom)?, v);
+    }
+    Ok(new_map)
+}
