@@ -59,13 +59,11 @@ pub struct ThreadMembersUpdateEvent {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
     pub removed_member_ids: Option<Vec<u64>>,
-    #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
-    pub added_member_ids: Option<Vec<u64>>,
     pub member_count: u32,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,
-    pub added_members: Vec<ThreadMember>,
+    #[serde(default)]
+    pub added_members: Option<Vec<ThreadMember>>,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub guild_id: u64,
 }
