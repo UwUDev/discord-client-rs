@@ -2,8 +2,8 @@ use discord_client_structs::deserializer::{
     deserialize_option_string_to_u64, deserialize_option_string_to_vec_u64,
     deserialize_string_to_u64,
 };
-use discord_client_structs::structs::channel::Channel;
 use discord_client_structs::structs::channel::thread::ThreadMember;
+use discord_client_structs::structs::channel::Channel;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
@@ -41,4 +41,31 @@ pub struct ThreadListSyncEvent {
     pub threads: Vec<Channel>,
     #[serde(default)]
     pub members: Option<Vec<ThreadMember>>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct ThreadMemberUpdateEvent {
+    #[serde(flatten)]
+    pub thread_member: ThreadMember,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub guild_id: u64,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct ThreadMembersUpdateEvent {
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
+    pub member_ids_preview: Option<Vec<u64>>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
+    pub removed_member_ids: Option<Vec<u64>>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
+    pub added_member_ids: Option<Vec<u64>>,
+    pub member_count: u32,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
+    pub added_members: Vec<ThreadMember>,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub guild_id: u64,
 }

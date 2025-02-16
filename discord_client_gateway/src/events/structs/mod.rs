@@ -1,8 +1,6 @@
 use crate::events::structs::call::*;
 use crate::events::structs::channel::summary::*;
-use crate::events::structs::channel::thread::{
-    ThreadCreateEvent, ThreadDeleteEvent, ThreadListSyncEvent, ThreadUpdateEvent,
-};
+use crate::events::structs::channel::thread::*;
 use crate::events::structs::channel::typing::*;
 use crate::events::structs::channel::voice::*;
 use crate::events::structs::channel::*;
@@ -59,6 +57,8 @@ pub enum Event {
     ThreadUpdate(ThreadUpdateEvent),
     ThreadDelete(ThreadDeleteEvent),
     ThreadListSync(ThreadListSyncEvent),
+    ThreadMemberUpdate(ThreadMemberUpdateEvent),
+    ThreadMembersUpdate(ThreadMembersUpdateEvent),
 
     // call events
     CallCreate(CallCreateEvent),

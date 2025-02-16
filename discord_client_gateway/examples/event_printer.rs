@@ -6,11 +6,10 @@ use std::process::exit;
 async fn main() {
     let token = std::fs::read_to_string("token.txt").unwrap();
 
-    let mut client = GatewayClient::connect(
-        token,
-        53607934,
-        369195,
-    ).await.unwrap();
+    let mut client = GatewayClient::connect(token, 53607934, 369195)
+        .await
+        .unwrap();
+
     for _ in 0..2 {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
@@ -35,7 +34,6 @@ async fn main() {
 
     // todo: GUILD_INTEGRATIONS_UPDATE
     // todo: INTEGRATIONS_UPDATE
-    // todo: THREAD_MEMBERS_UPDATE
     // todo: MESSAGE_DELETE_BULK
 
     loop {
