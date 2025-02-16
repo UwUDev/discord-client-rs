@@ -12,6 +12,7 @@ use crate::events::structs::message::*;
 use crate::events::structs::misc::*;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
+use crate::events::structs::user::*;
 use serde_json::Value;
 
 pub mod call;
@@ -22,6 +23,7 @@ pub mod message;
 pub mod misc;
 pub mod presence;
 pub mod ready;
+pub mod user;
 
 #[derive(Debug, Clone)]
 pub enum Event {
@@ -85,6 +87,9 @@ pub enum Event {
     // poll events
     MessagePollVoteAdd(MessagePollVoteAddEvent),
     MessagePollVoteRemove(MessagePollVoteRemoveEvent),
+
+    // user events
+    UserConnectionsUpdate(UserConnectionsUpdateEvent),
 
     // misc events
     ContentInventoryInboxStale(ContentInventoryInboxStaleEvent),

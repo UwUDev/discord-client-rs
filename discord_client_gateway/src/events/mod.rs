@@ -13,6 +13,7 @@ use crate::events::structs::message::*;
 use crate::events::structs::misc::*;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
+use crate::events::structs::user::*;
 use crate::events::structs::*;
 use serde::Deserialize;
 
@@ -160,6 +161,7 @@ define_events! {
         GuildAuditLogEntryCreate { t: "GUILD_AUDIT_LOG_ENTRY_CREATE", type: GuildAuditLogEntryCreateEvent },
         ContentInventoryInboxStale { t: "CONTENT_INVENTORY_INBOX_STALE", type: ContentInventoryInboxStaleEvent },
         UserSettingsProtoUpdate { t: "USER_SETTINGS_PROTO_UPDATE", type: UserSettingsProtoUpdateEvent },
+        UserConnectionsUpdate { t: "USER_CONNECTIONS_UPDATE", type: UserConnectionsUpdateEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }
