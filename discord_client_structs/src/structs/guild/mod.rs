@@ -329,7 +329,7 @@ pub struct AuditEntryInfo {
     pub role_name: Option<String>,
     #[serde(default)]
     pub r#type: Option<String>,
-    pub status: String,
+    pub status: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
