@@ -2,8 +2,8 @@ use discord_client_structs::deserializer::{
     deserialize_option_string_to_u64, deserialize_option_string_to_vec_u64,
     deserialize_string_to_u64,
 };
-use discord_client_structs::structs::channel::thread::ThreadMember;
 use discord_client_structs::structs::channel::Channel;
+use discord_client_structs::structs::channel::thread::ThreadMember;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]

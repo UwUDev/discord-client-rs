@@ -52,3 +52,26 @@ pub struct MessageReactionAddManyEvent {
     pub guild_id: Option<u64>,
     pub reactions: Vec<DebouncedReaction>,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct MessageReactionRemoveEmojiEvent {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub channel_id: u64,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub message_id: u64,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub guild_id: Option<u64>,
+    pub emoji: Emoji,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct MessageReactionRemoveAllEvent {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub channel_id: u64,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub message_id: u64,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub guild_id: Option<u64>,
+}
