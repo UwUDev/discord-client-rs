@@ -12,7 +12,7 @@ pub mod reaction;
 //noinspection DuplicatedCode
 pub struct MessageCreateEvent {
     #[serde(flatten)]
-    pub base: Message,
+    pub message: Message,
     pub channel_type: u8,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
@@ -26,7 +26,7 @@ pub struct MessageCreateEvent {
 //noinspection DuplicatedCode
 pub struct MessageUpdateEvent {
     #[serde(flatten)]
-    pub base: Message,
+    pub message: Message,
     pub channel_type: u8,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
