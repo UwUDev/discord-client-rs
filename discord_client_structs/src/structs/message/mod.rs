@@ -123,8 +123,8 @@ pub struct MessageSnapshot {
     pub edited_timestamp: Option<DateTime<Utc>>,
     #[serde(default)]
     pub mentions: Option<Vec<User>>,
-    #[serde(deserialize_with = "deserialize_string_to_vec_u64")]
-    pub mention_roles: Vec<u64>,
+    #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
+    pub mention_roles: Option<Vec<u64>>,
     pub attachments: Vec<Attachment>,
     pub embeds: Vec<Embed>,
     pub r#type: u8,
