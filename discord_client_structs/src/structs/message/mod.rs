@@ -45,6 +45,7 @@ pub struct Message {
     pub edited_timestamp: Option<DateTime<Utc>>,
     pub tts: bool,
     pub mention_everyone: bool,
+    #[serde(default)]
     pub mentions: Option<Vec<User>>,
     #[serde(deserialize_with = "deserialize_string_to_vec_u64")]
     pub mention_roles: Vec<u64>,
@@ -120,7 +121,8 @@ pub struct MessageSnapshot {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
     pub edited_timestamp: Option<DateTime<Utc>>,
-    pub mentions: Vec<User>,
+    #[serde(default)]
+    pub mentions: Option<Vec<User>>,
     #[serde(deserialize_with = "deserialize_string_to_vec_u64")]
     pub mention_roles: Vec<u64>,
     pub attachments: Vec<Attachment>,
