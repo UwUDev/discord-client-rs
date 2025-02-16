@@ -6,7 +6,7 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize, Clone)]
 pub struct Presence {
     #[serde(flatten)]
-    pub user: User,
+    pub user: Option<User>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub guild_id: Option<u64>,

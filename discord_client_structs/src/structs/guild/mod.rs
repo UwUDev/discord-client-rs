@@ -382,3 +382,13 @@ pub struct MemberVerificationFormField {
     #[serde(default)]
     pub placeholder: Option<String>,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct SupplementalGuild {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
+    #[serde(default)]
+    pub voice_states: Option<Vec<VoiceState>>,
+    // todo: "embedded_activities": [],
+    // todo: "activity_instances": []
+}

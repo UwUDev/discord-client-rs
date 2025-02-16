@@ -29,6 +29,7 @@ pub mod ready;
 pub enum Event {
     // Ready events
     Ready(ReadyEvent),
+    ReadySupplemental(ReadySupplementalEvent),
 
     // message events
     MessageCreate(MessageCreateEvent),

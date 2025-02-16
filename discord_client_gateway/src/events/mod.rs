@@ -124,6 +124,7 @@ macro_rules! define_events {
 define_events! {
     dispatch op 0, {
         Ready { t: "READY", type: ReadyEvent },
+        ReadySupplemental { t: "READY_SUPPLEMENTAL", type: ReadySupplementalEvent },
         MessageCreate { t: "MESSAGE_CREATE", type: MessageCreateEvent },
         MessageUpdate { t: "MESSAGE_UPDATE", type: MessageUpdateEvent },
         MessageDelete { t: "MESSAGE_DELETE", type: MessageDeleteEvent },

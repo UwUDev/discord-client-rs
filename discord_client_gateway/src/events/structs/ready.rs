@@ -3,7 +3,7 @@ use discord_client_structs::structs::channel::Channel;
 use discord_client_structs::structs::gateway::GatewayApplication;
 use discord_client_structs::structs::guild::experiment::GuildExperiment;
 use discord_client_structs::structs::guild::user::UserGuildSettings;
-use discord_client_structs::structs::guild::{GatewayGuild, GuildJoinRequest};
+use discord_client_structs::structs::guild::{GatewayGuild, GuildJoinRequest, SupplementalGuild};
 use discord_client_structs::structs::misc::{TutorialIndicators, Versioned};
 use discord_client_structs::structs::user::{Member, User};
 use discord_client_structs::structs::user::connection::Connection;
@@ -55,4 +55,13 @@ pub struct ReadyEvent {
     pub api_code_version: Option<u8>,
     pub experiments: Vec<UserExperiment>,
     pub guild_experiments: Vec<GuildExperiment>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct ReadySupplementalEvent {
+    pub guilds: Vec<SupplementalGuild>,
+    pub merged_members: Vec<Vec<Member>>,
+    pub merged_presences: MergedPresences,
+    pub lazy_private_channels: Vec<Channel>,
+    pub disclose: Vec<String>,
 }
