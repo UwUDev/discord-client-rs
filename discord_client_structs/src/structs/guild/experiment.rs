@@ -1,6 +1,9 @@
-use serde::{Deserialize, Deserializer};
+use derive_builder::Builder;
+use serde::ser::SerializeSeq;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct GuildExperiment {
     pub hash: i64,
     pub hash_key: Option<String>,
@@ -103,7 +106,28 @@ impl<'de> Deserialize<'de> for GuildExperiment {
     }
 }
 
-#[derive(Debug, Clone)]
+impl Serialize for GuildExperiment {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut seq = serializer.serialize_seq(Some(10))?;
+        seq.serialize_element(&self.hash)?;
+        seq.serialize_element(&self.hash_key)?;
+        seq.serialize_element(&self.revision)?;
+        seq.serialize_element(&self.populations)?;
+        seq.serialize_element(&self.overrides)?;
+        seq.serialize_element(&self.overrides_formatted)?;
+        seq.serialize_element(&self.holdout_name)?;
+        seq.serialize_element(&self.holdout_bucket)?;
+        seq.serialize_element(&self.aa_mode)?;
+        seq.serialize_element(&self.trigger_debugging)?;
+        seq.end()
+    }
+}
+
+#[derive(Debug, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct ExperimentPopulation {
     pub ranges: Vec<ExperimentPopulationRange>,
     //pub filters: ExperimentPopulationFilters, // todo: understand this
@@ -132,7 +156,19 @@ impl<'de> Deserialize<'de> for ExperimentPopulation {
     }
 }
 
-#[derive(Debug, Clone)]
+impl Serialize for ExperimentPopulation {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut seq = serializer.serialize_seq(Some(1))?;
+        seq.serialize_element(&self.ranges)?;
+        seq.end()
+    }
+}
+
+#[derive(Debug, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct ExperimentPopulationRange {
     pub bucket: i64,
     pub rollout: Vec<ExperimentPopulationRollout>,
@@ -166,13 +202,27 @@ impl<'de> Deserialize<'de> for ExperimentPopulationRange {
     }
 }
 
-#[derive(Debug, Deserialize, Clone)] // no need for custom deserialization
+impl Serialize for ExperimentPopulationRange {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut seq = serializer.serialize_seq(Some(2))?;
+        seq.serialize_element(&self.bucket)?;
+        seq.serialize_element(&self.rollout)?;
+        seq.end()
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)] // no need for custom deserialization
 pub struct ExperimentPopulationRollout {
     pub s: i64,
     pub e: i64,
 }
 
-#[derive(Debug, Deserialize, Clone)] // no need for custom deserialization
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)] // no need for custom deserialization
 pub struct ExperimentBucketOverride {
     pub b: i64,
     pub k: Vec<String>,

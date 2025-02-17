@@ -1,7 +1,5 @@
-use crate::deserializer::deserialize_iso8601_string_to_date;
-use crate::deserializer::deserialize_option_iso8601_string_to_date;
-use crate::deserializer::deserialize_option_string_to_u64;
-use crate::deserializer::deserialize_string_to_u64;
+use crate::deserializer::*;
+use crate::serializer::*;
 use crate::structs::channel::Channel;
 use crate::structs::channel::voice::VoiceState;
 use crate::structs::message::sticker::Sticker;
@@ -9,15 +7,18 @@ use crate::structs::misc::Emoji;
 use crate::structs::user::presence::Presence;
 use crate::structs::user::{Member, User};
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
+use derive_builder::Builder;
+use serde::{Deserialize, Serialize};
 
 pub mod experiment;
 pub mod user;
 // todo: refactor
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct GatewayGuild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     #[serde(default)]
     pub name: Option<String>,
@@ -61,34 +62,44 @@ pub struct GatewayGuild {
     pub premium_subscription_count: Option<u32>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct StageInstance {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub guild_id: u64,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub channel_id: Option<u64>,
     pub topic: String,
     pub privacy_level: u8,
     pub invite_code: Option<String>,
     pub discoverable_disabled: Option<bool>,
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub guild_scheduled_event_id: Option<u64>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct GuildScheduledEvent {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub guild_id: u64,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub channel_id: Option<u64>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub creator_id: Option<u64>,
     pub creator: Option<Member>,
     #[serde(default)]
@@ -100,19 +111,23 @@ pub struct GuildScheduledEvent {
     pub status: u8,
     pub entity_type: u8,
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub entity_id: Option<u64>,
     pub entity_metadata: Option<EntityMetadata>,
     pub user_count: Option<u32>,
     pub image: Option<String>,
 }
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct EntityMetadata {
     pub location: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct Role {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     #[serde(default)]
     pub name: Option<String>,
@@ -129,25 +144,31 @@ pub struct Role {
     pub tags: Option<RoleTags>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct RoleTags {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub bot_id: Option<u64>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub integration_id: Option<u64>,
     pub premium_subscriber: Option<bool>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub subscription_listing_id: Option<u64>,
     pub available_for_purchase: Option<bool>,
     pub guild_connections: Option<bool>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct Guild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     #[serde(default)]
     pub name: Option<String>,
@@ -157,19 +178,23 @@ pub struct Guild {
     pub splash: Option<String>,
     pub discovery_splash: Option<String>,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub owner_id: u64,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub application_id: Option<u64>,
     pub description: Option<String>,
     pub region: Option<String>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub afk_channel_id: Option<u64>,
     pub afk_timeout: Option<u32>,
     pub widget_enabled: Option<bool>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub widget_channel_id: Option<u64>,
     pub verification_level: Option<u8>,
     pub default_message_notifications: Option<u8>,
@@ -185,16 +210,20 @@ pub struct Guild {
     pub mfa_level: Option<u8>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub system_channel_id: Option<u64>,
     pub system_channel_flags: Option<u8>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub rules_channel_id: Option<u64>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub public_updates_channel_id: Option<u64>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub safety_alerts_channel_id: Option<u64>,
     pub max_members: Option<u32>,
     pub vanity_url_code: Option<String>,
@@ -208,6 +237,7 @@ pub struct Guild {
     pub premium_progress_bar_enabled: bool,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub latest_onboarding_question_id: Option<u64>,
     pub incidents_data: Option<AutomodIncidentsData>,
     pub approximate_member_count: Option<u32>,
@@ -215,25 +245,32 @@ pub struct Guild {
     pub clan: Option<Clan>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct AutomodIncidentsData {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    #[serde(serialize_with = "serialize_option_date_to_iso8601_string")]
     pub raid_detected_at: Option<DateTime<Utc>>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    #[serde(serialize_with = "serialize_option_date_to_iso8601_string")]
     pub dm_spam_detected_at: Option<DateTime<Utc>>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    #[serde(serialize_with = "serialize_option_date_to_iso8601_string")]
     pub invites_disabled_until: Option<DateTime<Utc>>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    #[serde(serialize_with = "serialize_option_date_to_iso8601_string")]
     pub dms_disabled_until: Option<DateTime<Utc>>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct Clan {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     #[serde(default)]
     pub name: Option<String>,
@@ -257,31 +294,38 @@ pub struct Clan {
     pub discovery_profile_features: Option<Vec<String>>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct GameActivity {
     pub activity_level: u32,
     pub activity_score: u32,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct UnavailableGuild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     pub unavailable: Option<bool>,
     pub geo_restricted: Option<bool>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct AuditLogEntry {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub target_id: Option<u64>,
     #[serde(default)]
     pub changes: Option<Vec<AuditLogChange>>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub user_id: Option<u64>,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     pub action_type: u8,
     #[serde(default)]
@@ -290,7 +334,8 @@ pub struct AuditLogEntry {
     pub reason: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct AuditLogChange {
     #[serde(default)]
     // can be an object, array, string, number and even boolean 💀
@@ -299,10 +344,12 @@ pub struct AuditLogChange {
     pub old_value: Option<serde_json::Value>,
     pub key: String,
 }
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct AuditEntryInfo {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub application_id: Option<u64>,
     #[serde(default)]
     pub auto_moderation_rule_name: Option<String>,
@@ -310,6 +357,7 @@ pub struct AuditEntryInfo {
     pub auto_moderation_rule_trigger_type: Option<String>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub channel_id: Option<u64>,
     #[serde(default)]
     pub count: Option<String>,
@@ -317,6 +365,7 @@ pub struct AuditEntryInfo {
     pub delete_member_days: Option<String>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub id: Option<u64>,
     #[serde(default)]
     pub integration_type: Option<String>,
@@ -324,6 +373,7 @@ pub struct AuditEntryInfo {
     pub members_removed: Option<String>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub message_id: Option<u64>,
     #[serde(default)]
     pub role_name: Option<String>,
@@ -332,39 +382,49 @@ pub struct AuditEntryInfo {
     pub status: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct GuildJoinRequest {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub join_request_id: u64,
     #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
+    #[serde(serialize_with = "serialize_date_to_iso8601_string")]
     pub created_at: DateTime<Utc>,
     pub application_status: String,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub guild_id: u64,
     #[serde(default)]
     pub form_responses: Option<Vec<MemberVerificationFormField>>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    #[serde(serialize_with = "serialize_option_date_to_iso8601_string")]
     pub last_seen: Option<DateTime<Utc>>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub actioned_at: Option<u64>,
     #[serde(default)]
     pub actioned_by_user: Option<User>,
     #[serde(default)]
     pub rejection_reason: Option<String>,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub user_id: u64,
     #[serde(default)]
     pub user: Option<User>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub interview_channel_id: Option<u64>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct MemberVerificationFormField {
     pub field_type: String,
     pub label: String,
@@ -383,9 +443,11 @@ pub struct MemberVerificationFormField {
     pub placeholder: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct SupplementalGuild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     #[serde(default)]
     pub voice_states: Option<Vec<VoiceState>>,

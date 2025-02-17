@@ -115,6 +115,7 @@ impl From<u64> for GatewayApplicationFlags {
 #[derive(Debug, Deserialize, Clone)]
 pub struct GatewayApplication {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     flags: u64,
 }

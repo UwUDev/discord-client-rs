@@ -1,14 +1,18 @@
-use crate::deserializer::{deserialize_option_string_to_u64, deserialize_string_to_u64};
+use crate::deserializer::*;
+use crate::serializer::*;
 use crate::structs::application::team::{Company, Team};
 use crate::structs::user::User;
 use crate::structs::user::activity::EmbeddedActivityConfig;
-use serde::Deserialize;
+use derive_builder::Builder;
+use serde::{Deserialize, Serialize};
 
 pub mod team;
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct IntegrationApplication {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     pub name: String,
     pub description: String,
@@ -18,12 +22,15 @@ pub struct IntegrationApplication {
     pub r#type: Option<u64>,
     pub flags: u64,
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub primary_sku_id: Option<u64>,
     pub verify_key: String,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub guild_id: Option<u64>,
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub eula_id: Option<u64>,
     pub slug: Option<String>,
     pub aliases: Option<Vec<String>>,
@@ -81,62 +88,74 @@ pub struct IntegrationApplication {
     pub embedded_activity_config: Option<EmbeddedActivityConfig>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct ApplicationExecutable {
     pub os: String,
     pub name: String,
     pub is_launcher: bool,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct ApplicationSku {
     pub id: Option<String>,
     pub sku: Option<String>,
     pub distributor: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct ApplicationInstallParams {
     pub scopes: Vec<String>,
     pub permissions: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct ApplicationIntegrationTypeConfig {
     pub oauth2_install_params: Option<ApplicationInstallParams>,
 }
 
-// application-command-index
-
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct ApplicationCommandIndex {
     pub applications: Vec<Application>,
     pub application_commands: Vec<ApplicationCommand>,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub version: u64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct Application {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     pub name: String,
     pub description: Option<String>,
     pub icon: Option<String>,
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub bot_id: Option<u64>,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub flags: u64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct ApplicationCommand {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     pub r#type: u64, // todo: parse type
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub application_id: u64,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub version: u64,
     pub name: String,
     pub dm_permission: bool,

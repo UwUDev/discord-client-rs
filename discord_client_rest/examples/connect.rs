@@ -1,11 +1,6 @@
 use discord_client_rest::rest::RestClient;
+use discord_client_structs::structs::message::{Message, MessageBuilder};
 use serde_json::Value;
-
-#[derive(serde::Serialize)]
-struct MessagePayload {
-    content: String,
-    tts: bool,
-}
 
 #[tokio::main]
 async fn main() {
@@ -17,17 +12,21 @@ async fn main() {
 
     println!("API Version: {}", client.api_version);
 
-    let message = MessagePayload {
-        content: "Hello, world!".to_string(),
-        tts: false,
-    };
+    let message = MessageBuilder::default()
+        .content("Hello, World!")
+        .tts(false)
+        .build()
+        .unwrap();
 
     let path = "channels/1264989590926921769/messages";
 
-    let response = client.post::<Value, _>(path, Some(&message)).await.unwrap();
+    let response_message = client
+        .post::<Message, Message>(path, Some(message))
+        .await
+        .unwrap();
 
-    println!("Response: {}", response.to_string());
-    let id = response["id"].as_str().unwrap();
+    println!("Response content: {}", response_message.content.unwrap());
+    let id = response_message.id;
     let path = format!("{}/{}", path, id);
 
     tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;

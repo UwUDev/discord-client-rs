@@ -9,6 +9,7 @@ pub struct UserGuildSettings {
     pub flags: u64, // todo: https://docs.discord.sex/resources/user-settings#user-guild-settings-flags
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub guild_id: Option<u64>,
     pub hide_muted_channels: bool,
     pub message_notifications: u64,

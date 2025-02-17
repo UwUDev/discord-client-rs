@@ -1,10 +1,11 @@
-use crate::deserializer::{
-    deserialize_option_iso8601_string_to_date, deserialize_option_string_to_u64,
-};
+use crate::deserializer::*;
+use crate::serializer::*;
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
+use derive_builder::Builder;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct Embed {
     pub title: Option<String>,
     pub r#type: String,
@@ -12,6 +13,7 @@ pub struct Embed {
     pub url: Option<String>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    #[serde(serialize_with = "serialize_option_date_to_iso8601_string")]
     pub timestamp: Option<DateTime<Utc>>,
     pub color: Option<u64>,
     pub footer: Option<EmbedFooter>,
@@ -23,18 +25,21 @@ pub struct Embed {
     pub fields: Option<Vec<EmbedField>>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub reference_id: Option<u64>,
     pub flags: Option<u64>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct EmbedFooter {
     pub text: String,
     pub icon_url: Option<String>,
     pub proxy_icon_url: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 //noinspection DuplicatedCode
 pub struct EmbedImage {
     pub url: String,
@@ -46,7 +51,8 @@ pub struct EmbedImage {
     pub placeholder: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 //noinspection DuplicatedCode
 pub struct EmbedThumbnail {
     pub url: String,
@@ -58,7 +64,8 @@ pub struct EmbedThumbnail {
     pub placeholder: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 //noinspection DuplicatedCode
 pub struct EmbedVideo {
     pub url: String,
@@ -70,13 +77,15 @@ pub struct EmbedVideo {
     pub placeholder: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct EmbedProvider {
     pub name: Option<String>,
     pub url: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct EmbedAuthor {
     pub name: String,
     pub url: Option<String>,
@@ -84,7 +93,8 @@ pub struct EmbedAuthor {
     pub proxy_icon_url: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct EmbedField {
     pub name: String,
     pub value: String,

@@ -35,6 +35,7 @@ pub struct Account {
 #[derive(Debug, Deserialize, Clone)]
 pub struct IntegrationGuild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     pub name: String,
     pub icon: Option<String>,

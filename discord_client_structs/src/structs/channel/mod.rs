@@ -1,25 +1,27 @@
-use crate::deserializer::{
-    deserialize_option_iso8601_string_to_date, deserialize_option_string_to_u64,
-    deserialize_option_string_to_vec_u64, deserialize_string_to_u64,
-};
+use crate::deserializer::*;
+use crate::serializer::*;
 use crate::structs::channel::thread::{DefaultReaction, Tag, ThreadMember, ThreadMetadata};
 use crate::structs::permission::Overwrite;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
+use derive_builder::Builder;
+use serde::{Deserialize, Serialize};
 
 pub mod overrides;
 pub mod summary;
 pub mod thread;
 pub mod voice;
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct Channel {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     pub r#type: u8,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub guild_id: Option<u64>,
     pub position: Option<i64>,
     pub permission_overwrites: Option<Vec<Overwrite>>,
@@ -28,6 +30,7 @@ pub struct Channel {
     pub nsfw: Option<bool>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub last_message_id: Option<u64>,
     pub bitrate: Option<u32>,
     pub user_limit: Option<u16>,
@@ -36,16 +39,20 @@ pub struct Channel {
     pub icon: Option<String>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub owner_id: Option<u64>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub application_id: Option<u64>,
     pub managed: Option<bool>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub parent_id: Option<u64>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    #[serde(serialize_with = "serialize_option_date_to_iso8601_string")]
     pub last_pin_timestamp: Option<DateTime<Utc>>,
     pub rtc_region: Option<String>,
     pub video_quality_mode: Option<u8>,
@@ -60,6 +67,7 @@ pub struct Channel {
     pub available_tags: Option<Vec<Tag>>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
+    #[serde(serialize_with = "serialize_option_vec_u64_as_string")]
     pub applied_tags: Option<Vec<u64>>,
     pub default_reaction_emoji: Option<DefaultReaction>,
     pub default_thread_rate_limit_per_user: Option<u32>,
@@ -67,9 +75,11 @@ pub struct Channel {
     pub default_forum_layout: Option<u8>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct PartialChannel {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     pub r#type: u8,
     pub name: Option<String>,
@@ -77,17 +87,22 @@ pub struct PartialChannel {
     pub icon: Option<String>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub guild_id: Option<u64>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
 pub struct UpdatedChannel {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub last_message_id: Option<u64>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    #[serde(serialize_with = "serialize_option_date_to_iso8601_string")]
     pub last_pin_timestamp: Option<DateTime<Utc>>,
 }
