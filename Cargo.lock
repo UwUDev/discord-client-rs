@@ -179,9 +179,9 @@ dependencies = [
 
 [[package]]
 name = "boring-sys2"
-version = "4.15.3"
+version = "4.15.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c515f6a5ac9c049f2e13feaa0f7b5750fe6a79acacaee3a65da144613e581c88"
+checksum = "f98a134b63dbb00502d1b0d2b1f6471ca02a4a95dff2a3305054850da51b5f4a"
 dependencies = [
  "autocfg",
  "bindgen",
@@ -192,9 +192,9 @@ dependencies = [
 
 [[package]]
 name = "boring2"
-version = "4.15.3"
+version = "4.15.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "273df18d8531ade3030de35554bf58cf961f63e4840d3d2f3c44e96be45daa64"
+checksum = "6d2bbc8b35f7aece1d82e05e4e065d839c8a2be6326e058c4a36a589bf4961ad"
 dependencies = [
  "bitflags",
  "boring-sys2",
@@ -1036,9 +1036,9 @@ checksum = "04cbf5b083de1c7e0222a7a51dbfdba1cbe1c6ab0b15e29fff3f6c077fd9cd9f"
 
 [[package]]
 name = "lru"
-version = "0.12.5"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "234cf4f4a04dc1f57e24b96cc0cd600cf2af460d4161ac5ecdd0af8e1f3b2a38"
+checksum = "227748d55f2f0ab4735d87fd623798cb6b664512fe979705f829c9f81c934465"
 
 [[package]]
 name = "malloc_buf"
@@ -1301,9 +1301,9 @@ checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
 name = "rquest"
-version = "2.0.6"
+version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "696a06e7772945b5da6993324bd7503a7e6fc7b001edabe21956b08d8544b386"
+checksum = "518cdd33af35c0c6e80120880417f62173e27ec9320c8cc9f71cab7044864c7d"
 dependencies = [
  "antidote",
  "async-compression",
@@ -1611,9 +1611,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-boring2"
-version = "4.15.3"
+version = "4.15.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ad25ad6cd6454669fb1fde3338f15716579eb93bdcf6cf09dde0dc4bb10c112"
+checksum = "136c1e2294f03fb795f33529ebf7c8b7037605cc97131e448587565d4aad2421"
 dependencies = [
  "boring-sys2",
  "boring2",

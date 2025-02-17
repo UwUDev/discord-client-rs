@@ -1,9 +1,11 @@
 [package]
 name = "discord_client_rest"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
-description.workspace = true
+version = "0.1.0"
+edition = "2024"
+authors = ["UwUDev"]
+description = "Undetected discord client rest API reimplementation"
+repository = "https://github.com/UwUDev/discord-client-rs"
+# readme = "README.md"
 
 [dependencies]
 discord_client_structs = {path = "../discord_client_structs"}
