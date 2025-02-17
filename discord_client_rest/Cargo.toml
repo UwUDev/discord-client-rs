@@ -7,6 +7,10 @@ description = "Undetected discord client rest API reimplementation"
 repository = "https://github.com/UwUDev/discord-client-rs"
 # readme = "README.md"
 
+[[example]]
+name = "send_message"
+path = "examples/send_message.rs"
+
 [dependencies]
 discord_client_structs = {path = "../discord_client_structs"}
 rquest = { workspace = true, features = ["gzip", "deflate", "zstd", "brotli", "json", "cookies"] }

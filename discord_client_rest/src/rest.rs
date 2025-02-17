@@ -7,7 +7,7 @@ use regex::Regex;
 use rquest::Impersonate::Chrome131;
 use rquest::ImpersonateOS::Windows;
 use rquest::header::HeaderMap;
-use rquest::{Client, Impersonate, Response, Url};
+use rquest::{Client, Impersonate, Response};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 
@@ -134,15 +134,9 @@ impl RestClient {
         let cookies = resp.cookies();
         for cookie in cookies {
             if cookie.name() == "__cf_bm" {
-                println!("CFBM: {}", cookie.value());
                 // todo: reinject cookie with https://discord.com and / path
             }
         }
-
-        let cookies = client
-            .get_cookies(&Url::parse("https://discord.com")?)
-            .unwrap();
-        println!("Cookies: {:?}", cookies);
 
         Ok(Self {
             token,
@@ -213,7 +207,7 @@ impl RestClient {
         self.handle_response(resp, &full_url).await
     }
 
-    async fn handle_response<T: serde::de::DeserializeOwned + Default>(
+    async fn handle_response<T: DeserializeOwned + Default>(
         &self,
         resp: Response,
         url: &str,
@@ -275,4 +269,6 @@ impl RestClient {
 
         Ok(headers)
     }
+
+    // TODO: rate-limits, reties and request queue
 }
