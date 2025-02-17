@@ -1,7 +1,6 @@
 use crate::deserializer::{
     deserialize_option_iso8601_string_to_date, deserialize_option_string_to_u64,
-    deserialize_string_to_u64, deserialize_string_to_vec_u64,
-    deserialize_option_string_to_vec_u64,
+    deserialize_option_string_to_vec_u64, deserialize_string_to_u64, deserialize_string_to_vec_u64,
 };
 use crate::structs::application::IntegrationApplication;
 use crate::structs::channel::PartialChannel;

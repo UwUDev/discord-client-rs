@@ -1,0 +1,17 @@
+[package]
+name = "discord_client_rest"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description.workspace = true
+
+[dependencies]
+discord_client_structs = {path = "../discord_client_structs"}
+rquest = { workspace = true, features = ["gzip", "deflate", "zstd", "brotli", "json", "cookies"] }
+tokio = { version = "1.43.0", features = ["rt", "macros", "rt-multi-thread"] }
+regex = "1.11.1"
+iana-time-zone = "0.1.61"
+current_locale = "0.1.1"
+serde_json = "1.0.138"
+base64 = "0.22.1"
+serde = { version = "1.0.217", features = ["derive"] }

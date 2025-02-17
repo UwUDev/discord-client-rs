@@ -105,3 +105,42 @@ pub struct ApplicationInstallParams {
 pub struct ApplicationIntegrationTypeConfig {
     pub oauth2_install_params: Option<ApplicationInstallParams>,
 }
+
+// application-command-index
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct ApplicationCommandIndex {
+    pub applications: Vec<Application>,
+    pub application_commands: Vec<ApplicationCommand>,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub version: u64,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Application {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
+    pub name: String,
+    pub description: Option<String>,
+    pub icon: Option<String>,
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub bot_id: Option<u64>,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub flags: u64,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct ApplicationCommand {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
+    pub r#type: u64, // todo: parse type
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub application_id: u64,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub version: u64,
+    pub name: String,
+    pub dm_permission: bool,
+    pub contexts: Vec<u8>,
+    pub integration_types: Vec<u8>,
+    pub handler: u8,
+}
