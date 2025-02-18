@@ -1,17 +1,18 @@
+use crate::clearance::{get_clearance_cookie, get_invisible};
+use crate::rate_limit::RateLimitError;
 use crate::super_prop::build_super_props;
 use crate::{BoxedError, BoxedResult};
 use current_locale::current_locale;
 use discord_client_structs::structs::application::ApplicationCommandIndex;
 use iana_time_zone::get_timezone;
 use regex::Regex;
-use rquest::header::HeaderMap;
 use rquest::Impersonate::Chrome133;
 use rquest::ImpersonateOS::Windows;
-use rquest::{Client, Impersonate, Response};
-use serde::de::DeserializeOwned;
+use rquest::header::HeaderMap;
+use rquest::{Client, Impersonate, Response, redirect};
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 use serde_json::Value;
-use crate::rate_limit::RateLimitError;
 
 const API_BASE: &str = "https://discord.com/api/";
 
@@ -43,6 +44,7 @@ impl RestClient {
             .brotli(true)
             .zstd(true)
             .cookie_store(true)
+            .redirect(redirect::Policy::default())
             .build()?;
 
         // get the cookies and api version
@@ -51,10 +53,11 @@ impl RestClient {
             .send()
             .await?;
 
+        let body = resp.text().await?;
+
         let api_version = match custom_api_version {
             Some(v) => v,
             None => {
-                let body = resp.text().await?;
                 let re = Regex::new(r"API_VERSION: (\d+)").unwrap();
 
                 re.captures(&body)
@@ -74,6 +77,28 @@ impl RestClient {
                 }
             }
         };
+
+        let re = Regex::new(r#"r:'([a-f0-9]+)'"#).unwrap();
+        let r: String = re
+            .captures(&body)
+            .ok_or("Failed to find r")?
+            .get(1)
+            .ok_or("Failed to find r")?
+            .as_str()
+            .to_string();
+
+        let re = Regex::new(r#"t:'([a-zA-Z0-9_\-=]+)'"#).unwrap();
+        let t: String = re
+            .captures(&body)
+            .ok_or("Failed to find t")?
+            .get(1)
+            .ok_or("Failed to find t")?
+            .as_str()
+            .to_string();
+
+        let (key, s) = get_invisible(&client).await?;
+
+        get_clearance_cookie(&client, r, t, key, s).await?;
 
         // get experiments cookies
         // todo: parse assignments
@@ -127,18 +152,7 @@ impl RestClient {
 
         let application_command_index = resp.json::<ApplicationCommandIndex>().await?;
 
-        // get the cfbm on
-        let resp = client
-            .get("https://cdn.discordapp.com/icons/1033564617936474264/072d5ea75e2d0548a6afafdb09a982aa.webp?size=16")
-            .send()
-            .await?;
-
-        let cookies = resp.cookies();
-        for cookie in cookies {
-            if cookie.name() == "__cf_bm" {
-                // todo: reinject cookie with https://discord.com and / path
-            }
-        }
+        // todo: reverse https://discord.com/cdn-cgi/challenge-platform/
 
         Ok(Self {
             token,
@@ -220,7 +234,7 @@ impl RestClient {
             401 => return Err("Invalid token".into()),
             204 => return Ok(T::default()),
             200..=299 => (),
-            429 => { // rate limit
+            429 => {
                 let json: Value = resp.json().await?;
                 let retry_after = json["retry_after"].as_f64().unwrap_or(0.0);
                 let retry_after = std::time::Duration::from_secs_f64(retry_after);

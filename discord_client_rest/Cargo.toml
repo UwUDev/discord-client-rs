@@ -21,3 +21,4 @@ current_locale = "0.1.1"
 serde_json = {workspace = true}
 base64 = "0.22.1"
 serde = { workspace = true, features = ["derive"] }
+log = "0.4.25"

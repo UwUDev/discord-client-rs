@@ -509,6 +509,7 @@ dependencies = [
  "current_locale",
  "discord_client_structs",
  "iana-time-zone",
+ "log",
  "regex",
  "rquest",
  "serde",
