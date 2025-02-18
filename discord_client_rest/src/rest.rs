@@ -4,12 +4,12 @@ use current_locale::current_locale;
 use discord_client_structs::structs::application::ApplicationCommandIndex;
 use iana_time_zone::get_timezone;
 use regex::Regex;
-use rquest::Impersonate::Chrome131;
-use rquest::ImpersonateOS::Windows;
 use rquest::header::HeaderMap;
+use rquest::Impersonate::Chrome133;
+use rquest::ImpersonateOS::Windows;
 use rquest::{Client, Impersonate, Response};
-use serde::Serialize;
 use serde::de::DeserializeOwned;
+use serde::Serialize;
 
 const API_BASE: &str = "https://discord.com/api/";
 
@@ -31,7 +31,7 @@ impl RestClient {
     ) -> BoxedResult<Self> {
         let imp = Impersonate::builder()
             .impersonate_os(Windows)
-            .impersonate(Chrome131)
+            .impersonate(Chrome133)
             .build();
 
         let client = Client::builder()
