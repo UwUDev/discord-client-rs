@@ -1,3 +1,4 @@
+use crate::api::message::MessageRest;
 use crate::clearance::{get_clearance_cookie, get_invisible};
 use crate::rate_limit::RateLimitError;
 use crate::super_prop::build_super_props;
@@ -165,6 +166,10 @@ impl RestClient {
         })
     }
 
+    pub fn message(&self) -> MessageRest {
+        MessageRest { client: self }
+    }
+
     pub async fn get<T: DeserializeOwned + Default>(&self, path: &str) -> BoxedResult<T> {
         let full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
 
@@ -187,6 +192,50 @@ impl RestClient {
         let full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
 
         let mut request = self.client.post(&full_url).headers(self.build_headers()?);
+
+        if let Some(body_data) = body {
+            request = request
+                .header("Content-Type", "application/json")
+                .json(&body_data);
+        }
+
+        let resp = request
+            .send()
+            .await
+            .map_err(|e| Box::new(e) as BoxedError)?;
+        self.handle_response(resp, &full_url).await
+    }
+
+    pub async fn put<T, B>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
+    where
+        T: DeserializeOwned + Default,
+        B: Serialize + Send + Sync,
+    {
+        let full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
+
+        let mut request = self.client.put(&full_url).headers(self.build_headers()?);
+
+        if let Some(body_data) = body {
+            request = request
+                .header("Content-Type", "application/json")
+                .json(&body_data);
+        }
+
+        let resp = request
+            .send()
+            .await
+            .map_err(|e| Box::new(e) as BoxedError)?;
+        self.handle_response(resp, &full_url).await
+    }
+
+    pub async fn patch<T, B>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
+    where
+        T: DeserializeOwned + Default,
+        B: Serialize + Send + Sync,
+    {
+        let full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
+
+        let mut request = self.client.patch(&full_url).headers(self.build_headers()?);
 
         if let Some(body_data) = body {
             request = request

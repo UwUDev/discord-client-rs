@@ -1,4 +1,5 @@
 use std::error::Error;
+mod api;
 mod clearance;
 pub mod rate_limit;
 pub mod rest;

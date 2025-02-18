@@ -1,6 +1,5 @@
 use discord_client_rest::rest::RestClient;
-use discord_client_structs::structs::message::{Message, MessageBuilder};
-use serde_json::Value;
+use discord_client_structs::structs::message::MessageBuilder;
 
 #[tokio::main]
 async fn main() {
@@ -18,21 +17,27 @@ async fn main() {
         .build()
         .unwrap();
 
-    let path = "channels/1264989590926921769/messages";
+    let channel_id: u64 = 1264989590926921769;
 
-    let response_message = client
-        .post::<Message, Message>(path, Some(message))
-        .await
-        .unwrap();
-
+    let mut response_message = client.message().send(channel_id, message).await.unwrap();
     println!("Response content: {}", response_message.content.unwrap());
     let id = response_message.id;
-    let path = format!("{}/{}", path, id);
+
+    tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+
+    response_message.content = Some("Hello, World! (edited)".to_string());
+
+    response_message = client
+        .message()
+        .edit(channel_id, id, response_message)
+        .await
+        .unwrap();
 
     tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
 
     client
-        .delete::<Value, _>(path.as_str(), None::<&()>)
+        .message()
+        .delete(channel_id, response_message.id)
         .await
         .unwrap();
 }
