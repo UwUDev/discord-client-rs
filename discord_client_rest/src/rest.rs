@@ -10,6 +10,8 @@ use rquest::ImpersonateOS::Windows;
 use rquest::{Client, Impersonate, Response};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
+use serde_json::Value;
+use crate::rate_limit::RateLimitError;
 
 const API_BASE: &str = "https://discord.com/api/";
 
@@ -218,6 +220,13 @@ impl RestClient {
             401 => return Err("Invalid token".into()),
             204 => return Ok(T::default()),
             200..=299 => (),
+            429 => { // rate limit
+                let json: Value = resp.json().await?;
+                let retry_after = json["retry_after"].as_f64().unwrap_or(0.0);
+                let retry_after = std::time::Duration::from_secs_f64(retry_after);
+                let global = json["global"].as_bool().unwrap_or(false);
+                return Err(Box::new(RateLimitError::new(retry_after, global)));
+            }
             code => {
                 let msg = format!("Request to {} failed with code {}", url, code);
                 return Err(msg.into());
