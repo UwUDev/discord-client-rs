@@ -4,6 +4,7 @@ use crate::rate_limit::RateLimitError;
 use crate::super_prop::build_super_props;
 use crate::{BoxedError, BoxedResult};
 use current_locale::current_locale;
+use discord_client_structs::parser::parse_id_from_token;
 use discord_client_structs::structs::application::ApplicationCommandIndex;
 use iana_time_zone::get_timezone;
 use regex::Regex;
@@ -19,6 +20,7 @@ const API_BASE: &str = "https://discord.com/api/";
 
 pub struct RestClient {
     token: String,
+    pub user_id: u64,
     client: Client,
     pub api_version: u8,
     pub application_command_index: ApplicationCommandIndex,
@@ -33,6 +35,8 @@ impl RestClient {
         custom_api_version: Option<u8>,
         build_number: u32,
     ) -> BoxedResult<Self> {
+        let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
+
         let imp = Impersonate::builder()
             .impersonate_os(Windows)
             .impersonate(Chrome133)
@@ -157,6 +161,7 @@ impl RestClient {
 
         Ok(Self {
             token,
+            user_id,
             client,
             api_version,
             application_command_index,

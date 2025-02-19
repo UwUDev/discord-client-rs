@@ -1,5 +1,6 @@
-use crate::BoxedResult;
 use crate::events::structs::gateway::GatewayPayload;
+use crate::{BoxedError, BoxedResult};
+use discord_client_structs::parser::parse_id_from_token;
 use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt, TryStreamExt};
 use rquest::Impersonate::Chrome133;
@@ -13,7 +14,8 @@ use tokio::sync::Mutex;
 use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
 
 pub struct GatewayClient {
-    pub token: String,
+    token: String,
+    pub user_id: u64,
     rx: Arc<Mutex<SplitStream<WebSocket>>>,
     tx: Arc<Mutex<SplitSink<WebSocket, Message>>>,
     zlib_decompressor: Arc<Mutex<ZlibStreamDecompressor>>,
@@ -27,6 +29,8 @@ pub struct GatewayClient {
 
 impl GatewayClient {
     pub async fn connect(token: String, capabilities: u32, build_number: u32) -> BoxedResult<Self> {
+        let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
+
         let imp = Impersonate::builder()
             .impersonate_os(Windows)
             .impersonate(Chrome133)
@@ -107,6 +111,7 @@ impl GatewayClient {
 
         Ok(Self {
             token,
+            user_id,
             rx: Arc::new(Mutex::new(rx)),
             tx,
             zlib_decompressor: Arc::new(Mutex::new(decompress)),
