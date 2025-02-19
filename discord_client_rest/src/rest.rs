@@ -7,6 +7,7 @@ use current_locale::current_locale;
 use discord_client_structs::parser::parse_id_from_token;
 use discord_client_structs::structs::application::ApplicationCommandIndex;
 use iana_time_zone::get_timezone;
+use log::{error, warn};
 use regex::Regex;
 use rquest::Impersonate::Chrome133;
 use rquest::ImpersonateOS::Windows;
@@ -18,7 +19,6 @@ use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
-use log::warn;
 use tokio::sync::Mutex;
 
 const API_BASE: &str = "https://discord.com/api/";
@@ -182,7 +182,11 @@ impl RestClient {
         MessageRest { client: self }
     }
 
-    pub async fn get<T: DeserializeOwned + Default + Send>(&self, path: &str, query: Option<HashMap<String, String>>) -> BoxedResult<T> {
+    pub async fn get<T: DeserializeOwned + Default + Send>(
+        &self,
+        path: &str,
+        query: Option<HashMap<String, String>>,
+    ) -> BoxedResult<T> {
         self.request::<T, ()>(Method::GET, path, query, None).await
     }
 
@@ -218,7 +222,13 @@ impl RestClient {
         self.request(Method::DELETE, path, None, body).await
     }
 
-    async fn request<T, B>(&self, method: Method, path: &str, query: Option<HashMap<String, String>>, body: Option<B>) -> BoxedResult<T>
+    async fn request<T, B>(
+        &self,
+        method: Method,
+        path: &str,
+        query: Option<HashMap<String, String>>,
+        body: Option<B>,
+    ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync + Clone,
@@ -231,7 +241,9 @@ impl RestClient {
 
             let _route_lock = route_limiter.route_mutex.lock().await;
 
-            let result = self.make_request(method.clone(), path, query.clone(), body.clone()).await;
+            let result = self
+                .make_request(method.clone(), path, query.clone(), body.clone())
+                .await;
 
             drop(_route_lock);
 
@@ -330,6 +342,11 @@ impl RestClient {
                 let retry_after = Duration::from_secs_f64(retry_after_secs);
                 let global = json["global"].as_bool().unwrap_or(false);
                 return Err(Box::new(RateLimitError::new(retry_after, global)));
+            }
+            400 => {
+                let resp_text = resp.text().await?;
+                error!("Bad request to {}: {}", url, resp_text);
+                return Err("Bad request".into());
             }
             code => {
                 let msg = format!("Request to {} failed with code {}", url, code);

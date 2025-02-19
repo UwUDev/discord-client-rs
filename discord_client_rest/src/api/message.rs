@@ -1,7 +1,9 @@
 use crate::BoxedResult;
 use crate::rest::RestClient;
 use discord_client_structs::structs::message::Message;
-use discord_client_structs::structs::message::query::MessageQuery;
+use discord_client_structs::structs::message::query::{
+    MessageQuery, MessageSearchQuery, MessageSearchResult,
+};
 
 pub struct MessageRest<'a> {
     pub client: &'a RestClient,
@@ -40,6 +42,28 @@ impl<'a> MessageRest<'a> {
         let path = format!("channels/{}/messages", channel_id);
         self.client
             .get::<Vec<Message>>(&path, Some(query.to_map()))
+            .await
+    }
+
+    pub async fn search_channel_messages(
+        &self,
+        channel_id: u64,
+        query: MessageSearchQuery,
+    ) -> BoxedResult<MessageSearchResult> {
+        let path = format!("channels/{}/messages/search", channel_id);
+        self.client
+            .get::<MessageSearchResult>(&path, Some(query.to_map()))
+            .await
+    }
+
+    pub async fn search_guild_messages(
+        &self,
+        guild_id: u64,
+        query: MessageSearchQuery,
+    ) -> BoxedResult<MessageSearchResult> {
+        let path = format!("guilds/{}/messages/search", guild_id);
+        self.client
+            .get::<MessageSearchResult>(&path, Some(query.to_map()))
             .await
     }
 }

@@ -16,3 +16,4 @@ serde_json = {workspace = true}
 chrono = {workspace = true}
 derive_builder = "0.20.2"
 base64 = "0.22.1"
+strum_macros = "0.27.1"
