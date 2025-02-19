@@ -1,6 +1,6 @@
 use crate::api::message::MessageRest;
 use crate::clearance::{get_clearance_cookie, get_invisible};
-use crate::rate_limit::RateLimitError;
+use crate::rate_limit::{RateLimitError, RateLimiter};
 use crate::super_prop::build_super_props;
 use crate::{BoxedError, BoxedResult};
 use current_locale::current_locale;
@@ -11,10 +11,11 @@ use regex::Regex;
 use rquest::Impersonate::Chrome133;
 use rquest::ImpersonateOS::Windows;
 use rquest::header::HeaderMap;
-use rquest::{Client, Impersonate, Response, redirect, Method};
+use rquest::{Client, Impersonate, Method, Response, redirect};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
+use std::time::Duration;
 
 const API_BASE: &str = "https://discord.com/api/";
 
@@ -27,6 +28,7 @@ pub struct RestClient {
     locale: String,
     timezone: String,
     pub build_number: u32,
+    rate_limiter: RateLimiter,
 }
 
 impl RestClient {
@@ -168,6 +170,7 @@ impl RestClient {
             locale,
             timezone,
             build_number,
+            rate_limiter: RateLimiter::new(),
         })
     }
 
@@ -175,7 +178,75 @@ impl RestClient {
         MessageRest { client: self }
     }
 
-    async fn request<T, B>(
+    pub async fn get<T: DeserializeOwned + Default>(&self, path: &str) -> BoxedResult<T> {
+        self.request::<T, ()>(Method::GET, path, None).await
+    }
+
+    pub async fn post<T, B: Clone>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
+    where
+        T: DeserializeOwned + Default,
+        B: Serialize + Send + Sync,
+    {
+        self.request(Method::POST, path, body).await
+    }
+
+    pub async fn put<T, B: Clone>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
+    where
+        T: DeserializeOwned + Default,
+        B: Serialize + Send + Sync,
+    {
+        self.request(Method::PUT, path, body).await
+    }
+
+    pub async fn patch<T, B: Clone>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
+    where
+        T: DeserializeOwned + Default,
+        B: Serialize + Send + Sync,
+    {
+        self.request(Method::PATCH, path, body).await
+    }
+
+    pub async fn delete<T, B: Clone>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
+    where
+        T: DeserializeOwned + Default,
+        B: Serialize + Send + Sync,
+    {
+        self.request(Method::DELETE, path, body).await
+    }
+
+    async fn request<T, B>(&self, method: Method, path: &str, body: Option<B>) -> BoxedResult<T>
+    where
+        T: DeserializeOwned + Default,
+        B: Serialize + Send + Sync + Clone,
+    {
+        loop {
+            self.rate_limiter.wait_if_needed().await;
+
+            let result = self.make_request(method.clone(), path, body.clone()).await;
+
+            match result {
+                Ok(response) => return Ok(response),
+                Err(e) => {
+                    if let Some(rate_limit_error) = e.downcast_ref::<RateLimitError>() {
+                        self.rate_limiter
+                            .update(rate_limit_error.retry_after, rate_limit_error.global)
+                            .await;
+
+                        println!(
+                            "Rate limited! Retrying after {:?} seconds",
+                            rate_limit_error.retry_after.as_secs_f64()
+                        );
+
+                        continue;
+                    } else {
+                        return Err(e);
+                    }
+                }
+            }
+        }
+    }
+
+    async fn make_request<T, B>(
         &self,
         method: Method,
         path: &str,
@@ -205,57 +276,20 @@ impl RestClient {
         self.handle_response(resp, &full_url).await
     }
 
-    pub async fn get<T: DeserializeOwned + Default>(&self, path: &str) -> BoxedResult<T> {
-        self.request::<T, ()>(Method::GET, path, None).await
-    }
-
-    pub async fn post<T, B>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
-    where
-        T: DeserializeOwned + Default,
-        B: Serialize + Send + Sync,
-    {
-        self.request(Method::POST, path, body).await
-    }
-
-    pub async fn put<T, B>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
-    where
-        T: DeserializeOwned + Default,
-        B: Serialize + Send + Sync,
-    {
-        self.request(Method::PUT, path, body).await
-    }
-
-    pub async fn patch<T, B>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
-    where
-        T: DeserializeOwned + Default,
-        B: Serialize + Send + Sync,
-    {
-        self.request(Method::PATCH, path, body).await
-    }
-
-    pub async fn delete<T, B>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
-    where
-        T: DeserializeOwned + Default,
-        B: Serialize + Send + Sync,
-    {
-        self.request(Method::DELETE, path, body).await
-    }
-
     async fn handle_response<T: DeserializeOwned + Default>(
         &self,
         resp: Response,
         url: &str,
     ) -> BoxedResult<T> {
         let status = resp.status();
-
         match status.as_u16() {
             401 => return Err("Invalid token".into()),
             204 => return Ok(T::default()),
             200..=299 => (),
             429 => {
                 let json: Value = resp.json().await?;
-                let retry_after = json["retry_after"].as_f64().unwrap_or(0.0);
-                let retry_after = std::time::Duration::from_secs_f64(retry_after);
+                let retry_after_secs = json["retry_after"].as_f64().unwrap_or(0.0);
+                let retry_after = Duration::from_secs_f64(retry_after_secs);
                 let global = json["global"].as_bool().unwrap_or(false);
                 return Err(Box::new(RateLimitError::new(retry_after, global)));
             }
@@ -266,7 +300,6 @@ impl RestClient {
         }
 
         let bytes = resp.bytes().await?;
-
         if bytes.is_empty() {
             Ok(T::default())
         } else {
