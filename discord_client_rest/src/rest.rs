@@ -11,7 +11,7 @@ use regex::Regex;
 use rquest::Impersonate::Chrome133;
 use rquest::ImpersonateOS::Windows;
 use rquest::header::HeaderMap;
-use rquest::{Client, Impersonate, Response, redirect};
+use rquest::{Client, Impersonate, Response, redirect, Method};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
@@ -175,18 +175,38 @@ impl RestClient {
         MessageRest { client: self }
     }
 
-    pub async fn get<T: DeserializeOwned + Default>(&self, path: &str) -> BoxedResult<T> {
+    async fn request<T, B>(
+        &self,
+        method: Method,
+        path: &str,
+        body: Option<B>,
+    ) -> BoxedResult<T>
+    where
+        T: DeserializeOwned + Default,
+        B: Serialize + Send + Sync,
+    {
         let full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
-
-        let resp = self
+        let mut request = self
             .client
-            .get(&full_url)
-            .headers(self.build_headers()?)
+            .request(method, &full_url)
+            .headers(self.build_headers()?);
+
+        if let Some(body_data) = body {
+            request = request
+                .header("Content-Type", "application/json")
+                .json(&body_data);
+        }
+
+        let resp = request
             .send()
             .await
             .map_err(|e| Box::new(e) as BoxedError)?;
 
         self.handle_response(resp, &full_url).await
+    }
+
+    pub async fn get<T: DeserializeOwned + Default>(&self, path: &str) -> BoxedResult<T> {
+        self.request::<T, ()>(Method::GET, path, None).await
     }
 
     pub async fn post<T, B>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
@@ -194,21 +214,7 @@ impl RestClient {
         T: DeserializeOwned + Default,
         B: Serialize + Send + Sync,
     {
-        let full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
-
-        let mut request = self.client.post(&full_url).headers(self.build_headers()?);
-
-        if let Some(body_data) = body {
-            request = request
-                .header("Content-Type", "application/json")
-                .json(&body_data);
-        }
-
-        let resp = request
-            .send()
-            .await
-            .map_err(|e| Box::new(e) as BoxedError)?;
-        self.handle_response(resp, &full_url).await
+        self.request(Method::POST, path, body).await
     }
 
     pub async fn put<T, B>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
@@ -216,21 +222,7 @@ impl RestClient {
         T: DeserializeOwned + Default,
         B: Serialize + Send + Sync,
     {
-        let full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
-
-        let mut request = self.client.put(&full_url).headers(self.build_headers()?);
-
-        if let Some(body_data) = body {
-            request = request
-                .header("Content-Type", "application/json")
-                .json(&body_data);
-        }
-
-        let resp = request
-            .send()
-            .await
-            .map_err(|e| Box::new(e) as BoxedError)?;
-        self.handle_response(resp, &full_url).await
+        self.request(Method::PUT, path, body).await
     }
 
     pub async fn patch<T, B>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
@@ -238,21 +230,7 @@ impl RestClient {
         T: DeserializeOwned + Default,
         B: Serialize + Send + Sync,
     {
-        let full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
-
-        let mut request = self.client.patch(&full_url).headers(self.build_headers()?);
-
-        if let Some(body_data) = body {
-            request = request
-                .header("Content-Type", "application/json")
-                .json(&body_data);
-        }
-
-        let resp = request
-            .send()
-            .await
-            .map_err(|e| Box::new(e) as BoxedError)?;
-        self.handle_response(resp, &full_url).await
+        self.request(Method::PATCH, path, body).await
     }
 
     pub async fn delete<T, B>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
@@ -260,21 +238,7 @@ impl RestClient {
         T: DeserializeOwned + Default,
         B: Serialize + Send + Sync,
     {
-        let full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
-
-        let mut request = self.client.delete(&full_url).headers(self.build_headers()?);
-
-        if let Some(body_data) = body {
-            request = request
-                .header("Content-Type", "application/json")
-                .json(&body_data);
-        }
-
-        let resp = request
-            .send()
-            .await
-            .map_err(|e| Box::new(e) as BoxedError)?;
-        self.handle_response(resp, &full_url).await
+        self.request(Method::DELETE, path, body).await
     }
 
     async fn handle_response<T: DeserializeOwned + Default>(
@@ -347,5 +311,5 @@ impl RestClient {
         Ok(headers)
     }
 
-    // TODO: rate-limits, reties and request queue
+    // TODO: reties and request queue
 }
