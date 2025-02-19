@@ -15,7 +15,10 @@ use rquest::{Client, Impersonate, Method, Response, redirect};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
+use std::collections::HashMap;
+use std::sync::Arc;
 use std::time::Duration;
+use tokio::sync::Mutex;
 
 const API_BASE: &str = "https://discord.com/api/";
 
@@ -28,7 +31,8 @@ pub struct RestClient {
     locale: String,
     timezone: String,
     pub build_number: u32,
-    rate_limiter: RateLimiter,
+    global_rate_limiter: RateLimiter,
+    route_rate_limiters: Arc<Mutex<HashMap<String, RateLimiter>>>,
 }
 
 impl RestClient {
@@ -170,7 +174,8 @@ impl RestClient {
             locale,
             timezone,
             build_number,
-            rate_limiter: RateLimiter::new(),
+            global_rate_limiter: RateLimiter::new(),
+            route_rate_limiters: Arc::new(Mutex::new(HashMap::new())),
         })
     }
 
@@ -178,13 +183,13 @@ impl RestClient {
         MessageRest { client: self }
     }
 
-    pub async fn get<T: DeserializeOwned + Default>(&self, path: &str) -> BoxedResult<T> {
+    pub async fn get<T: DeserializeOwned + Default + Send>(&self, path: &str) -> BoxedResult<T> {
         self.request::<T, ()>(Method::GET, path, None).await
     }
 
     pub async fn post<T, B: Clone>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
     where
-        T: DeserializeOwned + Default,
+        T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
         self.request(Method::POST, path, body).await
@@ -192,7 +197,7 @@ impl RestClient {
 
     pub async fn put<T, B: Clone>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
     where
-        T: DeserializeOwned + Default,
+        T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
         self.request(Method::PUT, path, body).await
@@ -200,7 +205,7 @@ impl RestClient {
 
     pub async fn patch<T, B: Clone>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
     where
-        T: DeserializeOwned + Default,
+        T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
         self.request(Method::PATCH, path, body).await
@@ -208,7 +213,7 @@ impl RestClient {
 
     pub async fn delete<T, B: Clone>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
     where
-        T: DeserializeOwned + Default,
+        T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
         self.request(Method::DELETE, path, body).await
@@ -216,33 +221,58 @@ impl RestClient {
 
     async fn request<T, B>(&self, method: Method, path: &str, body: Option<B>) -> BoxedResult<T>
     where
-        T: DeserializeOwned + Default,
+        T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync + Clone,
     {
         loop {
-            self.rate_limiter.wait_if_needed().await;
+            self.global_rate_limiter.wait_if_needed().await;
+
+            let route_limiter = self.get_route_limiter(path).await;
+            route_limiter.wait_if_needed().await;
+
+            let _route_lock = route_limiter.route_mutex.lock().await;
 
             let result = self.make_request(method.clone(), path, body.clone()).await;
+
+            drop(_route_lock);
 
             match result {
                 Ok(response) => return Ok(response),
                 Err(e) => {
                     if let Some(rate_limit_error) = e.downcast_ref::<RateLimitError>() {
-                        self.rate_limiter
-                            .update(rate_limit_error.retry_after, rate_limit_error.global)
-                            .await;
-
+                        if rate_limit_error.global {
+                            self.global_rate_limiter
+                                .update(rate_limit_error.retry_after)
+                                .await;
+                        } else {
+                            route_limiter.update(rate_limit_error.retry_after).await;
+                        }
                         println!(
-                            "Rate limited! Retrying after {:?} seconds",
+                            "Rate limited [{}]! Retrying after {:.2} seconds",
+                            if rate_limit_error.global {
+                                "global"
+                            } else {
+                                "route"
+                            },
                             rate_limit_error.retry_after.as_secs_f64()
                         );
-
                         continue;
                     } else {
                         return Err(e);
                     }
                 }
             }
+        }
+    }
+
+    async fn get_route_limiter(&self, route: &str) -> RateLimiter {
+        let mut limiters = self.route_rate_limiters.lock().await;
+        if let Some(limiter) = limiters.get(route) {
+            limiter.clone()
+        } else {
+            let limiter = RateLimiter::new();
+            limiters.insert(route.to_string(), limiter.clone());
+            limiter
         }
     }
 
@@ -343,6 +373,4 @@ impl RestClient {
 
         Ok(headers)
     }
-
-    // TODO: reties and request queue
 }

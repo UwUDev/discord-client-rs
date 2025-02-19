@@ -1,7 +1,7 @@
 use std::fmt::{Debug, Formatter};
 use std::sync::Arc;
-use tokio::sync::Mutex;
-use tokio::time::{Duration, Instant, sleep};
+use tokio::sync::{Mutex, Notify};
+use tokio::time::{Duration, Instant};
 
 pub struct RateLimitError {
     pub retry_after: Duration,
@@ -42,32 +42,49 @@ impl std::error::Error for RateLimitError {}
 #[derive(Clone)]
 pub(crate) struct RateLimiter {
     retry_until: Arc<Mutex<Option<Instant>>>,
-    is_global: Arc<Mutex<bool>>,
+    notify: Arc<Notify>,
+    pub(crate) route_mutex: Arc<Mutex<()>>,
 }
 
 impl RateLimiter {
     pub(crate) fn new() -> Self {
         RateLimiter {
             retry_until: Arc::new(Mutex::new(None)),
-            is_global: Arc::new(Mutex::new(false)),
+            notify: Arc::new(Notify::new()),
+            route_mutex: Arc::new(Mutex::new(())),
         }
     }
 
     pub(crate) async fn wait_if_needed(&self) {
-        if let Some(retry_time) = *self.retry_until.lock().await {
+        loop {
             let now = Instant::now();
-            if retry_time > now {
-                let wait_duration = retry_time - now;
-                sleep(wait_duration).await;
+            let retry_time = {
+                let retry_until = self.retry_until.lock().await;
+                *retry_until
+            };
+
+            if let Some(time) = retry_time {
+                if time > now {
+                    let duration = time - now;
+                    tokio::select! {
+                        _ = tokio::time::sleep(duration) => {},
+                        _ = self.notify.notified() => {},
+                    }
+                } else {
+                    let mut retry_until = self.retry_until.lock().await;
+                    *retry_until = None;
+                    return;
+                }
+            } else {
+                return;
             }
         }
     }
 
-    pub(crate) async fn update(&self, retry_after: Duration, global: bool) {
+    pub(crate) async fn update(&self, retry_after: Duration) {
         let mut retry_until = self.retry_until.lock().await;
-        *retry_until = Some(Instant::now() + retry_after);
-
-        let mut is_global = self.is_global.lock().await;
-        *is_global = global;
+        let new_retry_until = Instant::now() + retry_after;
+        *retry_until = Some(new_retry_until);
+        self.notify.notify_waiters();
     }
 }
