@@ -66,4 +66,19 @@ impl<'a> MessageRest<'a> {
             .get::<MessageSearchResult>(&path, Some(query.to_map()))
             .await
     }
+
+    pub async fn pin(&self, channel_id: u64, message_id: u64) -> BoxedResult<()> {
+        let path = format!("channels/{}/pins/{}", channel_id, message_id);
+        self.client.put::<_, ()>(&path, None::<()>).await
+    }
+
+    pub async fn unpin(&self, channel_id: u64, message_id: u64) -> BoxedResult<()> {
+        let path = format!("channels/{}/pins/{}", channel_id, message_id);
+        self.client.delete::<_, ()>(&path, None::<()>).await
+    }
+
+    pub async fn get_pinned_messages(&self, channel_id: u64) -> BoxedResult<Vec<Message>> {
+        let path = format!("channels/{}/pins", channel_id);
+        self.client.get::<Vec<Message>>(&path, None).await
+    }
 }

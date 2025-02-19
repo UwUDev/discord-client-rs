@@ -62,6 +62,28 @@ async fn main() {
 
     client
         .message()
+        .pin(channel_id, response_message.id)
+        .await
+        .unwrap();
+
+    let messages = client
+        .message()
+        .get_pinned_messages(channel_id)
+        .await
+        .unwrap();
+
+    println!("Got {} pinned messages", messages.len());
+
+    client
+        .message()
+        .unpin(channel_id, response_message.id)
+        .await
+        .unwrap();
+
+    tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+
+    client
+        .message()
         .delete(channel_id, response_message.id)
         .await
         .unwrap();
