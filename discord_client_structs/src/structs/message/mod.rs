@@ -30,6 +30,7 @@ pub mod reaction;
 pub mod select;
 pub mod soundboard;
 pub mod sticker;
+pub mod query;
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
 #[builder(setter(into, strip_option), default)]

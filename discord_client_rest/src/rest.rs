@@ -183,8 +183,8 @@ impl RestClient {
         MessageRest { client: self }
     }
 
-    pub async fn get<T: DeserializeOwned + Default + Send>(&self, path: &str) -> BoxedResult<T> {
-        self.request::<T, ()>(Method::GET, path, None).await
+    pub async fn get<T: DeserializeOwned + Default + Send>(&self, path: &str, query: Option<HashMap<String, String>>) -> BoxedResult<T> {
+        self.request::<T, ()>(Method::GET, path, query, None).await
     }
 
     pub async fn post<T, B: Clone>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
@@ -192,7 +192,7 @@ impl RestClient {
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(Method::POST, path, body).await
+        self.request(Method::POST, path, None, body).await
     }
 
     pub async fn put<T, B: Clone>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
@@ -200,7 +200,7 @@ impl RestClient {
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(Method::PUT, path, body).await
+        self.request(Method::PUT, path, None, body).await
     }
 
     pub async fn patch<T, B: Clone>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
@@ -208,7 +208,7 @@ impl RestClient {
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(Method::PATCH, path, body).await
+        self.request(Method::PATCH, path, None, body).await
     }
 
     pub async fn delete<T, B: Clone>(&self, path: &str, body: Option<B>) -> BoxedResult<T>
@@ -216,10 +216,10 @@ impl RestClient {
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(Method::DELETE, path, body).await
+        self.request(Method::DELETE, path, None, body).await
     }
 
-    async fn request<T, B>(&self, method: Method, path: &str, body: Option<B>) -> BoxedResult<T>
+    async fn request<T, B>(&self, method: Method, path: &str, query: Option<HashMap<String, String>>, body: Option<B>) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync + Clone,
@@ -232,7 +232,7 @@ impl RestClient {
 
             let _route_lock = route_limiter.route_mutex.lock().await;
 
-            let result = self.make_request(method.clone(), path, body.clone()).await;
+            let result = self.make_request(method.clone(), path, query.clone(), body.clone()).await;
 
             drop(_route_lock);
 
@@ -280,13 +280,22 @@ impl RestClient {
         &self,
         method: Method,
         path: &str,
+        query: Option<HashMap<String, String>>,
         body: Option<B>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default,
         B: Serialize + Send + Sync,
     {
-        let full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
+        let mut full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
+        if let Some(query) = query {
+            let query_string = query
+                .iter()
+                .map(|(k, v)| format!("{}={}", k, v))
+                .collect::<Vec<String>>()
+                .join("&");
+            full_url.push_str(&format!("?{}", query_string));
+        }
         let mut request = self
             .client
             .request(method, &full_url)
