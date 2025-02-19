@@ -8,8 +8,8 @@ repository = "https://github.com/UwUDev/discord-client-rs"
 # readme = "README.md"
 
 [[example]]
-name = "send_message"
-path = "examples/send_message.rs"
+name = "message"
+path = "examples/message.rs"
 
 [dependencies]
 discord_client_structs = {path = "../discord_client_structs"}

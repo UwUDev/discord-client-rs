@@ -19,6 +19,14 @@ async fn main() {
 
     let channel_id: u64 = 1264989590926921769;
 
+    let messages = client
+        .message()
+        .get_channel_messages(channel_id, Default::default())
+        .await
+        .unwrap();
+
+    println!("Got {} messages", messages.len());
+
     let mut response_message = client.message().send(channel_id, message).await.unwrap();
     println!("Response content: {}", response_message.content.unwrap());
     let id = response_message.id;

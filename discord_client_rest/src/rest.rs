@@ -18,6 +18,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
+use log::warn;
 use tokio::sync::Mutex;
 
 const API_BASE: &str = "https://discord.com/api/";
@@ -163,8 +164,6 @@ impl RestClient {
 
         let application_command_index = resp.json::<ApplicationCommandIndex>().await?;
 
-        // todo: reverse https://discord.com/cdn-cgi/challenge-platform/
-
         Ok(Self {
             token,
             user_id,
@@ -247,12 +246,12 @@ impl RestClient {
                         } else {
                             route_limiter.update(rate_limit_error.retry_after).await;
                         }
-                        println!(
+                        warn!(
                             "Rate limited [{}]! Retrying after {:.2} seconds",
                             if rate_limit_error.global {
                                 "global"
                             } else {
-                                "route"
+                                path
                             },
                             rate_limit_error.retry_after.as_secs_f64()
                         );
