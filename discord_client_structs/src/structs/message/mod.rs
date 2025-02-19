@@ -44,6 +44,10 @@ pub struct Message {
     #[builder(default)]
     #[serde(skip_serializing)]
     pub channel_id: u64,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    pub guild_id: Option<u64>,
     #[builder(default)]
     #[serde(skip_serializing)]
     pub author: User,
@@ -130,6 +134,7 @@ pub struct MessageReference {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[builder(setter(strip_option = "false"))]
     pub guild_id: Option<u64>,
     pub forward_only: Option<MessageForwardOnly>,
 }

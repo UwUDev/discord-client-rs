@@ -3,7 +3,10 @@
 members = [
     "discord_client_gateway",
     "discord_client_rest",
-    "discord_client_structs"
+    "discord_client_structs",
+
+    # Examples
+    "examples/feur_bot"
 ]
 
 resolver = "3"

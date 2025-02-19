@@ -521,6 +521,7 @@ dependencies = [
 name = "discord_client_structs"
 version = "0.1.0"
 dependencies = [
+ "base64",
  "chrono",
  "derive_builder",
  "serde",
@@ -580,6 +581,16 @@ name = "equivalent"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
+
+[[package]]
+name = "feur_bot"
+version = "0.1.0"
+dependencies = [
+ "discord_client_gateway",
+ "discord_client_rest",
+ "discord_client_structs",
+ "tokio",
+]
 
 [[package]]
 name = "flate2"
