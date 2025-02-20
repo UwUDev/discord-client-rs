@@ -59,9 +59,11 @@ async fn main() {
                         .build()
                         .unwrap();
 
+                    let guild_id = message_create.message.guild_id;
+
                     rest_client
                         .message()
-                        .send(message_create.message.channel_id, message)
+                        .send(message_create.message.channel_id, guild_id, message)
                         .await
                         .unwrap();
                 }

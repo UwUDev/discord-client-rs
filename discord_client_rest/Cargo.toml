@@ -11,6 +11,10 @@ repository = "https://github.com/UwUDev/discord-client-rs"
 name = "message"
 path = "examples/message.rs"
 
+[[example]]
+name = "channel"
+path = "examples/channel.rs"
+
 [dependencies]
 discord_client_structs = {path = "../discord_client_structs"}
 rquest = { workspace = true, features = ["gzip", "deflate", "zstd", "brotli", "json", "cookies"] }

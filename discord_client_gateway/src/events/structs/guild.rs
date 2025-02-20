@@ -7,10 +7,11 @@ use discord_client_structs::deserializer::deserialize_string_to_vec_u64;
 use discord_client_structs::structs::channel::UpdatedChannel;
 use discord_client_structs::structs::channel::voice::VoiceState;
 use discord_client_structs::structs::guild::{
-    AuditLogEntry, GatewayGuild, Guild, UnavailableGuild,
+    GatewayGuild, Guild, UnavailableGuild,
 };
 use discord_client_structs::structs::user::{AvatarDecorationData, Member, User};
 use serde::Deserialize;
+use discord_client_structs::structs::guild::log::AuditLogEntry;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct PassiveUpdateV2Event {

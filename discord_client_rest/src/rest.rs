@@ -1,3 +1,4 @@
+use crate::api::channel::ChannelRest;
 use crate::api::message::MessageRest;
 use crate::build_number::fetch_build_number;
 use crate::clearance::{get_clearance_cookie, get_invisible};
@@ -187,6 +188,10 @@ impl RestClient {
 
     pub fn message(&self) -> MessageRest {
         MessageRest { client: self }
+    }
+
+    pub fn channel(&self) -> ChannelRest {
+        ChannelRest { client: self }
     }
 
     pub async fn get<T: DeserializeOwned + Default + Send>(
@@ -458,7 +463,7 @@ impl RestClient {
                 Referer::Guild(referer) => {
                     headers.insert(
                         "Referer",
-                        format!("https://discord.com/channels/{}/", referer.guild_id)
+                        format!("https://discord.com/channels/{}", referer.guild_id)
                             .parse()
                             .map_err(|e| Box::new(e) as BoxedError)?,
                     );

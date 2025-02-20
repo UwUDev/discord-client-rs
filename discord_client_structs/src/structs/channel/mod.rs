@@ -7,6 +7,7 @@ use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 
+pub mod invite;
 pub mod overrides;
 pub mod summary;
 pub mod thread;
