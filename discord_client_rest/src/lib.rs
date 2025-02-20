@@ -1,9 +1,10 @@
 use std::error::Error;
-mod api;
-mod build_number;
-mod clearance;
+pub mod api;
+pub mod build_number;
+pub mod clearance;
 pub mod rate_limit;
 pub mod rest;
+pub mod structs;
 pub mod super_prop;
 
 type BoxedError = Box<dyn Error + Send + Sync>;

@@ -23,7 +23,7 @@ async fn main() {
 
     let messages = client
         .message()
-        .get_channel_messages(channel_id, Default::default())
+        .get_channel_messages(channel_id, Some(guild_id), Default::default())
         .await
         .unwrap();
 
@@ -42,7 +42,11 @@ async fn main() {
 
     println!("Got {} messages from you", search_result.messages.len());
 
-    let mut response_message = client.message().send(channel_id, message).await.unwrap();
+    let mut response_message = client
+        .message()
+        .send(channel_id, Some(guild_id), message)
+        .await
+        .unwrap();
     println!("Response content: {}", response_message.content.unwrap());
     let id = response_message.id;
 
@@ -52,7 +56,7 @@ async fn main() {
 
     response_message = client
         .message()
-        .edit(channel_id, id, response_message)
+        .edit(channel_id, id, Some(guild_id), response_message)
         .await
         .unwrap();
 
@@ -60,13 +64,13 @@ async fn main() {
 
     client
         .message()
-        .pin(channel_id, response_message.id)
+        .pin(channel_id, response_message.id, Some(guild_id))
         .await
         .unwrap();
 
     let messages = client
         .message()
-        .get_pinned_messages(channel_id)
+        .get_pinned_messages(channel_id, Some(guild_id))
         .await
         .unwrap();
 
@@ -74,7 +78,7 @@ async fn main() {
 
     client
         .message()
-        .unpin(channel_id, response_message.id)
+        .unpin(channel_id, response_message.id, Some(guild_id))
         .await
         .unwrap();
 
@@ -82,7 +86,7 @@ async fn main() {
 
     client
         .message()
-        .delete(channel_id, response_message.id)
+        .delete(channel_id, response_message.id, Some(guild_id))
         .await
         .unwrap();
 }
