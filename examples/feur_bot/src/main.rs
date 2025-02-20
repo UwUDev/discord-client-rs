@@ -6,14 +6,13 @@ use discord_client_structs::structs::message::MessageReferenceBuilder;
 
 #[tokio::main]
 async fn main() {
-    let build_number = 369195;
     let token = std::fs::read_to_string("token.txt").unwrap();
 
-    let mut gateway_client = GatewayClient::connect(token.clone(), 53607934, 369195)
+    let rest_client = RestClient::connect(token.clone(), None, None)
         .await
         .unwrap();
 
-    let rest_client = RestClient::connect(token, None, build_number)
+    let mut gateway_client = GatewayClient::connect(token, 53607934, rest_client.build_number)
         .await
         .unwrap();
 

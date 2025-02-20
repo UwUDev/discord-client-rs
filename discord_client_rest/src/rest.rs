@@ -1,4 +1,5 @@
 use crate::api::message::MessageRest;
+use crate::build_number::fetch_build_number;
 use crate::clearance::{get_clearance_cookie, get_invisible};
 use crate::rate_limit::{RateLimitError, RateLimiter};
 use crate::super_prop::build_super_props;
@@ -40,9 +41,14 @@ impl RestClient {
     pub async fn connect(
         token: String,
         custom_api_version: Option<u8>,
-        build_number: u32,
+        custom_build_number: Option<u32>,
     ) -> BoxedResult<Self> {
         let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
+
+        let build_number = match custom_build_number {
+            None => fetch_build_number().await?,
+            Some(build_num) => build_num,
+        };
 
         let imp = Impersonate::builder()
             .impersonate_os(Windows)

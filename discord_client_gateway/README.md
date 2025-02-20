@@ -35,6 +35,7 @@ discord_client_gateway = "0.1.0"
 let token = "CLIENT_TOKEN".to_string();
 let capabilities = 53607934; // Best if you want to receive all events
 let client_build_nubmer = 369195; // You should always use the latest build number
+// you can also fetch the build number from the crate `discord_client_rest`
 
 let mut client = GatewayClient::connect(token, capabilities, client_build_nubmer)
     .await

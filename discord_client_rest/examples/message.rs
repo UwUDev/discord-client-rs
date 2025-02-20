@@ -6,11 +6,9 @@ use discord_client_structs::structs::message::query::MessageSearchQueryBuilder;
 async fn main() {
     pretty_env_logger::init();
 
-    let build_num = 369195;
-
     let token = std::fs::read_to_string("token.txt").unwrap();
 
-    let client = RestClient::connect(token, None, build_num).await.unwrap();
+    let client = RestClient::connect(token, None, None).await.unwrap();
 
     println!("API Version: {}", client.api_version);
 
