@@ -18,6 +18,7 @@ use crate::structs::misc::{Emoji, Potion};
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
+use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 
 pub mod attachment;
@@ -32,7 +33,7 @@ pub mod select;
 pub mod soundboard;
 pub mod sticker;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct Message {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

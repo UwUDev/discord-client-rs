@@ -1,6 +1,5 @@
 use discord_client_gateway::events::Event;
 use discord_client_gateway::gateway::GatewayClient;
-use std::process::exit;
 
 #[tokio::main]
 async fn main() {
@@ -39,10 +38,9 @@ async fn main() {
     loop {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
-        if let Event::Unknown(unknown) = event {
-            if unknown.r#type == "USER_SETTINGS_PROTO_UPDATE" {
-                exit(0);
-            }
+        if let Event::MessageCreate(message_event) = event {
+            let created = message_event.message.created_at();
+            println!("{:?}", created)
         }
     }
 }

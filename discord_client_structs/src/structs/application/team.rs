@@ -2,9 +2,10 @@ use crate::deserializer::deserialize_string_to_u64;
 use crate::serializer::serialize_u64_as_string;
 use crate::structs::user::User;
 use derive_builder::Builder;
+use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct Team {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -31,7 +32,7 @@ pub struct TeamMember {
     pub role: String,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct Company {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

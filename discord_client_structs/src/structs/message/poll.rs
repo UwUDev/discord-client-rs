@@ -3,6 +3,7 @@ use crate::serializer::*;
 use crate::structs::misc::Emoji;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
+use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
@@ -40,7 +41,7 @@ pub struct PollResults {
     pub answer_counts: Vec<PollAnswerCount>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct PollAnswerCount {
     pub id: u64,

@@ -1,6 +1,7 @@
 use discord_client_structs::deserializer::deserialize_map_of_u64_string;
 use discord_client_structs::structs::channel::Channel;
 use discord_client_structs::structs::gateway::GatewayApplication;
+use discord_client_structs::structs::guild::clan::GuildJoinRequest;
 use discord_client_structs::structs::guild::experiment::GuildExperiment;
 use discord_client_structs::structs::guild::user::UserGuildSettings;
 use discord_client_structs::structs::guild::{GatewayGuild, SupplementalGuild};
@@ -13,7 +14,6 @@ use discord_client_structs::structs::user::session::Session;
 use discord_client_structs::structs::user::{Member, User};
 use serde::Deserialize;
 use std::collections::HashMap;
-use discord_client_structs::structs::guild::clan::GuildJoinRequest;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct ReadyEvent {

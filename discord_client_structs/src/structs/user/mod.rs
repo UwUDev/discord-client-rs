@@ -2,6 +2,7 @@ use crate::deserializer::*;
 use crate::serializer::*;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
+use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 
 pub mod activity;
@@ -11,7 +12,7 @@ pub mod presence;
 pub mod relationship;
 pub mod session;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct User {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

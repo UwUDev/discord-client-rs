@@ -12,6 +12,7 @@ use crate::structs::misc::Emoji;
 use crate::structs::user::Member;
 use crate::structs::user::presence::Presence;
 use derive_builder::Builder;
+use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 
 pub mod activity;
@@ -24,7 +25,7 @@ pub mod role;
 pub mod stage;
 pub mod user;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct GatewayGuild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -78,7 +79,7 @@ pub struct EntityMetadata {
     pub location: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct Guild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -159,7 +160,7 @@ pub struct Guild {
     pub clan: Option<Clan>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct UnavailableGuild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -169,7 +170,7 @@ pub struct UnavailableGuild {
     pub geo_restricted: Option<bool>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct SupplementalGuild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

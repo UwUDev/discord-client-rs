@@ -2,10 +2,11 @@ use crate::deserializer::*;
 use crate::serializer::*;
 use crate::structs::user::User;
 use derive_builder::Builder;
+use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct MessageInteraction {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -16,7 +17,7 @@ pub struct MessageInteraction {
     pub user: User,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct MessageInteractionMetadata {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

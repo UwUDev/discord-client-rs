@@ -4,9 +4,10 @@ use crate::structs::application::IntegrationApplication;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
+use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct Attachment {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

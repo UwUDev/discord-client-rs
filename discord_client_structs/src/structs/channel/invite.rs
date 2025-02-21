@@ -46,7 +46,7 @@ pub struct InviteStageInstance {
     pub topic: String,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct InviteGuild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

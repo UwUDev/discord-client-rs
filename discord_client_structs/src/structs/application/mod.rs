@@ -4,11 +4,12 @@ use crate::structs::application::team::{Company, Team};
 use crate::structs::user::User;
 use crate::structs::user::activity::EmbeddedActivityConfig;
 use derive_builder::Builder;
+use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 
 pub mod team;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct IntegrationApplication {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -127,7 +128,7 @@ pub struct ApplicationCommandIndex {
     pub version: u64,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct Application {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -144,7 +145,7 @@ pub struct Application {
     pub flags: u64,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct ApplicationCommand {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

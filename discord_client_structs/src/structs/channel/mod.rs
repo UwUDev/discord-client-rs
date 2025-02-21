@@ -5,6 +5,7 @@ use crate::structs::permission::Overwrite;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
+use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 
 pub mod invite;
@@ -13,7 +14,7 @@ pub mod summary;
 pub mod thread;
 pub mod voice;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct Channel {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -76,7 +77,7 @@ pub struct Channel {
     pub default_forum_layout: Option<u8>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct PartialChannel {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -92,7 +93,7 @@ pub struct PartialChannel {
     pub guild_id: Option<u64>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct UpdatedChannel {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

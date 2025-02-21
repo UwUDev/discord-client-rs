@@ -11,14 +11,15 @@ pub fn derive_created_at(input: TokenStream) -> TokenStream {
 
     let id_field = match &input.data {
         Data::Struct(data) => match &data.fields {
-            Fields::Named(fields) => fields.named.iter()
+            Fields::Named(fields) => fields
+                .named
+                .iter()
                 .find(|f| f.ident.as_ref().map_or(false, |i| i == "id"))
                 .map(|f| &f.ty),
             _ => None,
         },
         _ => None,
     };
-
 
     let output = match id_field {
         Some(ty) => {
@@ -37,8 +38,11 @@ pub fn derive_created_at(input: TokenStream) -> TokenStream {
                 }
             }
         }
-        None => syn::Error::new(struct_name.span(), "Struct must have field 'id' of type u64")
-            .to_compile_error(),
+        None => syn::Error::new(
+            struct_name.span(),
+            "Struct must have field 'id' of type u64",
+        )
+        .to_compile_error(),
     };
 
     output.into()

@@ -3,7 +3,9 @@ use crate::serializer::*;
 use crate::structs::user::Member;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
+use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
+
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
 #[builder(setter(into, strip_option), default)]
 pub struct ThreadMember {
@@ -38,7 +40,7 @@ pub struct ThreadMetadata {
     pub create_timestamp: Option<DateTime<Utc>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct Tag {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

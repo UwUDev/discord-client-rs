@@ -1,9 +1,12 @@
 use crate::structs::user::User;
+use crate::structs::user::deserialize_string_to_u64;
+use discord_client_macros::CreatedAt;
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, CreatedAt)]
 pub struct Relationship {
-    pub id: String,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
     r#type: u8,
     pub user: Option<User>,
     pub nickname: Option<String>,
@@ -14,9 +17,10 @@ pub struct Relationship {
     pub since: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, CreatedAt)]
 pub struct GameRelationship {
-    pub id: String,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
     pub application_id: String,
     r#type: u8,
     pub user: Option<User>,
