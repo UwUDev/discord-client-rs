@@ -502,6 +502,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "discord_client_macros"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "darling",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "discord_client_rest"
 version = "0.1.0"
 dependencies = [
@@ -525,6 +536,7 @@ dependencies = [
  "base64",
  "chrono",
  "derive_builder",
+ "discord_client_macros",
  "serde",
  "serde_json",
  "strum_macros",

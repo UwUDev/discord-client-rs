@@ -2,6 +2,7 @@
 
 members = [
     "discord_client_gateway",
+    "discord_client_macros",
     "discord_client_rest",
     "discord_client_structs",
 
