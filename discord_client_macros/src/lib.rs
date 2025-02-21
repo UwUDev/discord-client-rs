@@ -29,12 +29,10 @@ pub fn derive_created_at(input: TokenStream) -> TokenStream {
             }
 
             quote! {
-                use chrono::TimeZone;
-
                 impl #struct_name {
                     pub fn created_at(&self) -> Option<chrono::DateTime<chrono::Utc>> {
                         let timestamp = (self.id >> 22) + 1420070400000;
-                        chrono::Utc.timestamp_millis_opt(timestamp as i64).single()
+                        <chrono::Utc as chrono::TimeZone>::timestamp_millis_opt(&chrono::Utc, timestamp as i64).single()
                     }
                 }
             }
