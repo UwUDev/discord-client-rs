@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use discord_client_gateway::events::Event;
 use discord_client_gateway::gateway::GatewayClient;
 
@@ -31,16 +32,17 @@ async fn main() {
         client.auth_session_id_hash.clone()
     );
 
-    // todo: GUILD_INTEGRATIONS_UPDATE
-    // todo: INTEGRATIONS_UPDATE
-    // todo: MESSAGE_DELETE_BULK
-
     loop {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
         if let Event::MessageCreate(message_event) = event {
-            let created = message_event.message.created_at();
-            println!("{:?}", created)
+            let current_time = Utc::now();
+            let created: Option<DateTime<Utc>> = message_event.message.created_at();
+            if let Some(created) = created {
+                let humanized = created.format("%Y-%m-%d %H:%M:%S").to_string();
+                let elapsed = current_time.signed_duration_since(created);
+                println!("Message created at: {} ({} ms ago)", humanized, elapsed.num_milliseconds());
+            }
         }
     }
 }
