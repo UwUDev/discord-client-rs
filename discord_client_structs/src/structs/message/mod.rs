@@ -161,7 +161,7 @@ pub struct MessageSnapshot {
     pub edited_timestamp: Option<DateTime<Utc>>,
     #[serde(default)]
     pub mentions: Option<Vec<User>>,
-    #[serde(deserialize_with = "deserialize_string_to_vec_u64")]
+    #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
     #[serde(serialize_with = "serialize_option_vec_u64_as_string")]
     pub mention_roles: Option<Vec<u64>>,
