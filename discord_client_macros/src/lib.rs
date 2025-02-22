@@ -1,7 +1,6 @@
 use quote::quote;
 use syn::{Data, DeriveInput, Fields, parse_macro_input};
 
-// discord_client_macros/src/lib.rs
 use proc_macro::TokenStream;
 
 #[proc_macro_derive(CreatedAt)]

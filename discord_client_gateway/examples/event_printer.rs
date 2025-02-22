@@ -41,7 +41,11 @@ async fn main() {
             if let Some(created) = created {
                 let humanized = created.format("%Y-%m-%d %H:%M:%S").to_string();
                 let elapsed = current_time.signed_duration_since(created);
-                println!("Message created at: {} ({} ms ago)", humanized, elapsed.num_milliseconds());
+                println!(
+                    "Message created at: {} ({} ms ago)",
+                    humanized,
+                    elapsed.num_milliseconds()
+                );
             }
         }
     }

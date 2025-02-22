@@ -27,7 +27,7 @@ impl<'a> MessageRest<'a> {
             None => DmChannelReferer { channel_id }.into(),
         };
         self.client
-            .post::<Message, Message>(&path, Some(message), Some(referer.into()))
+            .post::<Message, Message>(&path, Some(message), Some(referer.into()), None)
             .await
     }
 
@@ -48,7 +48,7 @@ impl<'a> MessageRest<'a> {
             None => DmChannelReferer { channel_id }.into(),
         };
         self.client
-            .patch::<Message, Message>(&path, Some(message), Some(referer.into()))
+            .patch::<Message, Message>(&path, Some(message), Some(referer.into()), None)
             .await
     }
 
@@ -68,7 +68,7 @@ impl<'a> MessageRest<'a> {
             None => DmChannelReferer { channel_id }.into(),
         };
         self.client
-            .delete::<_, ()>(&path, None::<()>, Some(referer.into()))
+            .delete::<_, ()>(&path, None::<()>, Some(referer.into()), None)
             .await
     }
 
@@ -88,7 +88,7 @@ impl<'a> MessageRest<'a> {
             None => DmChannelReferer { channel_id }.into(),
         };
         self.client
-            .get::<Vec<Message>>(&path, Some(query.to_map()), Some(referer.into()))
+            .get::<Vec<Message>>(&path, Some(query.to_map()), Some(referer.into()), None)
             .await
     }
 
@@ -100,7 +100,7 @@ impl<'a> MessageRest<'a> {
         let path = format!("channels/{}/messages/search", channel_id);
         let referer = DmChannelReferer { channel_id };
         self.client
-            .get::<MessageSearchResult>(&path, Some(query.to_map()), Some(referer.into()))
+            .get::<MessageSearchResult>(&path, Some(query.to_map()), Some(referer.into()), None)
             .await
     }
 
@@ -112,7 +112,7 @@ impl<'a> MessageRest<'a> {
         let path = format!("guilds/{}/messages/search", guild_id);
         let referer = GuildReferer { guild_id };
         self.client
-            .get::<MessageSearchResult>(&path, Some(query.to_map()), Some(referer.into()))
+            .get::<MessageSearchResult>(&path, Some(query.to_map()), Some(referer.into()), None)
             .await
     }
 
@@ -132,7 +132,7 @@ impl<'a> MessageRest<'a> {
             None => DmChannelReferer { channel_id }.into(),
         };
         self.client
-            .put::<_, ()>(&path, None::<()>, Some(referer.into()))
+            .put::<_, ()>(&path, None::<()>, Some(referer.into()), None)
             .await
     }
 
@@ -152,7 +152,7 @@ impl<'a> MessageRest<'a> {
             None => DmChannelReferer { channel_id }.into(),
         };
         self.client
-            .delete::<_, ()>(&path, None::<()>, Some(referer.into()))
+            .delete::<_, ()>(&path, None::<()>, Some(referer.into()), None)
             .await
     }
 
@@ -171,7 +171,7 @@ impl<'a> MessageRest<'a> {
             None => DmChannelReferer { channel_id }.into(),
         };
         self.client
-            .get::<Vec<Message>>(&path, None, Some(referer.into()))
+            .get::<Vec<Message>>(&path, None, Some(referer.into()), None)
             .await
     }
 }

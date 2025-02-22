@@ -1,3 +1,8 @@
+// todo: trait ContextHeader
+
+#[derive(Debug, Clone)]
+pub struct HomePageReferer;
+
 #[derive(Debug, Clone)]
 pub struct GuildChannelReferer {
     pub guild_id: u64,
@@ -12,6 +17,12 @@ pub struct DmChannelReferer {
 #[derive(Debug, Clone)]
 pub struct GuildReferer {
     pub guild_id: u64,
+}
+
+impl From<HomePageReferer> for Referer {
+    fn from(referer: HomePageReferer) -> Self {
+        Referer::HomePage(referer)
+    }
 }
 
 impl From<GuildChannelReferer> for Referer {
@@ -34,6 +45,7 @@ impl From<GuildReferer> for Referer {
 
 #[derive(Debug, Clone)]
 pub enum Referer {
+    HomePage(HomePageReferer),
     GuildChannel(GuildChannelReferer),
     DmChannel(DmChannelReferer),
     Guild(GuildReferer),

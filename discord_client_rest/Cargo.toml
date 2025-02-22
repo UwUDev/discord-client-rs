@@ -15,6 +15,14 @@ path = "examples/message.rs"
 name = "channel"
 path = "examples/channel.rs"
 
+[[example]]
+name = "dm"
+path = "examples/dm.rs"
+
+[[example]]
+name = "group"
+path = "examples/group.rs"
+
 [dependencies]
 discord_client_structs = {path = "../discord_client_structs"}
 rquest = { workspace = true, features = ["gzip", "deflate", "zstd", "brotli", "json", "cookies"] }

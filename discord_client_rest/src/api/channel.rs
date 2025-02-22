@@ -17,7 +17,7 @@ impl<'a> ChannelRest<'a> {
         let path = format!("guilds/{}/channels", guild_id);
         let referer = GuildReferer { guild_id };
         self.client
-            .post::<Channel, Channel>(&path, Some(channel), Some(referer.into()))
+            .post::<Channel, Channel>(&path, Some(channel), Some(referer.into()), None)
             .await
     }
 
@@ -32,7 +32,7 @@ impl<'a> ChannelRest<'a> {
             channel_id: channel.id,
         };
         self.client
-            .patch::<Channel, Channel>(&path, Some(channel), Some(referer.into()))
+            .patch::<Channel, Channel>(&path, Some(channel), Some(referer.into()), None)
             .await
     }
 
@@ -43,7 +43,7 @@ impl<'a> ChannelRest<'a> {
             channel_id,
         };
         self.client
-            .delete::<_, Channel>(&path, None::<Channel>, Some(referer.into()))
+            .delete::<_, Channel>(&path, None::<Channel>, Some(referer.into()), None)
             .await
     }
 
@@ -63,6 +63,7 @@ impl<'a> ChannelRest<'a> {
                 &path,
                 Some(create_channel_invite),
                 Some(referer.into()),
+                None,
             )
             .await
     }
@@ -74,7 +75,7 @@ impl<'a> ChannelRest<'a> {
             channel_id,
         };
         self.client
-            .get::<Vec<Invite>>(&path, None, Some(referer.into()))
+            .get::<Vec<Invite>>(&path, None, Some(referer.into()), None)
             .await
     }
 }

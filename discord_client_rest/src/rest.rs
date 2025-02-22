@@ -1,8 +1,11 @@
 use crate::api::channel::ChannelRest;
+use crate::api::dm::DmRest;
+use crate::api::group::GroupRest;
 use crate::api::message::MessageRest;
 use crate::build_number::fetch_build_number;
 use crate::clearance::{get_clearance_cookie, get_invisible};
 use crate::rate_limit::{RateLimitError, RateLimiter};
+use crate::structs::context::{Context, ContextHeader};
 use crate::structs::referer::Referer;
 use crate::super_prop::build_super_props;
 use crate::{BoxedError, BoxedResult};
@@ -194,13 +197,22 @@ impl RestClient {
         ChannelRest { client: self }
     }
 
+    pub fn dm(&self) -> DmRest {
+        DmRest { client: self }
+    }
+
+    pub fn group(&self) -> GroupRest {
+        GroupRest { client: self }
+    }
+
     pub async fn get<T: DeserializeOwned + Default + Send>(
         &self,
         path: &str,
         query: Option<HashMap<String, String>>,
         referer: Option<Referer>,
+        context: Option<Context>,
     ) -> BoxedResult<T> {
-        self.request::<T, ()>(Method::GET, path, query, None, referer)
+        self.request::<T, ()>(Method::GET, path, query, None, referer, context)
             .await
     }
 
@@ -209,12 +221,14 @@ impl RestClient {
         path: &str,
         body: Option<B>,
         referer: Option<Referer>,
+        context: Option<Context>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(Method::POST, path, None, body, referer).await
+        self.request(Method::POST, path, None, body, referer, context)
+            .await
     }
 
     pub async fn put<T, B: Clone>(
@@ -222,12 +236,14 @@ impl RestClient {
         path: &str,
         body: Option<B>,
         referer: Option<Referer>,
+        context: Option<Context>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(Method::PUT, path, None, body, referer).await
+        self.request(Method::PUT, path, None, body, referer, context)
+            .await
     }
 
     pub async fn patch<T, B: Clone>(
@@ -235,12 +251,14 @@ impl RestClient {
         path: &str,
         body: Option<B>,
         referer: Option<Referer>,
+        context: Option<Context>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(Method::PATCH, path, None, body, referer).await
+        self.request(Method::PATCH, path, None, body, referer, context)
+            .await
     }
 
     pub async fn delete<T, B: Clone>(
@@ -248,12 +266,13 @@ impl RestClient {
         path: &str,
         body: Option<B>,
         referer: Option<Referer>,
+        context: Option<Context>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(Method::DELETE, path, None, body, referer)
+        self.request(Method::DELETE, path, None, body, referer, context)
             .await
     }
 
@@ -264,6 +283,7 @@ impl RestClient {
         query: Option<HashMap<String, String>>,
         body: Option<B>,
         referer: Option<Referer>,
+        context: Option<Context>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
@@ -284,6 +304,7 @@ impl RestClient {
                     query.clone(),
                     body.clone(),
                     referer.clone(),
+                    context.clone(),
                 )
                 .await;
 
@@ -336,6 +357,7 @@ impl RestClient {
         query: Option<HashMap<String, String>>,
         body: Option<B>,
         referer: Option<Referer>,
+        context: Option<Context>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default,
@@ -353,7 +375,7 @@ impl RestClient {
         let mut request = self
             .client
             .request(method, &full_url)
-            .headers(self.build_headers(referer)?);
+            .headers(self.build_headers(referer, context)?);
 
         if let Some(body_data) = body {
             request = request
@@ -405,7 +427,11 @@ impl RestClient {
         }
     }
 
-    fn build_headers(&self, referer: Option<Referer>) -> BoxedResult<HeaderMap> {
+    fn build_headers(
+        &self,
+        referer: Option<Referer>,
+        context: Option<Context>,
+    ) -> BoxedResult<HeaderMap> {
         let mut headers = HeaderMap::new();
 
         headers.insert(
@@ -414,26 +440,26 @@ impl RestClient {
         );
 
         headers.insert(
-            "x-debug-options",
+            "X-Debug-Options",
             "bugReporterEnabled"
                 .parse()
                 .map_err(|e| Box::new(e) as BoxedError)?,
         );
 
         headers.insert(
-            "x-discord-locale",
+            "X-Discord-Locale",
             self.locale.parse().map_err(|e| Box::new(e) as BoxedError)?,
         );
 
         headers.insert(
-            "x-discord-timezone",
+            "X-Discord-Timezone",
             self.timezone
                 .parse()
                 .map_err(|e| Box::new(e) as BoxedError)?,
         );
 
         headers.insert(
-            "x-super-properties",
+            "X-Super-Properties",
             build_super_props(self.build_number)
                 .parse()
                 .map_err(|e| Box::new(e) as BoxedError)?,
@@ -468,7 +494,25 @@ impl RestClient {
                             .map_err(|e| Box::new(e) as BoxedError)?,
                     );
                 }
+                Referer::HomePage(_) => {
+                    headers.insert(
+                        "Referer",
+                        "https://discord.com/channels/@me"
+                            .parse()
+                            .map_err(|e| Box::new(e) as BoxedError)?,
+                    );
+                }
             }
+        }
+
+        if let Some(context) = context {
+            headers.insert(
+                "X-Context-Properties",
+                context
+                    .get_header_value()
+                    .parse()
+                    .map_err(|e| Box::new(e) as BoxedError)?,
+            );
         }
 
         Ok(headers)
