@@ -1,5 +1,5 @@
 use crate::BoxedResult;
-use crate::rest::RestClient;
+use crate::rest::{RequestPropertiesBuilder, RestClient};
 use crate::structs::context::Context::NoContext;
 use crate::structs::referer::{HomePageReferer, Referer};
 use discord_client_structs::structs::channel::Channel;
@@ -26,14 +26,13 @@ impl<'a> DmRest<'a> {
 
         let context = NoContext;
 
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .context(context)
+            .build()?;
+
         self.client
-            .post::<Channel, Value>(
-                &path,
-                Some(payload),
-                Some(referer.into()),
-                Some(context),
-                None,
-            )
+            .post::<Channel, Value>(&path, Some(payload), Some(props))
             .await
     }
 
@@ -42,8 +41,12 @@ impl<'a> DmRest<'a> {
 
         let referer = HomePageReferer;
 
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .get::<Vec<Channel>>(&path, None, Some(referer.into()), None, None)
+            .get::<Vec<Channel>>(&path, None, Some(props))
             .await
     }
 

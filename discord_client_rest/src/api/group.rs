@@ -1,7 +1,7 @@
 use crate::BoxedResult;
-use crate::rest::RestClient;
+use crate::rest::{RequestPropertiesBuilder, RestClient};
 use crate::structs::context::Context::NewGroupDmContext;
-use crate::structs::referer::{DmChannelReferer, HomePageReferer};
+use crate::structs::referer::{DmChannelReferer, HomePageReferer, Referer};
 use discord_client_structs::structs::channel::Channel;
 use serde_json::{Value, json};
 
@@ -21,14 +21,13 @@ impl<'a> GroupRest<'a> {
 
         let referer = HomePageReferer;
 
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .context(context)
+            .build()?;
+
         self.client
-            .post::<Channel, Value>(
-                &path,
-                Some(payload),
-                Some(referer.into()),
-                Some(context),
-                None,
-            )
+            .post::<Channel, Value>(&path, Some(payload), Some(props))
             .await
     }
 
@@ -37,8 +36,12 @@ impl<'a> GroupRest<'a> {
 
         let referer = DmChannelReferer { channel_id };
 
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .put::<_, _>(&path, None::<&()>, Some(referer.into()), None, None)
+            .put::<_, _>(&path, None::<&()>, Some(props))
             .await
     }
 
@@ -47,8 +50,12 @@ impl<'a> GroupRest<'a> {
 
         let referer = DmChannelReferer { channel_id };
 
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .delete::<_, _>(&path, None::<&()>, Some(referer.into()), None, None)
+            .delete::<_, _>(&path, None::<&()>, Some(props))
             .await
     }
 
@@ -65,8 +72,12 @@ impl<'a> GroupRest<'a> {
           "owner": user_id.to_string(),
         });
 
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .put::<Channel, _>(&path, Some(payload), Some(referer.into()), None, None)
+            .put::<Channel, _>(&path, Some(payload), Some(props))
             .await
     }
 
@@ -79,8 +90,12 @@ impl<'a> GroupRest<'a> {
           "name": name,
         });
 
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .patch::<Channel, _>(&path, Some(payload), Some(referer.into()), None, None)
+            .patch::<Channel, _>(&path, Some(payload), Some(props))
             .await
     }
 
@@ -91,8 +106,12 @@ impl<'a> GroupRest<'a> {
 
         let referer = DmChannelReferer { channel_id };
 
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .delete::<Channel, _>(&path, None::<&()>, Some(referer.into()), None, None)
+            .delete::<Channel, _>(&path, None::<&()>, Some(props))
             .await
     }
 }

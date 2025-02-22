@@ -11,6 +11,7 @@ use crate::structs::referer::{Referer, RefererHeader};
 use crate::super_prop::build_super_props;
 use crate::{BoxedError, BoxedResult};
 use current_locale::current_locale;
+use derive_builder::Builder;
 use discord_client_structs::parser::parse_id_from_token;
 use discord_client_structs::structs::application::ApplicationCommandIndex;
 use iana_time_zone::get_timezone;
@@ -210,116 +211,66 @@ impl RestClient {
         &self,
         path: &str,
         query: Option<HashMap<String, String>>,
-        referer: Option<Referer>,
-        context: Option<Context>,
-        solved_captcha: Option<SolvedCaptcha>,
+        req_properties: Option<RequestProperties>,
     ) -> BoxedResult<T> {
-        self.request::<T, ()>(
-            Method::GET,
-            path,
-            query,
-            None,
-            referer,
-            context,
-            solved_captcha,
-        )
-        .await
+        self.request::<T, ()>(Method::GET, path, query, None, req_properties)
+            .await
     }
 
     pub async fn post<T, B: Clone>(
         &self,
         path: &str,
         body: Option<B>,
-        referer: Option<Referer>,
-        context: Option<Context>,
-        solved_captcha: Option<SolvedCaptcha>,
+        req_properties: Option<RequestProperties>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(
-            Method::POST,
-            path,
-            None,
-            body,
-            referer,
-            context,
-            solved_captcha,
-        )
-        .await
+        self.request(Method::POST, path, None, body, req_properties)
+            .await
     }
 
     pub async fn put<T, B: Clone>(
         &self,
         path: &str,
         body: Option<B>,
-        referer: Option<Referer>,
-        context: Option<Context>,
-        solved_captcha: Option<SolvedCaptcha>,
+        req_properties: Option<RequestProperties>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(
-            Method::PUT,
-            path,
-            None,
-            body,
-            referer,
-            context,
-            solved_captcha,
-        )
-        .await
+        self.request(Method::PUT, path, None, body, req_properties)
+            .await
     }
 
     pub async fn patch<T, B: Clone>(
         &self,
         path: &str,
         body: Option<B>,
-        referer: Option<Referer>,
-        context: Option<Context>,
-        solved_captcha: Option<SolvedCaptcha>,
+        req_properties: Option<RequestProperties>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(
-            Method::PATCH,
-            path,
-            None,
-            body,
-            referer,
-            context,
-            solved_captcha,
-        )
-        .await
+        self.request(Method::PATCH, path, None, body, req_properties)
+            .await
     }
 
     pub async fn delete<T, B: Clone>(
         &self,
         path: &str,
         body: Option<B>,
-        referer: Option<Referer>,
-        context: Option<Context>,
-        solved_captcha: Option<SolvedCaptcha>,
+        req_properties: Option<RequestProperties>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(
-            Method::DELETE,
-            path,
-            None,
-            body,
-            referer,
-            context,
-            solved_captcha,
-        )
-        .await
+        self.request(Method::DELETE, path, None, body, req_properties)
+            .await
     }
 
     async fn request<T, B>(
@@ -328,9 +279,7 @@ impl RestClient {
         path: &str,
         query: Option<HashMap<String, String>>,
         body: Option<B>,
-        referer: Option<Referer>,
-        context: Option<Context>,
-        solved_captcha: Option<SolvedCaptcha>,
+        req_properties: Option<RequestProperties>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
@@ -350,9 +299,7 @@ impl RestClient {
                     path,
                     query.clone(),
                     body.clone(),
-                    referer.clone(),
-                    context.clone(),
-                    solved_captcha.clone(),
+                    req_properties.clone(),
                 )
                 .await;
 
@@ -404,9 +351,7 @@ impl RestClient {
         path: &str,
         query: Option<HashMap<String, String>>,
         body: Option<B>,
-        referer: Option<Referer>,
-        context: Option<Context>,
-        solved_captcha: Option<SolvedCaptcha>,
+        req_properties: Option<RequestProperties>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default,
@@ -424,7 +369,7 @@ impl RestClient {
         let mut request = self
             .client
             .request(method, &full_url)
-            .headers(self.build_headers(referer, context, solved_captcha)?);
+            .headers(self.build_headers(req_properties)?);
 
         if let Some(body_data) = body {
             request = request
@@ -483,12 +428,7 @@ impl RestClient {
         }
     }
 
-    fn build_headers(
-        &self,
-        referer: Option<Referer>,
-        context: Option<Context>,
-        solved_captcha: Option<SolvedCaptcha>,
-    ) -> BoxedResult<HeaderMap> {
+    fn build_headers(&self, req_properties: Option<RequestProperties>) -> BoxedResult<HeaderMap> {
         let mut headers = HeaderMap::new();
 
         headers.insert(
@@ -522,30 +462,40 @@ impl RestClient {
                 .map_err(|e| Box::new(e) as BoxedError)?,
         );
 
-        if let Some(referer) = referer {
-            headers.insert(
-                "Referer",
-                referer
-                    .get_header_value()
-                    .parse()
-                    .map_err(|e| Box::new(e) as BoxedError)?,
-            );
-        }
+        if let Some(req_properties) = req_properties {
+            if let Some(referer) = req_properties.referer {
+                headers.insert(
+                    "Referer",
+                    referer
+                        .get_header_value()
+                        .parse()
+                        .map_err(|e| Box::new(e) as BoxedError)?,
+                );
+            }
 
-        if let Some(context) = context {
-            headers.insert(
-                "X-Context-Properties",
-                context
-                    .get_header_value()
-                    .parse()
-                    .map_err(|e| Box::new(e) as BoxedError)?,
-            );
-        }
+            if let Some(context) = req_properties.context {
+                headers.insert(
+                    "X-Context-Properties",
+                    context
+                        .get_header_value()
+                        .parse()
+                        .map_err(|e| Box::new(e) as BoxedError)?,
+                );
+            }
 
-        if let Some(solved_captcha) = solved_captcha {
-            solved_captcha.add_headers(&mut headers);
+            if let Some(solved_captcha) = req_properties.solved_captcha {
+                solved_captcha.add_headers(&mut headers);
+            }
         }
 
         Ok(headers)
     }
+}
+
+#[derive(Debug, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
+pub struct RequestProperties {
+    pub referer: Option<Referer>,
+    pub context: Option<Context>,
+    pub solved_captcha: Option<SolvedCaptcha>,
 }

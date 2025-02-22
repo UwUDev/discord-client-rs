@@ -1,5 +1,5 @@
 use crate::BoxedResult;
-use crate::rest::RestClient;
+use crate::rest::{RequestPropertiesBuilder, RestClient};
 use crate::structs::referer::{DmChannelReferer, GuildChannelReferer, GuildReferer, Referer};
 use discord_client_structs::structs::message::Message;
 use discord_client_structs::structs::message::query::{
@@ -18,6 +18,7 @@ impl<'a> MessageRest<'a> {
         message: Message,
     ) -> BoxedResult<Message> {
         let path = format!("channels/{}/messages", channel_id);
+
         let referer: Referer = match guild_id {
             Some(guild_id) => GuildChannelReferer {
                 guild_id,
@@ -26,8 +27,13 @@ impl<'a> MessageRest<'a> {
             .into(),
             None => DmChannelReferer { channel_id }.into(),
         };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .post::<Message, Message>(&path, Some(message), Some(referer.into()), None, None)
+            .post::<Message, Message>(&path, Some(message), Some(props))
             .await
     }
 
@@ -39,6 +45,7 @@ impl<'a> MessageRest<'a> {
         message: Message,
     ) -> BoxedResult<Message> {
         let path = format!("channels/{}/messages/{}", channel_id, message_id);
+
         let referer: Referer = match guild_id {
             Some(guild_id) => GuildChannelReferer {
                 guild_id,
@@ -47,8 +54,13 @@ impl<'a> MessageRest<'a> {
             .into(),
             None => DmChannelReferer { channel_id }.into(),
         };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .patch::<Message, Message>(&path, Some(message), Some(referer.into()), None, None)
+            .patch::<Message, Message>(&path, Some(message), Some(props))
             .await
     }
 
@@ -59,6 +71,7 @@ impl<'a> MessageRest<'a> {
         guild_id: Option<u64>,
     ) -> BoxedResult<()> {
         let path = format!("channels/{}/messages/{}", channel_id, message_id);
+
         let referer: Referer = match guild_id {
             Some(guild_id) => GuildChannelReferer {
                 guild_id,
@@ -67,8 +80,13 @@ impl<'a> MessageRest<'a> {
             .into(),
             None => DmChannelReferer { channel_id }.into(),
         };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .delete::<_, ()>(&path, None::<()>, Some(referer.into()), None, None)
+            .delete::<_, ()>(&path, None::<()>, Some(props))
             .await
     }
 
@@ -79,6 +97,7 @@ impl<'a> MessageRest<'a> {
         query: MessageQuery,
     ) -> BoxedResult<Vec<Message>> {
         let path = format!("channels/{}/messages", channel_id);
+
         let referer: Referer = match guild_id {
             Some(guild_id) => GuildChannelReferer {
                 guild_id,
@@ -87,14 +106,13 @@ impl<'a> MessageRest<'a> {
             .into(),
             None => DmChannelReferer { channel_id }.into(),
         };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .get::<Vec<Message>>(
-                &path,
-                Some(query.to_map()),
-                Some(referer.into()),
-                None,
-                None,
-            )
+            .get::<Vec<Message>>(&path, Some(query.to_map()), Some(props))
             .await
     }
 
@@ -104,15 +122,15 @@ impl<'a> MessageRest<'a> {
         query: MessageSearchQuery,
     ) -> BoxedResult<MessageSearchResult> {
         let path = format!("channels/{}/messages/search", channel_id);
+
         let referer = DmChannelReferer { channel_id };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .get::<MessageSearchResult>(
-                &path,
-                Some(query.to_map()),
-                Some(referer.into()),
-                None,
-                None,
-            )
+            .get::<MessageSearchResult>(&path, Some(query.to_map()), Some(props))
             .await
     }
 
@@ -122,15 +140,15 @@ impl<'a> MessageRest<'a> {
         query: MessageSearchQuery,
     ) -> BoxedResult<MessageSearchResult> {
         let path = format!("guilds/{}/messages/search", guild_id);
+
         let referer = GuildReferer { guild_id };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .get::<MessageSearchResult>(
-                &path,
-                Some(query.to_map()),
-                Some(referer.into()),
-                None,
-                None,
-            )
+            .get::<MessageSearchResult>(&path, Some(query.to_map()), Some(props))
             .await
     }
 
@@ -141,6 +159,7 @@ impl<'a> MessageRest<'a> {
         guild_id: Option<u64>,
     ) -> BoxedResult<()> {
         let path = format!("channels/{}/pins/{}", channel_id, message_id);
+
         let referer: Referer = match guild_id {
             Some(guild_id) => GuildChannelReferer {
                 guild_id,
@@ -149,8 +168,13 @@ impl<'a> MessageRest<'a> {
             .into(),
             None => DmChannelReferer { channel_id }.into(),
         };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .put::<_, ()>(&path, None::<()>, Some(referer.into()), None, None)
+            .put::<_, ()>(&path, None::<()>, Some(props))
             .await
     }
 
@@ -161,6 +185,7 @@ impl<'a> MessageRest<'a> {
         guild_id: Option<u64>,
     ) -> BoxedResult<()> {
         let path = format!("channels/{}/pins/{}", channel_id, message_id);
+
         let referer: Referer = match guild_id {
             Some(guild_id) => GuildChannelReferer {
                 guild_id,
@@ -169,8 +194,13 @@ impl<'a> MessageRest<'a> {
             .into(),
             None => DmChannelReferer { channel_id }.into(),
         };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .delete::<_, ()>(&path, None::<()>, Some(referer.into()), None, None)
+            .delete::<_, ()>(&path, None::<()>, Some(props))
             .await
     }
 
@@ -180,6 +210,7 @@ impl<'a> MessageRest<'a> {
         guild_id: Option<u64>,
     ) -> BoxedResult<Vec<Message>> {
         let path = format!("channels/{}/pins", channel_id);
+
         let referer: Referer = match guild_id {
             Some(guild_id) => GuildChannelReferer {
                 guild_id,
@@ -188,8 +219,13 @@ impl<'a> MessageRest<'a> {
             .into(),
             None => DmChannelReferer { channel_id }.into(),
         };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
         self.client
-            .get::<Vec<Message>>(&path, None, Some(referer.into()), None, None)
+            .get::<Vec<Message>>(&path, None, Some(props))
             .await
     }
 }

@@ -27,7 +27,7 @@ impl Display for CaptchaRequiredError {
 
 impl Error for CaptchaRequiredError {}
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct SolvedCaptcha {
     pub key: String,
     pub rqtoken: String,

@@ -518,6 +518,7 @@ version = "0.1.0"
 dependencies = [
  "base64",
  "current_locale",
+ "derive_builder",
  "discord_client_structs",
  "iana-time-zone",
  "log",
