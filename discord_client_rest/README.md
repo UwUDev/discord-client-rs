@@ -90,7 +90,7 @@ let resp: ? = self.client
 
 You call also use `put`, `patch`, `delete`, `get` methods to make requests.
 
-The `get` method is used to make requests that cannot receive a body but instead can receive query parameters.
+The `get` method is used to make requests that cannot send a body but instead can receive query parameters.
 
 ```rust
 let path = format!("channels/{}/messages/search", self.channel_id);
@@ -103,6 +103,7 @@ let props = RequestPropertiesBuilder::default()
     .referer::<Referer>(referer.into())
     .build()?;
 
+// Format is HashMap<String, String> for the query
 self.client
     .get::<MessageSearchResult>(&path, Some(query.to_map()), Some(props))
     .await
