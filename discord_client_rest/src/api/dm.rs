@@ -27,7 +27,13 @@ impl<'a> DmRest<'a> {
         let context = NoContext;
 
         self.client
-            .post::<Channel, Value>(&path, Some(payload), Some(referer.into()), Some(context))
+            .post::<Channel, Value>(
+                &path,
+                Some(payload),
+                Some(referer.into()),
+                Some(context),
+                None,
+            )
             .await
     }
 
@@ -37,7 +43,7 @@ impl<'a> DmRest<'a> {
         let referer = HomePageReferer;
 
         self.client
-            .get::<Vec<Channel>>(&path, None, Some(referer.into()), None)
+            .get::<Vec<Channel>>(&path, None, Some(referer.into()), None, None)
             .await
     }
 

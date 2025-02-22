@@ -3,6 +3,7 @@ use crate::api::dm::DmRest;
 use crate::api::group::GroupRest;
 use crate::api::message::MessageRest;
 use crate::build_number::fetch_build_number;
+use crate::captcha::{CaptchaRequiredError, SolvedCaptcha};
 use crate::clearance::{get_clearance_cookie, get_invisible};
 use crate::rate_limit::{RateLimitError, RateLimiter};
 use crate::structs::context::{Context, ContextHeader};
@@ -211,9 +212,18 @@ impl RestClient {
         query: Option<HashMap<String, String>>,
         referer: Option<Referer>,
         context: Option<Context>,
+        solved_captcha: Option<SolvedCaptcha>,
     ) -> BoxedResult<T> {
-        self.request::<T, ()>(Method::GET, path, query, None, referer, context)
-            .await
+        self.request::<T, ()>(
+            Method::GET,
+            path,
+            query,
+            None,
+            referer,
+            context,
+            solved_captcha,
+        )
+        .await
     }
 
     pub async fn post<T, B: Clone>(
@@ -222,13 +232,22 @@ impl RestClient {
         body: Option<B>,
         referer: Option<Referer>,
         context: Option<Context>,
+        solved_captcha: Option<SolvedCaptcha>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(Method::POST, path, None, body, referer, context)
-            .await
+        self.request(
+            Method::POST,
+            path,
+            None,
+            body,
+            referer,
+            context,
+            solved_captcha,
+        )
+        .await
     }
 
     pub async fn put<T, B: Clone>(
@@ -237,13 +256,22 @@ impl RestClient {
         body: Option<B>,
         referer: Option<Referer>,
         context: Option<Context>,
+        solved_captcha: Option<SolvedCaptcha>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(Method::PUT, path, None, body, referer, context)
-            .await
+        self.request(
+            Method::PUT,
+            path,
+            None,
+            body,
+            referer,
+            context,
+            solved_captcha,
+        )
+        .await
     }
 
     pub async fn patch<T, B: Clone>(
@@ -252,13 +280,22 @@ impl RestClient {
         body: Option<B>,
         referer: Option<Referer>,
         context: Option<Context>,
+        solved_captcha: Option<SolvedCaptcha>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(Method::PATCH, path, None, body, referer, context)
-            .await
+        self.request(
+            Method::PATCH,
+            path,
+            None,
+            body,
+            referer,
+            context,
+            solved_captcha,
+        )
+        .await
     }
 
     pub async fn delete<T, B: Clone>(
@@ -267,13 +304,22 @@ impl RestClient {
         body: Option<B>,
         referer: Option<Referer>,
         context: Option<Context>,
+        solved_captcha: Option<SolvedCaptcha>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync,
     {
-        self.request(Method::DELETE, path, None, body, referer, context)
-            .await
+        self.request(
+            Method::DELETE,
+            path,
+            None,
+            body,
+            referer,
+            context,
+            solved_captcha,
+        )
+        .await
     }
 
     async fn request<T, B>(
@@ -284,6 +330,7 @@ impl RestClient {
         body: Option<B>,
         referer: Option<Referer>,
         context: Option<Context>,
+        solved_captcha: Option<SolvedCaptcha>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default + Send,
@@ -305,6 +352,7 @@ impl RestClient {
                     body.clone(),
                     referer.clone(),
                     context.clone(),
+                    solved_captcha.clone(),
                 )
                 .await;
 
@@ -358,6 +406,7 @@ impl RestClient {
         body: Option<B>,
         referer: Option<Referer>,
         context: Option<Context>,
+        solved_captcha: Option<SolvedCaptcha>,
     ) -> BoxedResult<T>
     where
         T: DeserializeOwned + Default,
@@ -375,7 +424,7 @@ impl RestClient {
         let mut request = self
             .client
             .request(method, &full_url)
-            .headers(self.build_headers(referer, context)?);
+            .headers(self.build_headers(referer, context, solved_captcha)?);
 
         if let Some(body_data) = body {
             request = request
@@ -409,8 +458,15 @@ impl RestClient {
                 return Err(Box::new(RateLimitError::new(retry_after, global)));
             }
             400 => {
-                let resp_text = resp.text().await?;
-                error!("Bad request to {}: {}", url, resp_text);
+                let resp_json = resp.json::<Value>().await?;
+
+                if resp_json["captcha_sitekey"].is_string() {
+                    let captcha = serde_json::from_value::<CaptchaRequiredError>(resp_json)
+                        .map_err(|e| Box::new(e) as BoxedError)?;
+                    return Err(Box::new(captcha));
+                }
+
+                error!("Bad request to {}: {}", url, resp_json.to_string());
                 return Err("Bad request".into());
             }
             code => {
@@ -431,6 +487,7 @@ impl RestClient {
         &self,
         referer: Option<Referer>,
         context: Option<Context>,
+        solved_captcha: Option<SolvedCaptcha>,
     ) -> BoxedResult<HeaderMap> {
         let mut headers = HeaderMap::new();
 
@@ -513,6 +570,10 @@ impl RestClient {
                     .parse()
                     .map_err(|e| Box::new(e) as BoxedError)?,
             );
+        }
+
+        if let Some(solved_captcha) = solved_captcha {
+            solved_captcha.add_headers(&mut headers);
         }
 
         Ok(headers)

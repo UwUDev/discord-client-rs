@@ -22,7 +22,13 @@ impl<'a> GroupRest<'a> {
         let referer = HomePageReferer;
 
         self.client
-            .post::<Channel, Value>(&path, Some(payload), Some(referer.into()), Some(context))
+            .post::<Channel, Value>(
+                &path,
+                Some(payload),
+                Some(referer.into()),
+                Some(context),
+                None,
+            )
             .await
     }
 
@@ -32,7 +38,7 @@ impl<'a> GroupRest<'a> {
         let referer = DmChannelReferer { channel_id };
 
         self.client
-            .put::<_, _>(&path, None::<&()>, Some(referer.into()), None)
+            .put::<_, _>(&path, None::<&()>, Some(referer.into()), None, None)
             .await
     }
 
@@ -42,7 +48,7 @@ impl<'a> GroupRest<'a> {
         let referer = DmChannelReferer { channel_id };
 
         self.client
-            .delete::<_, _>(&path, None::<&()>, Some(referer.into()), None)
+            .delete::<_, _>(&path, None::<&()>, Some(referer.into()), None, None)
             .await
     }
 
@@ -60,7 +66,7 @@ impl<'a> GroupRest<'a> {
         });
 
         self.client
-            .put::<Channel, _>(&path, Some(payload), Some(referer.into()), None)
+            .put::<Channel, _>(&path, Some(payload), Some(referer.into()), None, None)
             .await
     }
 
@@ -74,7 +80,7 @@ impl<'a> GroupRest<'a> {
         });
 
         self.client
-            .patch::<Channel, _>(&path, Some(payload), Some(referer.into()), None)
+            .patch::<Channel, _>(&path, Some(payload), Some(referer.into()), None, None)
             .await
     }
 
@@ -86,7 +92,7 @@ impl<'a> GroupRest<'a> {
         let referer = DmChannelReferer { channel_id };
 
         self.client
-            .delete::<Channel, _>(&path, None::<&()>, Some(referer.into()), None)
+            .delete::<Channel, _>(&path, None::<&()>, Some(referer.into()), None, None)
             .await
     }
 }
