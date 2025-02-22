@@ -5,7 +5,7 @@ edition = "2024"
 authors = ["UwUDev"]
 description = "Undetected discord client rest API reimplementation"
 repository = "https://github.com/UwUDev/discord-client-rs"
-# readme = "README.md"
+readme = "README.md"
 
 [[example]]
 name = "message"
