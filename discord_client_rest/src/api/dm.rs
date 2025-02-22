@@ -4,17 +4,18 @@ use crate::structs::context::Context::NoContext;
 use crate::structs::referer::{HomePageReferer, Referer};
 use discord_client_structs::structs::channel::Channel;
 use serde_json::{Value, json};
+use crate::captcha::SolvedCaptcha;
 
 pub struct DmRest<'a> {
     pub client: &'a RestClient,
 }
 
 impl<'a> DmRest<'a> {
-    // todo: handle captcha
     pub async fn open_or_create_dm_channel(
         &self,
         user_id: u64,
         referer: Referer,
+        solved_captcha: Option<SolvedCaptcha>,
     ) -> BoxedResult<Channel> {
         let path = String::from("users/@me/channels");
 
@@ -26,10 +27,16 @@ impl<'a> DmRest<'a> {
 
         let context = NoContext;
 
-        let props = RequestPropertiesBuilder::default()
+        let mut builder = RequestPropertiesBuilder::default();
+        let mut props = builder
             .referer::<Referer>(referer.into())
-            .context(context)
-            .build()?;
+            .context(context);
+
+        if let Some(captcha) = solved_captcha {
+            props = props.solved_captcha(captcha);
+        }
+
+        let props = props.build()?;
 
         self.client
             .post::<Channel, Value>(&path, Some(payload), Some(props))
