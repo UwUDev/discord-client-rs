@@ -1,5 +1,8 @@
+use crate::BoxedResult;
 use crate::api::channel::ChannelRest;
-use crate::rest::RestClient;
+use crate::rest::{RequestPropertiesBuilder, RestClient};
+use crate::structs::referer::{GuildReferer, Referer};
+use discord_client_structs::structs::message::query::{MessageSearchQuery, MessageSearchResult};
 
 pub struct GuildRest<'a> {
     pub guild_id: u64,
@@ -13,5 +16,24 @@ impl<'a> GuildRest<'a> {
             guild_id: self.guild_id,
             client: self.client,
         }
+    }
+
+    pub async fn search_guild_messages(
+        &self,
+        query: MessageSearchQuery,
+    ) -> BoxedResult<MessageSearchResult> {
+        let path = format!("guilds/{}/messages/search", self.guild_id);
+
+        let referer = GuildReferer {
+            guild_id: self.guild_id,
+        };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
+        self.client
+            .get::<MessageSearchResult>(&path, Some(query.to_map()), Some(props))
+            .await
     }
 }

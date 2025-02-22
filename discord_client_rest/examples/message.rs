@@ -22,8 +22,8 @@ async fn main() {
     let guild_id: u64 = 1154763102554951811;
 
     let messages = client
-        .message()
-        .get_channel_messages(channel_id, Some(guild_id), Default::default())
+        .message(channel_id)
+        .get_channel_messages(Some(guild_id), Default::default())
         .await
         .unwrap();
 
@@ -35,16 +35,16 @@ async fn main() {
         .unwrap();
 
     let search_result = client
-        .message()
-        .search_guild_messages(guild_id, search_query)
+        .guild(guild_id)
+        .search_guild_messages(search_query)
         .await
         .unwrap();
 
     println!("Got {} messages from you", search_result.messages.len());
 
     let mut response_message = client
-        .message()
-        .send(channel_id, Some(guild_id), message)
+        .message(channel_id)
+        .send(Some(guild_id), message)
         .await
         .unwrap();
     println!("Response content: {}", response_message.content.unwrap());
@@ -55,38 +55,38 @@ async fn main() {
     response_message.content = Some("Hello, World! (edited)".to_string());
 
     response_message = client
-        .message()
-        .edit(channel_id, id, Some(guild_id), response_message)
+        .message(channel_id)
+        .edit(id, Some(guild_id), response_message)
         .await
         .unwrap();
 
     tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
 
     client
-        .message()
-        .pin(channel_id, response_message.id, Some(guild_id))
+        .message(channel_id)
+        .pin(response_message.id, Some(guild_id))
         .await
         .unwrap();
 
     let messages = client
-        .message()
-        .get_pinned_messages(channel_id, Some(guild_id))
+        .message(channel_id)
+        .get_pinned_messages(Some(guild_id))
         .await
         .unwrap();
 
     println!("Got {} pinned messages", messages.len());
 
     client
-        .message()
-        .unpin(channel_id, response_message.id, Some(guild_id))
+        .message(channel_id)
+        .unpin(response_message.id, Some(guild_id))
         .await
         .unwrap();
 
     tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
 
     client
-        .message()
-        .delete(channel_id, response_message.id, Some(guild_id))
+        .message(channel_id)
+        .delete(response_message.id, Some(guild_id))
         .await
         .unwrap();
 }

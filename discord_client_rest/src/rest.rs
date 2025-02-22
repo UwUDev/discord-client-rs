@@ -191,8 +191,11 @@ impl RestClient {
         })
     }
 
-    pub fn message(&self) -> MessageRest {
-        MessageRest { client: self }
+    pub fn message(&self, channel_id: u64) -> MessageRest {
+        MessageRest {
+            channel_id,
+            client: self,
+        }
     }
 
     pub fn guild(&self, guild_id: u64) -> GuildRest {
