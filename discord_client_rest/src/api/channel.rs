@@ -5,18 +5,22 @@ use discord_client_structs::structs::channel::Channel;
 use discord_client_structs::structs::channel::invite::{CreateChannelInvite, Invite};
 
 pub struct ChannelRest<'a> {
+    pub channel_id: Option<u64>,
+    pub guild_id: u64,
     pub client: &'a RestClient,
 }
 
 impl<'a> ChannelRest<'a> {
-    pub async fn create(&self, guild_id: u64, channel: Channel) -> BoxedResult<Channel> {
+    pub async fn create(&self, channel: Channel) -> BoxedResult<Channel> {
         if channel.name.is_none() {
             return Err("Channel name is required".into());
         }
 
-        let path = format!("guilds/{}/channels", guild_id);
+        let path = format!("guilds/{}/channels", self.guild_id);
 
-        let referer = GuildReferer { guild_id };
+        let referer = GuildReferer {
+            guild_id: self.guild_id,
+        };
 
         let props = RequestPropertiesBuilder::default()
             .referer::<Referer>(referer.into())
@@ -27,7 +31,7 @@ impl<'a> ChannelRest<'a> {
             .await
     }
 
-    pub async fn edit(&self, guild_id: u64, channel: Channel) -> BoxedResult<Channel> {
+    pub async fn edit(&self, channel: Channel) -> BoxedResult<Channel> {
         if channel.id == 0 {
             return Err("Channel ID is required".into());
         }
@@ -35,7 +39,7 @@ impl<'a> ChannelRest<'a> {
         let path = format!("channels/{}", channel.id);
 
         let referer = GuildChannelReferer {
-            guild_id,
+            guild_id: self.guild_id,
             channel_id: channel.id,
         };
         let props = RequestPropertiesBuilder::default()
@@ -47,12 +51,16 @@ impl<'a> ChannelRest<'a> {
             .await
     }
 
-    pub async fn delete(&self, guild_id: u64, channel_id: u64) -> BoxedResult<Channel> {
-        let path = format!("channels/{}", channel_id);
+    pub async fn delete(&self) -> BoxedResult<Channel> {
+        if self.channel_id.is_none() {
+            return Err("Channel ID is required".into());
+        }
+
+        let path = format!("channels/{}", self.channel_id.unwrap());
 
         let referer = GuildChannelReferer {
-            guild_id,
-            channel_id,
+            guild_id: self.guild_id,
+            channel_id: self.channel_id.unwrap(),
         };
 
         let props = RequestPropertiesBuilder::default()
@@ -66,16 +74,19 @@ impl<'a> ChannelRest<'a> {
 
     pub async fn create_invite(
         &self,
-        channel_id: u64,
-        guild_id: u64,
         create_channel_invite: CreateChannelInvite,
     ) -> BoxedResult<Invite> {
-        let path = format!("channels/{}/invites", channel_id);
+        if self.channel_id.is_none() {
+            return Err("Channel ID is required".into());
+        }
+
+        let path = format!("channels/{}/invites", self.channel_id.unwrap());
 
         let referer = GuildChannelReferer {
-            guild_id,
-            channel_id,
+            guild_id: self.guild_id,
+            channel_id: self.channel_id.unwrap(),
         };
+
         let props = RequestPropertiesBuilder::default()
             .referer::<Referer>(referer.into())
             .build()?;
@@ -85,12 +96,16 @@ impl<'a> ChannelRest<'a> {
             .await
     }
 
-    pub async fn get_invites(&self, channel_id: u64, guild_id: u64) -> BoxedResult<Vec<Invite>> {
-        let path = format!("channels/{}/invites", channel_id);
+    pub async fn get_invites(&self) -> BoxedResult<Vec<Invite>> {
+        if self.channel_id.is_none() {
+            return Err("Channel ID is required".into());
+        }
+
+        let path = format!("channels/{}/invites", self.channel_id.unwrap());
 
         let referer = GuildChannelReferer {
-            guild_id,
-            channel_id,
+            guild_id: self.guild_id,
+            channel_id: self.channel_id.unwrap(),
         };
 
         let props = RequestPropertiesBuilder::default()

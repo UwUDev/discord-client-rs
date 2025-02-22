@@ -1,6 +1,6 @@
-use crate::api::channel::ChannelRest;
 use crate::api::dm::DmRest;
 use crate::api::group::GroupRest;
+use crate::api::guild::GuildRest;
 use crate::api::message::MessageRest;
 use crate::build_number::fetch_build_number;
 use crate::captcha::{CaptchaRequiredError, SolvedCaptcha};
@@ -195,8 +195,11 @@ impl RestClient {
         MessageRest { client: self }
     }
 
-    pub fn channel(&self) -> ChannelRest {
-        ChannelRest { client: self }
+    pub fn guild(&self, guild_id: u64) -> GuildRest {
+        GuildRest {
+            guild_id,
+            client: self,
+        }
     }
 
     pub fn dm(&self) -> DmRest {
