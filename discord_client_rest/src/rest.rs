@@ -7,7 +7,7 @@ use crate::captcha::{CaptchaRequiredError, SolvedCaptcha};
 use crate::clearance::{get_clearance_cookie, get_invisible};
 use crate::rate_limit::{RateLimitError, RateLimiter};
 use crate::structs::context::{Context, ContextHeader};
-use crate::structs::referer::Referer;
+use crate::structs::referer::{Referer, RefererHeader};
 use crate::super_prop::build_super_props;
 use crate::{BoxedError, BoxedResult};
 use current_locale::current_locale;
@@ -523,43 +523,13 @@ impl RestClient {
         );
 
         if let Some(referer) = referer {
-            match referer {
-                Referer::GuildChannel(referer) => {
-                    headers.insert(
-                        "Referer",
-                        format!(
-                            "https://discord.com/channels/{}/{}",
-                            referer.guild_id, referer.channel_id
-                        )
-                        .parse()
-                        .map_err(|e| Box::new(e) as BoxedError)?,
-                    );
-                }
-                Referer::DmChannel(referer) => {
-                    headers.insert(
-                        "Referer",
-                        format!("https://discord.com/channels/@me/{}", referer.channel_id)
-                            .parse()
-                            .map_err(|e| Box::new(e) as BoxedError)?,
-                    );
-                }
-                Referer::Guild(referer) => {
-                    headers.insert(
-                        "Referer",
-                        format!("https://discord.com/channels/{}", referer.guild_id)
-                            .parse()
-                            .map_err(|e| Box::new(e) as BoxedError)?,
-                    );
-                }
-                Referer::HomePage(_) => {
-                    headers.insert(
-                        "Referer",
-                        "https://discord.com/channels/@me"
-                            .parse()
-                            .map_err(|e| Box::new(e) as BoxedError)?,
-                    );
-                }
-            }
+            headers.insert(
+                "Referer",
+                referer
+                    .get_header_value()
+                    .parse()
+                    .map_err(|e| Box::new(e) as BoxedError)?,
+            );
         }
 
         if let Some(context) = context {
