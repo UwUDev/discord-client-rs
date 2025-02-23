@@ -70,8 +70,7 @@ pub struct Message {
     #[serde(serialize_with = "serialize_vec_u64_as_string")]
     pub mention_roles: Vec<u64>,
     pub mention_channels: Option<Vec<PartialChannel>>,
-    #[serde(default)]
-    pub attachments: Option<Vec<Attachment>>,
+    pub attachments: Vec<Attachment>,
     pub embeds: Vec<Embed>,
     pub reactions: Option<Vec<Reaction>>,
     pub nonce: Option<String>,
@@ -365,6 +364,12 @@ pub struct MessageForwardOnly {
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
 #[builder(setter(into, strip_option), default)]
 pub struct MessageSnapshot {
+    pub message: SnapshotMessage,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
+pub struct SnapshotMessage {
     pub content: Option<String>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
