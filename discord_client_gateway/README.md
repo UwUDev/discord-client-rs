@@ -103,16 +103,16 @@ if let Event::Ready(ready) = event {
   - [x] Message Ack
   - [x] Last Messages
   - **Reactions**
-   - [x] Message Reaction Add
-   - [x] Message Reaction Remove
-   - [x] Message Reaction Add Many
-   - [x] Message Reaction Remove Emoji
-   - [x] Message Reaction Remove All
+    - [x] Message Reaction Add
+    - [x] Message Reaction Remove
+    - [x] Message Reaction Add Many
+    - [x] Message Reaction Remove Emoji
+    - [x] Message Reaction Remove All
   - **Poll**
-   - [x] Message Poll Vote Add
-   - [x] Message Poll Vote Remove
+    - [x] Message Poll Vote Add
+    - [x] Message Poll Vote Remove
   - **Mention**
-   - [ ] Recent Mention Delete
+    - [ ] Recent Mention Delete
 - **Channel**
   - [x] Channel Create
   - [x] Channel Update
