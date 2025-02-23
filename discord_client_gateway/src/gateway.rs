@@ -6,10 +6,11 @@ use futures_util::{SinkExt, StreamExt, TryStreamExt};
 use rquest::Impersonate::Chrome133;
 use rquest::ImpersonateOS::Windows;
 use rquest::{Client, Impersonate, Message, WebSocket};
-use serde_json::Value;
+use serde_json::{json, Value};
 use std::io::Write;
 use std::str::FromStr;
 use std::sync::Arc;
+use std::sync::atomic::{AtomicU32, Ordering};
 use tokio::sync::Mutex;
 use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
 
@@ -25,6 +26,7 @@ pub struct GatewayClient {
     pub auth_session_id_hash: Option<String>,
     capabilities: u32,
     build_number: u32,
+    last_sequence: Arc<AtomicU32>,
 }
 
 impl GatewayClient {
@@ -89,7 +91,10 @@ impl GatewayClient {
                 .unwrap();
         });
 
+        let last_sequence = Arc::new(AtomicU32::new(0));
+
         let tx_clone = Arc::clone(&tx);
+        let last_seq_clone = Arc::clone(&last_sequence);
         tokio::spawn(async move {
             loop {
                 tokio::time::sleep(tokio::time::Duration::from_millis(
@@ -97,10 +102,17 @@ impl GatewayClient {
                 ))
                 .await;
 
+                let d = last_seq_clone.load(Ordering::Relaxed);
+
+                let payload = json!({
+                    "op": 1,
+                    "d": d
+                });
+
                 if tx_clone
                     .lock()
                     .await
-                    .send(Message::Text(r#"{"op":1,"d":null}"#.to_string()))
+                    .send(Message::Text(payload.to_string()))
                     .await
                     .is_err()
                 {
@@ -121,6 +133,7 @@ impl GatewayClient {
             auth_session_id_hash: None,
             capabilities,
             build_number,
+            last_sequence,
         })
     }
 
@@ -158,6 +171,10 @@ impl GatewayClient {
                         file.write_all(text.as_bytes()).unwrap();
 
                         let payload: GatewayPayload = serde_json::from_str(&text).unwrap();
+                        if let Some(sequence) = payload.s {
+                            self.last_sequence.store(sequence, Ordering::Relaxed);
+                        }
+
                         let event = crate::events::parse_gateway_payload(payload)?;
 
                         if let crate::events::Event::Ready(ready) = event.clone() {
