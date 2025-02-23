@@ -70,7 +70,8 @@ pub struct Message {
     #[serde(serialize_with = "serialize_vec_u64_as_string")]
     pub mention_roles: Vec<u64>,
     pub mention_channels: Option<Vec<PartialChannel>>,
-    pub attachments: Vec<Attachment>,
+    #[serde(default)]
+    pub attachments: Option<Vec<Attachment>>,
     pub embeds: Vec<Embed>,
     pub reactions: Option<Vec<Reaction>>,
     pub nonce: Option<String>,
@@ -379,7 +380,8 @@ pub struct MessageSnapshot {
     #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
     #[serde(serialize_with = "serialize_option_vec_u64_as_string")]
     pub mention_roles: Option<Vec<u64>>,
-    pub attachments: Vec<Attachment>,
+    #[serde(default)]
+    pub attachments: Option<Vec<Attachment>>,
     pub embeds: Vec<Embed>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_message_type")]
