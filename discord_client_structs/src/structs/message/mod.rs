@@ -82,8 +82,8 @@ pub struct Message {
     #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub webhook_id: Option<u64>,
     #[builder(default)]
-    #[serde(skip_serializing)]
     #[serde(deserialize_with = "deserialize_message_type")]
+    #[serde(serialize_with = "serialize_message_type")]
     pub r#type: MessageType,
     pub activity: Option<MessageActivity>,
     pub application: Option<IntegrationApplication>,
@@ -262,12 +262,78 @@ where
     Ok(MessageType::from(value))
 }
 
+fn serialize_message_type<S>(value: &MessageType, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: serde::Serializer,
+{
+    serializer.serialize_u64(value.as_u64())
+}
+
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
 #[builder(setter(into, strip_option), default)]
 pub struct MessageActivity {
-    pub r#type: u8,
+    #[serde(deserialize_with = "deserialize_message_activity_type")]
+    #[serde(serialize_with = "serialize_message_activity_type")]
+    pub r#type: MessageActivityType,
     pub session_id: Option<String>,
     pub party_id: Option<String>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MessageActivityType {
+    Join,
+    Spectate,
+    Listen,
+    JoinRequest,
+    Unknown(u8),
+}
+
+impl MessageActivityType {
+    pub fn as_u8(&self) -> u8 {
+        match *self {
+            Self::Join => 1,
+            Self::Spectate => 2,
+            Self::Listen => 3,
+            Self::JoinRequest => 5,
+            Self::Unknown(n) => n,
+        }
+    }
+}
+
+impl From<u8> for MessageActivityType {
+    fn from(value: u8) -> Self {
+        match value {
+            1 => Self::Join,
+            2 => Self::Spectate,
+            3 => Self::Listen,
+            5 => Self::JoinRequest,
+            n => Self::Unknown(n),
+        }
+    }
+}
+
+impl Default for MessageActivityType {
+    fn default() -> Self {
+        Self::Join
+    }
+}
+
+fn deserialize_message_activity_type<'de, D>(deserializer: D) -> Result<MessageActivityType, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = u8::deserialize(deserializer)?;
+    Ok(MessageActivityType::from(value))
+}
+
+fn serialize_message_activity_type<S>(
+    value: &MessageActivityType,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: serde::Serializer,
+{
+    serializer.serialize_u8(value.as_u8())
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
