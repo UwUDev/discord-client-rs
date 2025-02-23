@@ -83,7 +83,8 @@ pub struct Message {
     pub webhook_id: Option<u64>,
     #[builder(default)]
     #[serde(skip_serializing)]
-    pub r#type: u8,
+    #[serde(deserialize_with = "deserialize_message_type")]
+    pub r#type: MessageType,
     pub activity: Option<MessageActivity>,
     pub application: Option<IntegrationApplication>,
     #[serde(default)]
@@ -113,6 +114,152 @@ pub struct Message {
     pub changelog_id: Option<u64>,
     pub soundboard_sounds: Option<Vec<SoundboardSound>>,
     pub potions: Option<Vec<Potion>>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MessageType {
+    Default,
+    RecipientAdd,
+    RecipientRemove,
+    Call,
+    ChannelNameChange,
+    ChannelIconChange,
+    ChannelPinnedMessage,
+    UserJoin,
+    GuildBoost,
+    GuildBoostTier1,
+    GuildBoostTier2,
+    GuildBoostTier3,
+    ChannelFollowAdd,
+    GuildDiscoveryDisqualified,
+    GuildDiscoveryRequalified,
+    GuildDiscoveryGracePeriodInitialWarning,
+    GuildDiscoveryGracePeriodFinalWarning,
+    ThreadCreated,
+    Reply,
+    ChatInputCommand,
+    ThreadStarterMessage,
+    GuildInviteReminder,
+    ContextMenuCommand,
+    AutoModerationAction,
+    RoleSubscriptionPurchase,
+    InteractionPremiumUpsell,
+    StageStart,
+    StageEnd,
+    StageSpeaker,
+    StageTopic,
+    GuildApplicationPremiumSubscription,
+    GuildIncidentAlertModeEnabled,
+    GuildIncidentAlertModeDisabled,
+    GuildIncidentReportRaid,
+    GuildIncidentReportFalseAlarm,
+    PurchaseNotification,
+    PollResult,
+    Unknown(u64),
+}
+
+impl Default for MessageType {
+    fn default() -> Self {
+        Self::Default
+    }
+}
+
+impl MessageType {
+    pub fn as_u64(&self) -> u64 {
+        match *self {
+            Self::Default => 0,
+            Self::RecipientAdd => 1,
+            Self::RecipientRemove => 2,
+            Self::Call => 3,
+            Self::ChannelNameChange => 4,
+            Self::ChannelIconChange => 5,
+            Self::ChannelPinnedMessage => 6,
+            Self::UserJoin => 7,
+            Self::GuildBoost => 8,
+            Self::GuildBoostTier1 => 9,
+            Self::GuildBoostTier2 => 10,
+            Self::GuildBoostTier3 => 11,
+            Self::ChannelFollowAdd => 12,
+            Self::GuildDiscoveryDisqualified => 14,
+            Self::GuildDiscoveryRequalified => 15,
+            Self::GuildDiscoveryGracePeriodInitialWarning => 16,
+            Self::GuildDiscoveryGracePeriodFinalWarning => 17,
+            Self::ThreadCreated => 18,
+            Self::Reply => 19,
+            Self::ChatInputCommand => 20,
+            Self::ThreadStarterMessage => 21,
+            Self::GuildInviteReminder => 22,
+            Self::ContextMenuCommand => 23,
+            Self::AutoModerationAction => 24,
+            Self::RoleSubscriptionPurchase => 25,
+            Self::InteractionPremiumUpsell => 26,
+            Self::StageStart => 27,
+            Self::StageEnd => 28,
+            Self::StageSpeaker => 29,
+            Self::StageTopic => 31,
+            Self::GuildApplicationPremiumSubscription => 32,
+            Self::GuildIncidentAlertModeEnabled => 36,
+            Self::GuildIncidentAlertModeDisabled => 37,
+            Self::GuildIncidentReportRaid => 38,
+            Self::GuildIncidentReportFalseAlarm => 39,
+            Self::PurchaseNotification => 44,
+            Self::PollResult => 46,
+            Self::Unknown(n) => n,
+        }
+    }
+}
+
+impl From<u64> for MessageType {
+    fn from(value: u64) -> Self {
+        match value {
+            0 => Self::Default,
+            1 => Self::RecipientAdd,
+            2 => Self::RecipientRemove,
+            3 => Self::Call,
+            4 => Self::ChannelNameChange,
+            5 => Self::ChannelIconChange,
+            6 => Self::ChannelPinnedMessage,
+            7 => Self::UserJoin,
+            8 => Self::GuildBoost,
+            9 => Self::GuildBoostTier1,
+            10 => Self::GuildBoostTier2,
+            11 => Self::GuildBoostTier3,
+            12 => Self::ChannelFollowAdd,
+            14 => Self::GuildDiscoveryDisqualified,
+            15 => Self::GuildDiscoveryRequalified,
+            16 => Self::GuildDiscoveryGracePeriodInitialWarning,
+            17 => Self::GuildDiscoveryGracePeriodFinalWarning,
+            18 => Self::ThreadCreated,
+            19 => Self::Reply,
+            20 => Self::ChatInputCommand,
+            21 => Self::ThreadStarterMessage,
+            22 => Self::GuildInviteReminder,
+            23 => Self::ContextMenuCommand,
+            24 => Self::AutoModerationAction,
+            25 => Self::RoleSubscriptionPurchase,
+            26 => Self::InteractionPremiumUpsell,
+            27 => Self::StageStart,
+            28 => Self::StageEnd,
+            29 => Self::StageSpeaker,
+            31 => Self::StageTopic,
+            32 => Self::GuildApplicationPremiumSubscription,
+            36 => Self::GuildIncidentAlertModeEnabled,
+            37 => Self::GuildIncidentAlertModeDisabled,
+            38 => Self::GuildIncidentReportRaid,
+            39 => Self::GuildIncidentReportFalseAlarm,
+            44 => Self::PurchaseNotification,
+            46 => Self::PollResult,
+            n => Self::Unknown(n),
+        }
+    }
+}
+
+fn deserialize_message_type<'de, D>(deserializer: D) -> Result<MessageType, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = u64::deserialize(deserializer)?;
+    Ok(MessageType::from(value))
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
