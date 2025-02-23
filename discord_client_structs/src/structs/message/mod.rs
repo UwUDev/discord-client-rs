@@ -381,7 +381,10 @@ pub struct MessageSnapshot {
     pub mention_roles: Option<Vec<u64>>,
     pub attachments: Vec<Attachment>,
     pub embeds: Vec<Embed>,
-    pub r#type: u8,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_message_type")]
+    #[serde(serialize_with = "serialize_message_type")]
+    pub r#type: MessageType,
     pub flags: u64,
     pub components: Option<Vec<MessageComponent>>,
     pub sticker_items: Option<Vec<StickerItem>>,
@@ -391,7 +394,10 @@ pub struct MessageSnapshot {
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
 #[builder(setter(into, strip_option), default)]
 pub struct MessageComponent {
-    pub r#type: u8,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_component_type")]
+    #[serde(serialize_with = "serialize_component_type")]
+    pub r#type: ComponentType,
     pub custom_id: Option<String>,
     pub disabled: Option<bool>,
     pub style: Option<u8>,
@@ -403,4 +409,70 @@ pub struct MessageComponent {
     pub min_values: Option<u64>,
     pub max_values: Option<u64>,
     pub components: Option<Vec<MessageComponent>>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ComponentType {
+    ActionRow,
+    Button,
+    StringSelect,
+    TextInput,
+    UserSelect,
+    RoleSelect,
+    MentionableSelect,
+    ChannelSelect,
+    Unknown(u8),
+}
+
+impl ComponentType {
+    pub fn as_u8(&self) -> u8 {
+        match *self {
+            Self::ActionRow => 1,
+            Self::Button => 2,
+            Self::StringSelect => 3,
+            Self::TextInput => 4,
+            Self::UserSelect => 5,
+            Self::RoleSelect => 6,
+            Self::MentionableSelect => 7,
+            Self::ChannelSelect => 8,
+            Self::Unknown(n) => n,
+        }
+    }
+}
+
+impl From<u8> for ComponentType {
+    fn from(value: u8) -> Self {
+        match value {
+            1 => Self::ActionRow,
+            2 => Self::Button,
+            3 => Self::StringSelect,
+            4 => Self::TextInput,
+            5 => Self::UserSelect,
+            6 => Self::RoleSelect,
+            7 => Self::MentionableSelect,
+            8 => Self::ChannelSelect,
+            n => Self::Unknown(n),
+        }
+    }
+}
+
+impl Default for ComponentType {
+    fn default() -> Self {
+        Self::ActionRow
+    }
+}
+
+fn deserialize_component_type<'de, D>(deserializer: D) -> Result<ComponentType, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = u8::deserialize(deserializer)?;
+    Ok(ComponentType::from(value))
+}
+
+fn serialize_component_type<S>(value: &ComponentType, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: serde::Serializer,
+{
+    serializer.serialize_u8(value.as_u8())
 }
