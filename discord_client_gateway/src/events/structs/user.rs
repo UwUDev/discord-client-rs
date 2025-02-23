@@ -6,6 +6,7 @@ use serde::Deserialize;
 pub struct UserConnectionsUpdateEvent {
     #[serde(flatten)]
     pub connection: Option<Connection>,
+    #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub user_id: Option<u64>, // null if it's yourself
 }
