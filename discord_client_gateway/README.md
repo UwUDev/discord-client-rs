@@ -6,6 +6,7 @@ This crate offers a seamless integration for Discord bot developers, featuring:
 
 - **Zlib-stream decompression** support for Discord's compressed payloads
 - **TLS impersonation** and **HTTP/2 (H2) mimicing** of Chrome to avoid detection
+- Automatic heartbeat with sequence number handling
 - Efficient handling of Discord's WebSocket events
 - Automatic shard management for scalable bot implementations
 
