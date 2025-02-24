@@ -6,7 +6,7 @@ use futures_util::{SinkExt, StreamExt, TryStreamExt};
 use rquest::Impersonate::Chrome133;
 use rquest::ImpersonateOS::Windows;
 use rquest::{Client, Impersonate, Message, WebSocket};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::io::Write;
 use std::str::FromStr;
 use std::sync::Arc;

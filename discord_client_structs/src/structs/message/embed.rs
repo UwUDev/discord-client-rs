@@ -96,8 +96,6 @@ where
     serializer.serialize_str(embed_type.as_str())
 }
 
-
-
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
 #[builder(setter(into, strip_option), default)]
 pub struct EmbedFooter {

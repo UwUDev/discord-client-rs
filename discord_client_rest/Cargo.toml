@@ -36,3 +36,4 @@ serde = { workspace = true, features = ["derive"] }
 log = "0.4.25"
 pretty_env_logger = "0.4"
 derive_builder = "0.20.2"
+chrono.workspace = true

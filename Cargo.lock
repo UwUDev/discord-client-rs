@@ -517,6 +517,7 @@ name = "discord_client_rest"
 version = "0.1.0"
 dependencies = [
  "base64",
+ "chrono",
  "current_locale",
  "derive_builder",
  "discord_client_structs",

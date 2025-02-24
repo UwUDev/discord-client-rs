@@ -34,6 +34,7 @@ pub struct User {
     pub premium_type: Option<u64>,
     pub public_flags: Option<u64>,
     pub avatar_decoration_data: Option<AvatarDecorationData>,
+    pub token: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]

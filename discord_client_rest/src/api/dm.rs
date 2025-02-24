@@ -1,10 +1,10 @@
 use crate::BoxedResult;
+use crate::captcha::SolvedCaptcha;
 use crate::rest::{RequestPropertiesBuilder, RestClient};
 use crate::structs::context::Context::NoContext;
 use crate::structs::referer::{HomePageReferer, Referer};
 use discord_client_structs::structs::channel::Channel;
 use serde_json::{Value, json};
-use crate::captcha::SolvedCaptcha;
 
 pub struct DmRest<'a> {
     pub client: &'a RestClient,
@@ -28,9 +28,7 @@ impl<'a> DmRest<'a> {
         let context = NoContext;
 
         let mut builder = RequestPropertiesBuilder::default();
-        let mut props = builder
-            .referer::<Referer>(referer.into())
-            .context(context);
+        let mut props = builder.referer::<Referer>(referer.into()).context(context);
 
         if let Some(captcha) = solved_captcha {
             props = props.solved_captcha(captcha);

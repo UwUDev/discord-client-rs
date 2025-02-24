@@ -318,7 +318,9 @@ impl Default for MessageActivityType {
     }
 }
 
-fn deserialize_message_activity_type<'de, D>(deserializer: D) -> Result<MessageActivityType, D::Error>
+fn deserialize_message_activity_type<'de, D>(
+    deserializer: D,
+) -> Result<MessageActivityType, D::Error>
 where
     D: serde::Deserializer<'de>,
 {

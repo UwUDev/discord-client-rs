@@ -2,6 +2,7 @@ use crate::api::dm::DmRest;
 use crate::api::group::GroupRest;
 use crate::api::guild::GuildRest;
 use crate::api::message::MessageRest;
+use crate::api::self_user::SelfUserRest;
 use crate::build_number::fetch_build_number;
 use crate::captcha::{CaptchaRequiredError, SolvedCaptcha};
 use crate::clearance::{get_clearance_cookie, get_invisible};
@@ -211,6 +212,10 @@ impl RestClient {
 
     pub fn group(&self) -> GroupRest {
         GroupRest { client: self }
+    }
+
+    pub fn self_user(&self) -> SelfUserRest {
+        SelfUserRest { client: self }
     }
 
     pub async fn get<T: DeserializeOwned + Default + Send>(
