@@ -1,4 +1,6 @@
 use crate::BoxedResult;
+use crate::image::ImageType;
+use crate::image::base64::encode_image;
 use crate::rest::{RequestPropertiesBuilder, RestClient};
 use crate::structs::referer::{HomePageReferer, Referer};
 use chrono::{DateTime, Utc};
@@ -106,5 +108,23 @@ impl<'a> SelfUserRest<'a> {
         self.patch(body).await
     }
 
-    // todo: avatar, banner, decoration & flags
+    pub async fn set_avatar(&self, avatar: Vec<u8>, image_type: ImageType) -> BoxedResult<User> {
+        let base64_avatar = encode_image(avatar, image_type);
+        let body = json!({
+            "avatar": base64_avatar,
+        });
+
+        self.patch(body).await
+    }
+
+    pub async fn set_banner(&self, banner: Vec<u8>, image_type: ImageType) -> BoxedResult<User> {
+        let base64_banner = encode_image(banner, image_type);
+        let body = json!({
+            "banner": base64_banner,
+        });
+
+        self.patch(body).await
+    }
+
+    // todo: decoration & flags
 }
