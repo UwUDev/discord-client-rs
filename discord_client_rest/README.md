@@ -285,12 +285,12 @@ self.client
   - [ ] Add Guild Role Members
   - [ ] Bulk Action Guild Join Requests
   - [ ] Bulk Guild Ban
-  - [ ] Create Guild
+  - [x] Create Guild
   - [ ] Create Guild Ban
   - [ ] Create Guild Join Request
   - [ ] Create Guild Join Request Interview
   - [ ] Create Guild Role
-  - [ ] Delete Guild
+  - [x] Delete Guild
   - [ ] Delete Guild Ban
   - [ ] Delete Guild Join Request
   - [ ] Delete Guild Role
@@ -495,8 +495,8 @@ self.client
   - [ ] Request mail change
   - [x] Change email
   - [x] Change password
-  - [ ] Change avatar
-  - [ ] Change banner
+  - [x] Change avatar
+  - [x] Change banner
   - [x] Change bio
   - [x] Change pronouns
   - [x] Change accent color

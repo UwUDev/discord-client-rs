@@ -19,8 +19,9 @@ async fn main() {
         .unwrap();
 
     let mut channel = client
-        .guild(guild_id)
+        .guild(Some(guild_id))
         .channel(None)
+        .unwrap()
         .create(channel)
         .await
         .unwrap();
@@ -32,16 +33,18 @@ async fn main() {
 
     channel.name = Some("test-channel-edited".to_string());
 
+
     client
-        .guild(guild_id)
+        .guild(Some(guild_id))
         .channel(None)
+        .unwrap()
         .edit(channel)
         .await
         .unwrap();
-
     let invite = client
-        .guild(guild_id)
+        .guild(Some(guild_id))
         .channel(Some(channel_id))
+        .unwrap()
         .create_invite(Default::default())
         .await
         .unwrap();
@@ -49,8 +52,9 @@ async fn main() {
     println!("Invite: discord.gg/{}", invite.code);
 
     let invite_count = client
-        .guild(guild_id)
+        .guild(Some(guild_id))
         .channel(Some(channel_id))
+        .unwrap()
         .get_invites()
         .await
         .unwrap()
@@ -61,8 +65,9 @@ async fn main() {
     tokio::time::sleep(std::time::Duration::from_secs(1)).await;
 
     client
-        .guild(guild_id)
+        .guild(Some(guild_id))
         .channel(Some(channel_id))
+        .unwrap()
         .delete()
         .await
         .unwrap();

@@ -35,7 +35,7 @@ async fn main() {
         .unwrap();
 
     let search_result = client
-        .guild(guild_id)
+        .guild(Some(guild_id))
         .search_guild_messages(search_query)
         .await
         .unwrap();

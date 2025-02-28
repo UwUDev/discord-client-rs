@@ -11,3 +11,6 @@ pub mod super_prop;
 
 type BoxedError = Box<dyn Error + Send + Sync>;
 type BoxedResult<T> = Result<T, BoxedError>;
+
+
+const MAX_ICON_SIZE: usize = 10 * 1024 * 1024;

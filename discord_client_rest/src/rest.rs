@@ -199,7 +199,7 @@ impl RestClient {
         }
     }
 
-    pub fn guild(&self, guild_id: u64) -> GuildRest {
+    pub fn guild(&self, guild_id: Option<u64>) -> GuildRest {
         GuildRest {
             guild_id,
             client: self,
