@@ -33,7 +33,6 @@ async fn main() {
 
     channel.name = Some("test-channel-edited".to_string());
 
-
     client
         .guild(Some(guild_id))
         .channel(None)

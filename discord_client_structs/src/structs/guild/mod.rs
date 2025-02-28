@@ -18,13 +18,13 @@ use serde::{Deserialize, Serialize};
 pub mod activity;
 pub mod automod;
 pub mod clan;
+pub mod create;
 pub mod event;
 pub mod experiment;
 pub mod log;
 pub mod role;
 pub mod stage;
 pub mod user;
-pub mod create;
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]

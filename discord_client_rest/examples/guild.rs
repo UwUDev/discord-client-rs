@@ -1,5 +1,5 @@
-use discord_client_rest::image::base64::encode_image;
 use discord_client_rest::image::ImageType;
+use discord_client_rest::image::base64::encode_image;
 use discord_client_rest::rest::RestClient;
 use discord_client_structs::structs::guild::create::CreateGuildBuilder;
 
@@ -22,11 +22,7 @@ async fn main() {
         .build()
         .unwrap();
 
-    let guild = client
-        .guild(None)
-        .create(create_guild)
-        .await
-        .unwrap();
+    let guild = client.guild(None).create(create_guild).await.unwrap();
 
     let logs = client
         .guild(Some(guild.id))
@@ -36,9 +32,5 @@ async fn main() {
 
     println!("Got {} logs", logs.audit_log_entries.len());
 
-    client
-        .guild(Some(guild.id))
-        .delete()
-        .await
-        .unwrap();
+    client.guild(Some(guild.id)).delete().await.unwrap();
 }

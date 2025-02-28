@@ -2,10 +2,10 @@ use crate::api::channel::ChannelRest;
 use crate::rest::{RequestPropertiesBuilder, RestClient};
 use crate::structs::referer::{GuildReferer, HomePageReferer, Referer};
 use crate::{BoxedResult, MAX_ICON_SIZE};
-use discord_client_structs::structs::guild::create::CreateGuild;
-use discord_client_structs::structs::guild::log::query::AuditLogQuery;
-use discord_client_structs::structs::guild::log::AuditLog;
 use discord_client_structs::structs::guild::Guild;
+use discord_client_structs::structs::guild::create::CreateGuild;
+use discord_client_structs::structs::guild::log::AuditLog;
+use discord_client_structs::structs::guild::log::query::AuditLogQuery;
 use discord_client_structs::structs::message::query::{MessageSearchQuery, MessageSearchResult};
 
 pub struct GuildRest<'a> {
