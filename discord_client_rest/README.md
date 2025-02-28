@@ -148,7 +148,7 @@ self.client
   - [ ] Set Application Embeddability
   - [ ] Transfer Application
   - [ ] Upload Unverified Application Icon
-- **Audit loc**
+- **Audit log**
   - [x] Get Guild Audit Log
 - **Auto moderation**
   - [ ] Clear Mention Raid Incident
@@ -381,15 +381,15 @@ self.client
   - [ ] Create Greet Message
   - [x] Create Message
   - [ ] Create Poll Vote
-  - [ ] Create Reaction
+  - [x] Create Reaction
   - [ ] Crosspost Message
   - [ ] Delete All Reactions
   - [ ] Delete Attachment
   - [ ] Delete Conversation Summary
   - [x] Delete DM Message
   - [x] Delete Message
-  - [ ] Delete Own Reaction
-  - [ ] Delete Reaction
+  - [x] Delete Own Reaction
+  - [x] Delete Reaction
   - [ ] Delete Reaction Emoji
   - [x] Edit DM Message
   - [x] Edit Message

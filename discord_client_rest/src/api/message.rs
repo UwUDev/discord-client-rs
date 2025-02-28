@@ -204,4 +204,80 @@ impl<'a> MessageRest<'a> {
             .get::<Vec<Message>>(&path, None, Some(props))
             .await
     }
+
+    pub async fn add_reaction(
+        &self,
+        message_id: u64,
+        emoji: String,
+        burst: bool,
+        guild_id: Option<u64>,
+    ) -> BoxedResult<()> {
+        let mut path = format!(
+            "channels/{}/messages/{}/reactions/{}/@me",
+            self.channel_id, message_id, emoji
+        );
+        if burst {
+            path.push_str("?type=1");
+        }
+
+        let referer: Referer = match guild_id {
+            Some(guild_id) => GuildChannelReferer {
+                guild_id,
+                channel_id: self.channel_id,
+            }
+            .into(),
+            None => DmChannelReferer {
+                channel_id: self.channel_id,
+            }
+            .into(),
+        };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
+        self.client
+            .put::<_, ()>(&path, None::<()>, Some(props))
+            .await
+    }
+
+    pub async fn remove_reaction(
+        &self,
+        message_id: u64,
+        emoji: String,
+        user_id: Option<u64>,
+        burst: bool,
+        guild_id: Option<u64>,
+    ) -> BoxedResult<()> {
+        let reaction_type = if burst { 1 } else { 0 };
+        let reaction_user = match user_id {
+            Some(user_id) => user_id.to_string(),
+            None => String::from("@me"),
+        };
+
+        let path = format!(
+            "channels/{}/messages/{}/reactions/{}/{}/{}",
+            self.channel_id, message_id, emoji, reaction_type, reaction_user
+        );
+
+        let referer: Referer = match guild_id {
+            Some(guild_id) => GuildChannelReferer {
+                guild_id,
+                channel_id: self.channel_id,
+            }
+            .into(),
+            None => DmChannelReferer {
+                channel_id: self.channel_id,
+            }
+            .into(),
+        };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
+        self.client
+            .delete::<_, ()>(&path, None::<()>, Some(props))
+            .await
+    }
 }

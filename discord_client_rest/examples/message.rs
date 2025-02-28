@@ -60,7 +60,30 @@ async fn main() {
         .await
         .unwrap();
 
+    client
+        .message(channel_id)
+        .add_reaction(
+            response_message.id,
+            String::from("🏳️‍⚧️"),
+            false,
+            Some(guild_id),
+        )
+        .await
+        .unwrap();
+
     tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+
+    client
+        .message(channel_id)
+        .remove_reaction(
+            response_message.id,
+            String::from("🏳️‍⚧️"),
+            None,
+            false,
+            Some(guild_id),
+        )
+        .await
+        .unwrap();
 
     client
         .message(channel_id)
