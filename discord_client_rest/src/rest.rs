@@ -1,3 +1,4 @@
+use crate::api::auth::AuthRest;
 use crate::api::dm::DmRest;
 use crate::api::group::GroupRest;
 use crate::api::guild::GuildRest;
@@ -6,6 +7,7 @@ use crate::api::self_user::SelfUserRest;
 use crate::build_number::fetch_build_number;
 use crate::captcha::{CaptchaRequiredError, SolvedCaptcha};
 use crate::clearance::{get_clearance_cookie, get_invisible};
+use crate::mfa::{MfaRequiredError, MfaVerificationRequest};
 use crate::rate_limit::{RateLimitError, RateLimiter};
 use crate::structs::context::{Context, ContextHeader};
 use crate::structs::referer::{Referer, RefererHeader};
@@ -218,6 +220,10 @@ impl RestClient {
         SelfUserRest { client: self }
     }
 
+    pub fn auth(&self) -> AuthRest {
+        AuthRest { client: self }
+    }
+
     pub async fn get<T: DeserializeOwned + Default + Send>(
         &self,
         path: &str,
@@ -403,7 +409,27 @@ impl RestClient {
     ) -> BoxedResult<T> {
         let status = resp.status();
         match status.as_u16() {
-            401 => return Err("Invalid token".into()),
+            401 => {
+                let json: Value = resp.json().await?;
+
+                if json["code"].is_i64() {
+                    let code = json["code"].as_i64().unwrap();
+                    if code == 60003 {
+                        let mfa_value = json.get("mfa").unwrap();
+                        let mfa_request =
+                            serde_json::from_value::<MfaVerificationRequest>(mfa_value.clone())
+                                .map_err(|e| Box::new(e) as BoxedError)?;
+
+                        let mfa_error = MfaRequiredError {
+                            verification_request: mfa_request,
+                        };
+
+                        return Err(Box::new(mfa_error));
+                    }
+                }
+
+                return Err("Invalid token".into());
+            }
             204 => return Ok(T::default()),
             200..=299 => (),
             429 => {

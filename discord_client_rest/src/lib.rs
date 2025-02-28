@@ -4,6 +4,7 @@ pub mod build_number;
 pub mod captcha;
 pub mod clearance;
 pub mod image;
+pub mod mfa;
 pub mod rate_limit;
 pub mod rest;
 pub mod structs;

@@ -10,6 +10,7 @@ This crate offers a seamless integration for Discord bot developers, featuring:
 - Efficient handling of Discord's REST responses
 - Captcha detection and handling
 - Automatic headers generation for Discord's REST requests
+- MFA Handling
 
 ## Usage
 
