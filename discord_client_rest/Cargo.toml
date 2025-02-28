@@ -23,6 +23,10 @@ path = "examples/dm.rs"
 name = "group"
 path = "examples/group.rs"
 
+[[example]]
+name = "guild"
+path = "examples/guild.rs"
+
 [dependencies]
 discord_client_structs = {path = "../discord_client_structs"}
 rquest = { workspace = true, features = ["gzip", "deflate", "zstd", "brotli", "json", "cookies"] }

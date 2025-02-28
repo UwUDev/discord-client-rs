@@ -14,8 +14,8 @@ pub struct MessageQuery {
 }
 
 impl MessageQuery {
-    pub fn to_map(&self) -> std::collections::HashMap<String, String> {
-        let mut map = std::collections::HashMap::new();
+    pub fn to_map(&self) -> HashMap<String, String> {
+        let mut map = HashMap::new();
         if let Some(around) = self.around {
             map.insert("around".to_string(), around.to_string());
         }

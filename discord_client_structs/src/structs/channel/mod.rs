@@ -13,6 +13,7 @@ pub mod overrides;
 pub mod summary;
 pub mod thread;
 pub mod voice;
+pub mod webhook;
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]

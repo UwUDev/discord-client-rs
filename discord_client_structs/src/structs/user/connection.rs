@@ -1,5 +1,6 @@
-use crate::structs::user::deserialize_string_to_u64;
-use serde::Deserialize;
+use crate::deserializer::*;
+use crate::serializer::*;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Connection {
@@ -26,13 +27,26 @@ pub struct ConnectionIntegration {
     pub guild: IntegrationGuild,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct PartialIntegration {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
+    pub id: u64,
+    pub name: String,
+    pub r#type: String, // todo: enum
+    pub account: Account,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
+    pub application_id: Option<Vec<u64>>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Account {
     pub id: String,
     pub name: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct IntegrationGuild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     #[serde(serialize_with = "serialize_u64_as_string")]
