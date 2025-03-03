@@ -2,12 +2,10 @@ use discord_client_structs::deserializer::deserialize_map_of_u64_string;
 use discord_client_structs::structs::channel::Channel;
 use discord_client_structs::structs::gateway::GatewayApplication;
 use discord_client_structs::structs::guild::clan::GuildJoinRequest;
-use discord_client_structs::structs::guild::experiment::GuildExperiment;
 use discord_client_structs::structs::guild::user::UserGuildSettings;
 use discord_client_structs::structs::guild::{GatewayGuild, SupplementalGuild};
 use discord_client_structs::structs::misc::{TutorialIndicators, Versioned};
 use discord_client_structs::structs::user::connection::Connection;
-use discord_client_structs::structs::user::experiment::UserExperiment;
 use discord_client_structs::structs::user::presence::{MergedPresences, Presence};
 use discord_client_structs::structs::user::relationship::{GameRelationship, Relationship};
 use discord_client_structs::structs::user::session::Session;
@@ -54,8 +52,8 @@ pub struct ReadyEvent {
     pub shard: Option<Vec<u8>>,
     pub resume_gateway_url: String,
     pub api_code_version: Option<u8>,
-    pub experiments: Vec<UserExperiment>,
-    pub guild_experiments: Vec<GuildExperiment>,
+    //pub experiments: Vec<UserExperiment>,
+    //pub guild_experiments: Vec<GuildExperiment>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
