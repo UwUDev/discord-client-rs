@@ -13,7 +13,7 @@ pub struct Invite {
     pub code: String,
     pub r#type: u8,
     #[serde(flatten)]
-    pub metadata: InviteMetadata,
+    pub metadata: Option<InviteMetadata>,
     pub channel: Option<Channel>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
