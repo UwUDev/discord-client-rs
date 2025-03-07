@@ -11,9 +11,13 @@ readme = "README.md"
 name = "discord_client_gateway"
 path = "src/lib.rs"
 
+[features]
+debug_events = []
+
 [[example]]
 name = "event_printer"
 path = "examples/event_printer.rs"
+required-features = ["debug_events"]
 
 [dependencies]
 discord_client_structs = {path = "../discord_client_structs"}

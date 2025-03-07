@@ -7,6 +7,7 @@ use rquest::Impersonate::Chrome133;
 use rquest::ImpersonateOS::Windows;
 use rquest::{Client, Impersonate, Message, WebSocket};
 use serde_json::{Value, json};
+#[cfg(feature = "debug_events")]
 use std::io::Write;
 use std::str::FromStr;
 use std::sync::Arc;
@@ -156,19 +157,21 @@ impl GatewayClient {
                             Err(ZlibDecompressionError::NeedMoreData) => continue,
                             Err(_err) => return Err("Broken frame".into()),
                         };
-
                         let text = String::from_utf8(vec).unwrap();
 
-                        std::fs::remove_file("event.json").unwrap_or_default();
+                        #[cfg(feature = "debug_events")]
+                        {
+                            std::fs::remove_file("event.json").unwrap_or_default();
 
-                        let mut file = std::fs::OpenOptions::new()
-                            .write(true)
-                            .create(true)
-                            .append(false)
-                            .open("event.json")
-                            .unwrap();
+                            let mut file = std::fs::OpenOptions::new()
+                                .write(true)
+                                .create(true)
+                                .append(false)
+                                .open("event.json")
+                                .unwrap();
 
-                        file.write_all(text.as_bytes()).unwrap();
+                            file.write_all(text.as_bytes()).unwrap();
+                        }
 
                         let payload: GatewayPayload = serde_json::from_str(&text).unwrap();
                         if let Some(sequence) = payload.s {
