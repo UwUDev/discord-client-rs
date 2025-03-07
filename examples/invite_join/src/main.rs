@@ -79,6 +79,8 @@ async fn main() {
                         println!("Error joining invite: {:?}", err);
                     }
                 }
+            } else {
+                println!("Error joining invite: {:?}", err);
             }
         }
     }
