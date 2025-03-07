@@ -1,0 +1,10 @@
+[package]
+name = "join_invite"
+version = "0.1.0"
+edition = "2024"
+
+
+[dependencies]
+discord_client_gateway = {path = "../../discord_client_gateway"}
+discord_client_rest = {path = "../../discord_client_rest"}
+tokio = { workspace = true, features = ["rt", "macros", "rt-multi-thread"] }

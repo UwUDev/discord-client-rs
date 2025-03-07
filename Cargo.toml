@@ -7,7 +7,8 @@ members = [
     "discord_client_structs",
 
     # Examples
-    "examples/feur_bot"
+    "examples/feur_bot",
+    "examples/invite_join",
 ]
 
 resolver = "3"

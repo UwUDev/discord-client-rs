@@ -1105,6 +1105,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "join_invite"
+version = "0.1.0"
+dependencies = [
+ "discord_client_gateway",
+ "discord_client_rest",
+ "tokio",
+]
+
+[[package]]
 name = "js-sys"
 version = "0.3.77"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1550,6 +1559,7 @@ version = "1.0.138"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d434192e7da787e94a6ea7e9670b26a036d0ca41e0b7efb2676dd32bae872949"
 dependencies = [
+ "indexmap",
  "itoa",
  "memchr",
  "ryu",
