@@ -74,7 +74,7 @@ impl From<Invite> for Context {
                     location_channel_id: id,
                     location_channel_type: r#type,
                 })
-            },
+            }
             None => Context::NoContext,
         }
     }

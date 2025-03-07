@@ -2,6 +2,7 @@ use crate::api::auth::AuthRest;
 use crate::api::dm::DmRest;
 use crate::api::group::GroupRest;
 use crate::api::guild::GuildRest;
+use crate::api::invite::InviteRest;
 use crate::api::message::MessageRest;
 use crate::api::self_user::SelfUserRest;
 use crate::build_number::fetch_build_number;
@@ -39,7 +40,7 @@ pub struct RestClient {
     pub user_id: u64,
     client: Client,
     pub api_version: u8,
-    pub application_command_index: ApplicationCommandIndex,
+    pub application_command_index: Option<ApplicationCommandIndex>,
     locale: String,
     timezone: String,
     pub build_number: u32,
@@ -178,7 +179,13 @@ impl RestClient {
             )));
         }
 
-        let application_command_index = resp.json::<ApplicationCommandIndex>().await?;
+        let application_command_index = match resp.json::<ApplicationCommandIndex>().await {
+            Ok(index) => Some(index),
+            Err(e) => {
+                error!("Failed to parse application command index: {}", e);
+                None
+            }
+        };
 
         Ok(Self {
             token,
@@ -222,6 +229,10 @@ impl RestClient {
 
     pub fn auth(&self) -> AuthRest {
         AuthRest { client: self }
+    }
+
+    pub fn invite(&self) -> InviteRest {
+        InviteRest { client: self }
     }
 
     pub async fn get<T: DeserializeOwned + Default + Send>(
@@ -452,7 +463,8 @@ impl RestClient {
                 return Err("Bad request".into());
             }
             code => {
-                let msg = format!("Request to {} failed with code {}", url, code);
+                let body = resp.text().await?;
+                let msg = format!("Request to {} failed with code {}: {}", url, code, body);
                 return Err(msg.into());
             }
         }
