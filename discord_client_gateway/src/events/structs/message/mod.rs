@@ -62,7 +62,7 @@ pub struct MessageAckEvent {
     pub mention_count: Option<u32>,
     pub manual: Option<bool>,
     pub last_viewed: Option<u64>,
-    pub flags: u64,
+    pub flags: Option<u64>,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub channel_id: u64,
     pub ack_type: Option<u8>,
