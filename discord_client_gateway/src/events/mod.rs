@@ -1,5 +1,5 @@
 use crate::events::gateway::GatewayPayload;
-use crate::events::structs::call::CallCreateEvent;
+use crate::events::structs::call::*;
 use crate::events::structs::channel::summary::*;
 use crate::events::structs::channel::thread::*;
 use crate::events::structs::channel::typing::*;
@@ -144,6 +144,8 @@ define_events! {
         ThreadMemberUpdate { t: "THREAD_MEMBER_UPDATE", type: ThreadMemberUpdateEvent },
         ThreadMembersUpdate { t: "THREAD_MEMBERS_UPDATE", type: ThreadMembersUpdateEvent },
         CallCreate { t: "CALL_CREATE", type: CallCreateEvent },
+        CallUpdate { t: "CALL_UPDATE", type: CallUpdateEvent },
+        CallDelete { t: "CALL_DELETE", type: CallDeleteEvent },
         PassiveUpdateV2 { t: "PASSIVE_UPDATE_V2", type: PassiveUpdateV2Event },
         ConversationSummaryUpdate { t: "CONVERSATION_SUMMARY_UPDATE", type: ConversationSummaryUpdateEvent },
         VoiceStateUpdate { t: "VOICE_STATE_UPDATE", type: VoiceStateUpdateEvent },

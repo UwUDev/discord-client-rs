@@ -66,6 +66,8 @@ pub enum Event {
 
     // call events
     CallCreate(CallCreateEvent),
+    CallUpdate(CallUpdateEvent),
+    CallDelete(CallDeleteEvent),
 
     // voice events
     VoiceStateUpdate(VoiceStateUpdateEvent),

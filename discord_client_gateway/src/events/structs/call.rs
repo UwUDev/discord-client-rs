@@ -15,3 +15,21 @@ pub struct CallCreateEvent {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub channel_id: u64,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct CallUpdateEvent {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub channel_id: u64,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub message_id: u64,
+    pub region: String,
+    #[serde(deserialize_with = "deserialize_string_to_vec_u64")]
+    pub ringing: Vec<u64>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct CallDeleteEvent {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub channel_id: u64,
+    pub unavailable: Option<bool>,
+}
