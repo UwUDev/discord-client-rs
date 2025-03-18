@@ -1,6 +1,4 @@
-use discord_client_structs::deserializer::{
-    deserialize_option_string_to_u64, deserialize_string_to_u64,
-};
+use discord_client_structs::deserializer::*;
 use discord_client_structs::structs::message::Message;
 use discord_client_structs::structs::user::{Member, User};
 use serde::Deserialize;
@@ -40,6 +38,17 @@ pub struct MessageUpdateEvent {
 pub struct MessageDeleteEvent {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub channel_id: u64,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub guild_id: Option<u64>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct MessageDeleteBulkEvent {
+    #[serde(deserialize_with = "deserialize_string_to_vec_u64")]
+    pub ids: Vec<u64>,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub channel_id: u64,
     #[serde(default)]

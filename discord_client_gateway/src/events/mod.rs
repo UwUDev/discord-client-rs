@@ -129,6 +129,7 @@ define_events! {
         MessageCreate { t: "MESSAGE_CREATE", type: MessageCreateEvent },
         MessageUpdate { t: "MESSAGE_UPDATE", type: MessageUpdateEvent },
         MessageDelete { t: "MESSAGE_DELETE", type: MessageDeleteEvent },
+        MessageDeleteBulk { t: "MESSAGE_DELETE_BULK", type: MessageDeleteBulkEvent },
         MessageAck { t: "MESSAGE_ACK", type: MessageAckEvent },
         MessageReactionAdd { t: "MESSAGE_REACTION_ADD", type: MessageReactionAddEvent },
         MessageReactionRemove { t: "MESSAGE_REACTION_REMOVE", type: MessageReactionRemoveEvent },

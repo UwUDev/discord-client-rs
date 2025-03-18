@@ -37,6 +37,7 @@ pub enum Event {
     MessageCreate(MessageCreateEvent),
     MessageUpdate(MessageUpdateEvent),
     MessageDelete(MessageDeleteEvent),
+    MessageDeleteBulk(MessageDeleteBulkEvent),
     MessageAck(MessageAckEvent),
     MessageReactionAdd(MessageReactionAddEvent),
     MessageReactionRemove(MessageReactionRemoveEvent),
