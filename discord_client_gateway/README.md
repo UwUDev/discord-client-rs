@@ -86,8 +86,8 @@ if let Event::Ready(ready) = event {
 - **Channel**
   - **Call**
     - [x] Call Create
-    - [ ] Call Delete
-    - [ ] Call Update
+    - [x] Call Delete
+    - [x] Call Update
   - **Conversation**
     - [x] Conversation Summary Update
   - **DM**
