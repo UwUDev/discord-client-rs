@@ -201,7 +201,7 @@ if let Event::Ready(ready) = event {
   - [x] Message Ack
   - [x] Message Create
   - [x] Message Delete
-  - [ ] Message Delete Bulk
+  - [x] Message Delete Bulk
   - [x] Message Update
 - **Misc**
   - [x] Content Inventory Inbox Stale
