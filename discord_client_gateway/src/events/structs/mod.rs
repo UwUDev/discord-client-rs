@@ -6,6 +6,7 @@ use crate::events::structs::channel::typing::*;
 use crate::events::structs::channel::voice::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
+use crate::events::structs::guild::automod::AutoModMentionRaidDetectionEvent;
 use crate::events::structs::guild::role::*;
 use crate::events::structs::guild::*;
 use crate::events::structs::message::poll::*;
@@ -90,6 +91,7 @@ pub enum Event {
     GuildRoleCreate(GuildRoleCreateEvent),
     GuildRoleUpdate(GuildRoleUpdateEvent),
     GuildRoleDelete(GuildRoleDeleteEvent),
+    AutoModMentionRaidDetection(AutoModMentionRaidDetectionEvent),
 
     // typing events
     TypingStart(TypingStartEvent),
