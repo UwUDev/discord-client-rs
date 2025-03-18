@@ -93,7 +93,8 @@ if let Event::Ready(ready) = event {
   - **DM**
     - [ ] DM Settings Upsell Show
   - **Pin**
-    - [ ] Channel Pins Update
+    - [x] Channel Pins Update
+    - [x] Channel Pins ACX
   - **Recipient**
     - [ ] Channel Recipient Add
     - [ ] Channel Recipient Remove

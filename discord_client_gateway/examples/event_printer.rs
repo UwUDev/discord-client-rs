@@ -1,6 +1,7 @@
 use chrono::{DateTime, Utc};
 use discord_client_gateway::events::Event;
 use discord_client_gateway::gateway::GatewayClient;
+use std::process::exit;
 
 #[tokio::main]
 async fn main() {
@@ -35,7 +36,7 @@ async fn main() {
     loop {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
-        if let Event::MessageCreate(message_event) = event {
+        if let Event::MessageCreate(message_event) = event.clone() {
             let current_time = Utc::now();
             let created: Option<DateTime<Utc>> = message_event.message.created_at();
             if let Some(created) = created {
@@ -47,6 +48,10 @@ async fn main() {
                     elapsed.num_milliseconds()
                 );
             }
+        } else if let Event::Unknown(unknown) = event {
+            println!("Unknown event found: {}  ({})", unknown.r#type, unknown.op);
+            println!("See the event.json file to debug this event.");
+            exit(0);
         }
     }
 }
