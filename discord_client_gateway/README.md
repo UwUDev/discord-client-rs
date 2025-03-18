@@ -152,9 +152,6 @@ if let Event::Ready(ready) = event {
     - [ ] Guild Integration Delete
     - [ ] Guild Integration Update
     - [ ] Guild Integrations Update
-  - **Invite**
-    - [ ] Guild Invite Create
-    - [ ] Guild Invite Delete
   - **Log**
     - [x] Guild Audit Log Entry Create
   - **Member**
@@ -167,9 +164,9 @@ if let Event::Ready(ready) = event {
     - [ ] Guild Join Request Delete
     - [ ] Guild Join Request Update
   - **Role**
-    - [ ] Guild Role Create
-    - [ ] Guild Role Delete
-    - [ ] Guild Role Update
+    - [x] Guild Role Create
+    - [x] Guild Role Delete
+    - [x] Guild Role Update
   - **Schedule Event**
     - [ ] Guild Schedule Event Create
     - [ ] Guild Schedule Event Delete

@@ -6,6 +6,7 @@ use crate::events::structs::channel::typing::*;
 use crate::events::structs::channel::voice::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
+use crate::events::structs::guild::role::*;
 use crate::events::structs::guild::*;
 use crate::events::structs::message::poll::*;
 use crate::events::structs::message::reaction::*;
@@ -85,6 +86,9 @@ pub enum Event {
     GuildUpdate(GuildUpdateEvent),
     GuildDelete(GuildDeleteEvent),
     GuildAuditLogEntryCreate(GuildAuditLogEntryCreateEvent),
+    GuildRoleCreate(GuildRoleCreateEvent),
+    GuildRoleUpdate(GuildRoleUpdateEvent),
+    GuildRoleDelete(GuildRoleDeleteEvent),
 
     // typing events
     TypingStart(TypingStartEvent),

@@ -11,6 +11,7 @@ use discord_client_structs::structs::guild::{GatewayGuild, Guild, UnavailableGui
 use discord_client_structs::structs::user::{AvatarDecorationData, Member, User};
 use serde::Deserialize;
 
+pub mod role;
 #[derive(Debug, Deserialize, Clone)]
 pub struct PassiveUpdateV2Event {
     pub updated_voice_states: Vec<VoiceState>,
