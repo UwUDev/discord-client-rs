@@ -142,7 +142,7 @@ if let Event::Ready(ready) = event {
     - [ ] Guild Ban Add
     - [ ] Guild Ban Remove
   - **Emoji**
-    - [ ] Guild Emojis Update
+    - [x] Guild Emojis Update
   - **Integration**
     - [ ] Guild Integration Create
     - [ ] Guild Integration Delete
@@ -175,7 +175,7 @@ if let Event::Ready(ready) = event {
     - [ ] Guild Soundboard Sound Update
     - [ ] Soundboard Sounds
   - **Sticker**
-    - [ ] Guild Stickers Update
+    - [x] Guild Stickers Update
   - **Update**
     - [x] Passive Update V2
   - [x] Guild Create

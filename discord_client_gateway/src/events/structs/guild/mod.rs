@@ -12,7 +12,9 @@ use discord_client_structs::structs::user::{AvatarDecorationData, Member, User};
 use serde::Deserialize;
 
 pub mod automod;
+pub mod emoji;
 pub mod role;
+pub mod sticker;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct PassiveUpdateV2Event {
