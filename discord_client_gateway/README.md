@@ -99,7 +99,7 @@ if let Event::Ready(ready) = event {
 - [ ] Remote Command
 - [ ] Request Deleted Entity IDs
 - [ ] Request Soundboard Sounds
-- [ ] Request Last Messages
+- [x] Request Last Messages
 - [ ] Search Recent Members
 - [x] Request Channel Statuses
 

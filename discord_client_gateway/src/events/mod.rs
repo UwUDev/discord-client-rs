@@ -191,6 +191,7 @@ define_events! {
         UserSettingsProtoUpdate { t: "USER_SETTINGS_PROTO_UPDATE", type: UserSettingsProtoUpdateEvent },
         UserConnectionsUpdate { t: "USER_CONNECTIONS_UPDATE", type: UserConnectionsUpdateEvent },
         ChannelStatues { t: "CHANNEL_STATUSES", type: ChannelStatusesEvent },
+        LastMessages { t: "LAST_MESSAGES", type: LastMessagesEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }

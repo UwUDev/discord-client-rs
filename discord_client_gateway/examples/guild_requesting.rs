@@ -33,16 +33,34 @@ async fn main() {
     );
 
     let guild_id: u64 = 442252698964721669;
+    let channel_ids: Vec<u64> = vec![443150878111694848, 448238009733742612];
 
     client.request_channel_statuses(guild_id).await.unwrap();
 
     loop {
         let event = client.next_event().await.unwrap();
-        println!("{}", event);
         if let Event::ChannelStatues(statues_event) = event.clone() {
             println!(
                 "Got {} channel statuses for guild {}",
                 statues_event.channels.len(),
+                statues_event.guild_id
+            );
+            break;
+        }
+    }
+
+    client
+        .request_last_messages(guild_id, channel_ids)
+        .await
+        .unwrap();
+
+    loop {
+        let event = client.next_event().await.unwrap();
+        println!("{}", event);
+        if let Event::LastMessages(statues_event) = event.clone() {
+            println!(
+                "Got {} last messages for guild {}",
+                statues_event.messages.len(),
                 statues_event.guild_id
             );
         } else if let Event::Unknown(unknown) = event {

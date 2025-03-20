@@ -122,6 +122,7 @@ pub enum Event {
 
     // requested events
     ChannelStatuses(ChannelStatusesEvent),
+    LastMessages(LastMessagesEvent),
 
     // misc events
     ContentInventoryInboxStale(ContentInventoryInboxStaleEvent),

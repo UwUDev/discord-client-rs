@@ -217,4 +217,19 @@ impl GatewayClient {
             .await?;
         Ok(())
     }
+
+    pub async fn request_last_messages(
+        &mut self,
+        guild_id: u64,
+        channel_ids: Vec<u64>,
+    ) -> BoxedResult<()> {
+        let payload = create_op_34(guild_id, channel_ids);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.to_string()))
+            .await?;
+        Ok(())
+    }
 }
