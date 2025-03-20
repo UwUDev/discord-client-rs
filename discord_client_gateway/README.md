@@ -207,10 +207,6 @@ if let Event::Ready(ready) = event {
 - **Ready**
   - [x] Ready
   - [x] Ready Supplemental
-- **Relationship**
-  - [ ] Relationship Add
-  - [ ] Relationship Remove
-  - [ ] Relationship Update
 - **Stage**
   - [ ] Stage Instance Create
   - [ ] Stage Instance Delete
@@ -229,3 +225,7 @@ if let Event::Ready(ready) = event {
   - [ ] User Note Update
   - [ ] User Required Action Update
   - [ ] User Settings Update
+  - **Relationship**
+    - [ ] Relationship Add
+    - [ ] Relationship Remove
+    - [ ] Relationship Update
