@@ -1,5 +1,5 @@
 use crate::events::structs::gateway::GatewayPayload;
-use crate::utils::create_op_37;
+use crate::utils::*;
 use crate::{BoxedError, BoxedResult};
 use discord_client_structs::parser::parse_id_from_token;
 use futures_util::stream::{SplitSink, SplitStream};
@@ -204,6 +204,17 @@ impl GatewayClient {
     pub async fn bulk_guild_subscribe(&mut self, guild_ids: Vec<u64>) -> BoxedResult<()> {
         let op_37 = create_op_37(guild_ids);
         self.tx.lock().await.send(Message::Text(op_37)).await?;
+        Ok(())
+    }
+
+    pub async fn request_channel_statuses(&mut self, guild_id: u64) -> BoxedResult<()> {
+        let payload = create_op_36(guild_id);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.to_string()))
+            .await?;
         Ok(())
     }
 }

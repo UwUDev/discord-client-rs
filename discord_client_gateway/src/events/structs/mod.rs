@@ -20,6 +20,7 @@ use crate::events::structs::message::*;
 use crate::events::structs::misc::*;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
+use crate::events::structs::requested::*;
 use crate::events::structs::user::*;
 use serde_json::Value;
 
@@ -118,6 +119,9 @@ pub enum Event {
 
     // user events
     UserConnectionsUpdate(UserConnectionsUpdateEvent),
+
+    // requested events
+    ChannelStatuses(ChannelStatusesEvent),
 
     // misc events
     ContentInventoryInboxStale(ContentInventoryInboxStaleEvent),

@@ -19,6 +19,11 @@ name = "event_printer"
 path = "examples/event_printer.rs"
 required-features = ["debug_events"]
 
+[[example]]
+name = "guild_requesting"
+path = "examples/guild_requesting.rs"
+required-features = ["debug_events"]
+
 [dependencies]
 discord_client_structs = {path = "../discord_client_structs"}
 futures-util = { version = "0.3.0", default-features = false }

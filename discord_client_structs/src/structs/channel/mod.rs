@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 
 pub mod invite;
 pub mod overrides;
+pub mod status;
 pub mod summary;
 pub mod thread;
 pub mod voice;
