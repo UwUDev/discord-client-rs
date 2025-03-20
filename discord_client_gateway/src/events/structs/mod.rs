@@ -31,6 +31,7 @@ pub mod message;
 pub mod misc;
 pub mod presence;
 pub mod ready;
+pub mod requested;
 pub mod user;
 
 #[derive(Debug, Clone)]
