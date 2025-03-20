@@ -11,6 +11,7 @@ use crate::events::structs::gateway::*;
 use crate::events::structs::guild::automod::*;
 use crate::events::structs::guild::ban::*;
 use crate::events::structs::guild::emoji::*;
+use crate::events::structs::guild::integration::*;
 use crate::events::structs::guild::role::*;
 use crate::events::structs::guild::sticker::*;
 use crate::events::structs::guild::*;
@@ -23,7 +24,6 @@ use crate::events::structs::ready::*;
 use crate::events::structs::user::*;
 use crate::events::structs::*;
 use serde::Deserialize;
-use crate::events::structs::guild::integration::*;
 
 pub(crate) mod deserializer;
 pub mod structs;
