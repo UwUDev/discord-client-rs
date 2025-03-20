@@ -21,6 +21,7 @@ use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::user::*;
 use serde_json::Value;
+use crate::events::structs::guild::integration::*;
 
 pub mod call;
 pub mod channel;
@@ -102,6 +103,10 @@ pub enum Event {
     GuildStickersUpdate(GuildStickersUpdateEvent),
     GuildBanAdd(GuildBanAddEvent),
     GuildBanRemove(GuildBanRemoveEvent),
+    GuildIntegrationsUpdate(GuildIntegrationsUpdateEvent),
+    IntegrationCreate(IntegrationCreateEvent),
+    IntegrationUpdate(IntegrationUpdateEvent),
+    IntegrationDelete(IntegrationDeleteEvent),
 
     // typing events
     TypingStart(TypingStartEvent),

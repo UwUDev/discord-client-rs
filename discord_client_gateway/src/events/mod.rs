@@ -23,6 +23,7 @@ use crate::events::structs::ready::*;
 use crate::events::structs::user::*;
 use crate::events::structs::*;
 use serde::Deserialize;
+use crate::events::structs::guild::integration::*;
 
 pub(crate) mod deserializer;
 pub mod structs;
@@ -180,6 +181,10 @@ define_events! {
         GuildStickersUpdate { t: "GUILD_STICKERS_UPDATE", type: GuildStickersUpdateEvent },
         GuildBanAdd { t: "GUILD_BAN_ADD", type: GuildBanAddEvent },
         GuildBanRemove { t: "GUILD_BAN_REMOVE", type: GuildBanRemoveEvent },
+        GuildIntegrationsUpdate { t: "GUILD_INTEGRATIONS_UPDATE", type: GuildIntegrationsUpdateEvent },
+        GuildIntegrationCreate { t: "INTEGRATION_CREATE", type: IntegrationCreateEvent },
+        GuildIntegrationUpdate { t: "INTEGRATION_UPDATE", type: IntegrationUpdateEvent },
+        GuildIntegrationDelete { t: "INTEGRATION_DELETE", type: IntegrationDeleteEvent },
         AutoModMentionRaidDetection { t: "AUTO_MODERATION_MENTION_RAID_DETECTION", type: AutoModMentionRaidDetectionEvent },
         ContentInventoryInboxStale { t: "CONTENT_INVENTORY_INBOX_STALE", type: ContentInventoryInboxStaleEvent },
         UserSettingsProtoUpdate { t: "USER_SETTINGS_PROTO_UPDATE", type: UserSettingsProtoUpdateEvent },

@@ -144,10 +144,10 @@ if let Event::Ready(ready) = event {
   - **Emoji**
     - [x] Guild Emojis Update
   - **Integration**
-    - [ ] Guild Integration Create
-    - [ ] Guild Integration Delete
-    - [ ] Guild Integration Update
-    - [ ] Guild Integrations Update
+    - [x] Guild Integration Create
+    - [x] Guild Integration Delete
+    - [x] Guild Integration Update
+    - [x] Guild Integrations Update
   - **Log**
     - [x] Guild Audit Log Entry Create
   - **Member**

@@ -14,6 +14,7 @@ use serde::Deserialize;
 pub mod automod;
 pub mod ban;
 pub mod emoji;
+pub mod integration;
 pub mod role;
 pub mod sticker;
 

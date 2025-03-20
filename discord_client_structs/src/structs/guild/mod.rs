@@ -21,6 +21,7 @@ pub mod clan;
 pub mod create;
 pub mod event;
 pub mod experiment;
+pub mod integration;
 pub mod log;
 pub mod role;
 pub mod stage;
