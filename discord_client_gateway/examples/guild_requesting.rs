@@ -57,12 +57,29 @@ async fn main() {
     loop {
         let event = client.next_event().await.unwrap();
         println!("{}", event);
-        if let Event::LastMessages(statues_event) = event.clone() {
+        if let Event::LastMessages(last_messages) = event.clone() {
             println!(
                 "Got {} last messages for guild {}",
-                statues_event.messages.len(),
-                statues_event.guild_id
+                last_messages.messages.len(),
+                last_messages.guild_id
             );
+            break;
+        }
+    }
+
+    // Empty query to get all members (max 1k per page, you can use pagination to get more but can't go over 10k)
+    client.search_recent_members(guild_id, "", None, None).await.unwrap();
+
+    loop {
+        let event = client.next_event().await.unwrap();
+        println!("{}", event);
+        if let Event::GuildMembersChunk(members_chunk) = event.clone() {
+            println!(
+                "Got {} members for guild {}",
+                members_chunk.members.len(),
+                members_chunk.guild_id
+            );
+            break;
         } else if let Event::Unknown(unknown) = event {
             println!("Unknown event found: {}  ({})", unknown.r#type, unknown.op);
             println!("See the event.json file to debug this event.");

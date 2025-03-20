@@ -123,6 +123,7 @@ pub enum Event {
     // requested events
     ChannelStatuses(ChannelStatusesEvent),
     LastMessages(LastMessagesEvent),
+    GuildMembersChunk(GuildMembersChunkEvent),
 
     // misc events
     ContentInventoryInboxStale(ContentInventoryInboxStaleEvent),

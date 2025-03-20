@@ -232,4 +232,21 @@ impl GatewayClient {
             .await?;
         Ok(())
     }
+
+    pub async fn search_recent_members(
+        &mut self,
+        guild_id: u64,
+        query: &str,
+        continuation_token: Option<u64>,
+        nonce: Option<&str>,
+    ) -> BoxedResult<()> {
+        let payload = create_op_35(guild_id, query, continuation_token, nonce);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.to_string()))
+            .await?;
+        Ok(())
+    }
 }

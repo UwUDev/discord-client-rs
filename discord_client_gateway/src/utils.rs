@@ -36,3 +36,19 @@ pub(crate) fn create_op_34(guild_id: u64, channel_ids: Vec<u64>) -> String {
 
     payload.to_string()
 }
+
+pub(crate) fn create_op_35(guild_id: u64, query: &str, continuation_token: Option<u64>, nonce: Option<&str>) -> String {
+    let mut payload = Value::from_str(r#"{"op":35,"d":{"guild_id":0,"query":"","continuation_token":null}}"#).unwrap();
+    payload["d"]["guild_id"] = Value::from(guild_id);
+    payload["d"]["query"] = Value::from(query);
+    payload["d"]["continuation_token"] = match continuation_token {
+        Some(token) => Value::from(token),
+        None => Value::Null,
+    };
+    payload["d"]["nonce"] = match nonce {
+        Some(nonce) => Value::from(nonce),
+        None => Value::Null,
+    };
+
+    payload.to_string()
+}

@@ -192,6 +192,7 @@ define_events! {
         UserConnectionsUpdate { t: "USER_CONNECTIONS_UPDATE", type: UserConnectionsUpdateEvent },
         ChannelStatues { t: "CHANNEL_STATUSES", type: ChannelStatusesEvent },
         LastMessages { t: "LAST_MESSAGES", type: LastMessagesEvent },
+        GuildMembersChunk { t: "GUILD_MEMBERS_CHUNK", type: GuildMembersChunkEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }

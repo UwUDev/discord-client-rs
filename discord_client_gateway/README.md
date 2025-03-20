@@ -100,7 +100,7 @@ if let Event::Ready(ready) = event {
 - [ ] Request Deleted Entity IDs
 - [ ] Request Soundboard Sounds
 - [x] Request Last Messages
-- [ ] Search Recent Members
+- [x] Search Recent Members
 - [x] Request Channel Statuses
 
 ## Supported receive events
