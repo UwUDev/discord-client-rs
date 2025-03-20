@@ -14,6 +14,8 @@ It tends to provide a high-level API for interacting with Discord's real-time We
 - **TLS impersonation** and **HTTP/2 (H2) mimicing** of Chrome to avoid detection
 - **Undetectable** by Discord's anti-bot mechanisms unless you do something stupid or spammy
 - **Automatic heartbeat** with sequence number handling
+- **Captcha handling**
+- **Queue system and rate limiting**
 
 ## Crates
 
