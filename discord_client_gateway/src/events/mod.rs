@@ -8,10 +8,11 @@ use crate::events::structs::channel::typing::*;
 use crate::events::structs::channel::voice::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
-use crate::events::structs::guild::automod::AutoModMentionRaidDetectionEvent;
-use crate::events::structs::guild::emoji::GuildEmojisUpdateEvent;
+use crate::events::structs::guild::automod::*;
+use crate::events::structs::guild::ban::*;
+use crate::events::structs::guild::emoji::*;
 use crate::events::structs::guild::role::*;
-use crate::events::structs::guild::sticker::GuildStickersUpdateEvent;
+use crate::events::structs::guild::sticker::*;
 use crate::events::structs::guild::*;
 use crate::events::structs::message::poll::*;
 use crate::events::structs::message::reaction::*;
@@ -177,6 +178,8 @@ define_events! {
         GuildRoleDelete { t: "GUILD_ROLE_DELETE", type: GuildRoleDeleteEvent },
         GuildEmojisUpdate { t: "GUILD_EMOJIS_UPDATE", type: GuildEmojisUpdateEvent },
         GuildStickersUpdate { t: "GUILD_STICKERS_UPDATE", type: GuildStickersUpdateEvent },
+        GuildBanAdd { t: "GUILD_BAN_ADD", type: GuildBanAddEvent },
+        GuildBanRemove { t: "GUILD_BAN_REMOVE", type: GuildBanRemoveEvent },
         AutoModMentionRaidDetection { t: "AUTO_MODERATION_MENTION_RAID_DETECTION", type: AutoModMentionRaidDetectionEvent },
         ContentInventoryInboxStale { t: "CONTENT_INVENTORY_INBOX_STALE", type: ContentInventoryInboxStaleEvent },
         UserSettingsProtoUpdate { t: "USER_SETTINGS_PROTO_UPDATE", type: UserSettingsProtoUpdateEvent },

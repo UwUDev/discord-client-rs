@@ -12,6 +12,7 @@ use discord_client_structs::structs::user::{AvatarDecorationData, Member, User};
 use serde::Deserialize;
 
 pub mod automod;
+pub mod ban;
 pub mod emoji;
 pub mod role;
 pub mod sticker;

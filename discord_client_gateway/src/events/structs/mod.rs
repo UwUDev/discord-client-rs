@@ -7,10 +7,11 @@ use crate::events::structs::channel::typing::*;
 use crate::events::structs::channel::voice::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
-use crate::events::structs::guild::automod::AutoModMentionRaidDetectionEvent;
-use crate::events::structs::guild::emoji::GuildEmojisUpdateEvent;
+use crate::events::structs::guild::automod::*;
+use crate::events::structs::guild::ban::*;
+use crate::events::structs::guild::emoji::*;
 use crate::events::structs::guild::role::*;
-use crate::events::structs::guild::sticker::GuildStickersUpdateEvent;
+use crate::events::structs::guild::sticker::*;
 use crate::events::structs::guild::*;
 use crate::events::structs::message::poll::*;
 use crate::events::structs::message::reaction::*;
@@ -99,6 +100,8 @@ pub enum Event {
     AutoModMentionRaidDetection(AutoModMentionRaidDetectionEvent),
     GuildEmojisUpdate(GuildEmojisUpdateEvent),
     GuildStickersUpdate(GuildStickersUpdateEvent),
+    GuildBanAdd(GuildBanAddEvent),
+    GuildBanRemove(GuildBanRemoveEvent),
 
     // typing events
     TypingStart(TypingStartEvent),

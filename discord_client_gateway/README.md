@@ -139,8 +139,8 @@ if let Event::Ready(ready) = event {
   - **Auto Moderation**
     - [x] Auto Moderation Mention Raid Detection
   - **Ban**
-    - [ ] Guild Ban Add
-    - [ ] Guild Ban Remove
+    - [x] Guild Ban Add
+    - [x] Guild Ban Remove
   - **Emoji**
     - [x] Guild Emojis Update
   - **Integration**
