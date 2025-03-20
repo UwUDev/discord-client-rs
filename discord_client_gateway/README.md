@@ -78,8 +78,32 @@ if let Event::Ready(ready) = event {
     client.bulk_guild_subscribe(ids).await.unwrap();
 }
 ```
+## Supported send events
 
-## Supported events
+- [x] Identify
+- [ ] Resume
+- [x] Heartbeat
+- [ ] Update Presence
+- [ ] Update Voice State
+- [ ] Ping Voice Server
+- [ ] Create Stream
+- [ ] Watch Stream
+- [ ] Set Stream Paused
+- [ ] Delete Stream
+- [ ] Ping Stream Server
+- [x] Bulk guild subscribe
+- [ ] Request Guild Members
+- [ ] Request Call Connect
+- [ ] Update Guild Subscriptions
+- [ ] Request Forum Unreads
+- [ ] Remote Command
+- [ ] Request Deleted Entity IDs
+- [ ] Request Soundboard Sounds
+- [ ] Request Last Messages
+- [ ] Search Recent Members
+- [ ] Request Channel Statuses
+
+## Supported receive events
 
 - **Application**
   - [ ] Application Command Permissions Update

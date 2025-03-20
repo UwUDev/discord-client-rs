@@ -1,4 +1,5 @@
 use crate::events::structs::gateway::GatewayPayload;
+use crate::utils::create_op_37;
 use crate::{BoxedError, BoxedResult};
 use discord_client_structs::parser::parse_id_from_token;
 use futures_util::stream::{SplitSink, SplitStream};
@@ -9,7 +10,6 @@ use rquest::{Client, Impersonate, Message, WebSocket};
 use serde_json::{Value, json};
 #[cfg(feature = "debug_events")]
 use std::io::Write;
-use std::str::FromStr;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
 use tokio::sync::Mutex;
@@ -202,25 +202,8 @@ impl GatewayClient {
     }
 
     pub async fn bulk_guild_subscribe(&mut self, guild_ids: Vec<u64>) -> BoxedResult<()> {
-        let op_37 = Self::create_op_37(guild_ids);
+        let op_37 = create_op_37(guild_ids);
         self.tx.lock().await.send(Message::Text(op_37)).await?;
         Ok(())
-    }
-
-    fn create_op_37(guild_ids: Vec<u64>) -> String {
-        let mut payload = Value::from_str(r#"{"op":37,"d":{"subscriptions":{}}}"#).unwrap();
-        let guild_payload = Value::from_str(
-            r#"{"typing":true,"threads":true,"activities":true,"member_updates":true}"#,
-        )
-        .unwrap();
-
-        for guild_id in guild_ids {
-            payload["d"]["subscriptions"]
-                .as_object_mut()
-                .unwrap()
-                .insert(guild_id.to_string(), guild_payload.clone());
-        }
-
-        payload.to_string()
     }
 }
