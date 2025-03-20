@@ -101,7 +101,7 @@ if let Event::Ready(ready) = event {
 - [ ] Request Soundboard Sounds
 - [ ] Request Last Messages
 - [ ] Search Recent Members
-- [ ] Request Channel Statuses
+- [x] Request Channel Statuses
 
 ## Supported receive events
 
