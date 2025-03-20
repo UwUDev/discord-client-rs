@@ -1,6 +1,7 @@
 use crate::events::gateway::GatewayPayload;
 use crate::events::structs::call::*;
 use crate::events::structs::channel::pin::*;
+use crate::events::structs::channel::recipient::*;
 use crate::events::structs::channel::summary::*;
 use crate::events::structs::channel::thread::*;
 use crate::events::structs::channel::typing::*;
@@ -143,6 +144,8 @@ define_events! {
         ChannelDelete { t: "CHANNEL_DELETE", type: ChannelDeleteEvent },
         ChannelPinsUpdate { t: "CHANNEL_PINS_UPDATE", type: ChannelPinsUpdateEvent },
         ChannelPinsAck { t: "CHANNEL_PINS_ACK", type: ChannelPinsAckEvent },
+        ChannelRecipientAdd { t: "CHANNEL_RECIPIENT_ADD", type: ChannelRecipientAddEvent },
+        ChannelRecipientRemove { t: "CHANNEL_RECIPIENT_REMOVE", type: ChannelRecipientRemoveEvent },
         ThreadCreate { t: "THREAD_CREATE", type: ThreadCreateEvent },
         ThreadUpdate { t: "THREAD_UPDATE", type: ThreadUpdateEvent },
         ThreadDelete { t: "THREAD_DELETE", type: ThreadDeleteEvent },

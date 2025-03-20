@@ -1,5 +1,6 @@
 use crate::events::structs::call::*;
 use crate::events::structs::channel::pin::*;
+use crate::events::structs::channel::recipient::*;
 use crate::events::structs::channel::summary::*;
 use crate::events::structs::channel::thread::*;
 use crate::events::structs::channel::typing::*;
@@ -61,6 +62,8 @@ pub enum Event {
     ConversationSummaryUpdate(ConversationSummaryUpdateEvent),
     ChannelPinsUpdate(ChannelPinsUpdateEvent),
     ChannelPinsAck(ChannelPinsAckEvent),
+    ChannelRecipientAdd(ChannelRecipientAddEvent),
+    ChannelRecipientRemove(ChannelRecipientRemoveEvent),
 
     // thread events
     ThreadCreate(ThreadCreateEvent),

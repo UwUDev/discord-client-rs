@@ -96,8 +96,8 @@ if let Event::Ready(ready) = event {
     - [x] Channel Pins Update
     - [x] Channel Pins ACX
   - **Recipient**
-    - [ ] Channel Recipient Add
-    - [ ] Channel Recipient Remove
+    - [x] Channel Recipient Add
+    - [x] Channel Recipient Remove
   - **Thread**
     - [x] Thread Create
     - [x] Thread Delete
