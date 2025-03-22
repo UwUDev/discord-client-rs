@@ -1,6 +1,8 @@
 use discord_client_gateway::gateway::GatewayClient;
 use discord_client_rest::captcha::{CaptchaRequiredError, SolvedCaptcha};
 use discord_client_rest::rest::RestClient;
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 #[tokio::main]
 async fn main() {
@@ -10,23 +12,25 @@ async fn main() {
         .await
         .unwrap();
 
-    let mut gateway_client = GatewayClient::connect(token, 53607934, rest_client.build_number)
-        .await
-        .unwrap();
+    let gateway_client = Arc::new(Mutex::new(
+        GatewayClient::connect(token, 53607934, rest_client.build_number)
+            .await
+            .unwrap()
+    ));
 
     let user_id = rest_client.user_id;
-
     println!("User ID: {}", user_id);
 
     for _ in 0..2 {
-        let _ = gateway_client.next_event().await.unwrap();
+        let _ = gateway_client.lock().await.next_event().await.unwrap();
     }
 
-    let session_id = gateway_client.session_id.clone().unwrap();
+    let session_id = gateway_client.lock().await.session_id.clone().unwrap();
 
+    let gateway_client_clone = Arc::clone(&gateway_client);
     tokio::spawn(async move {
         loop {
-            let _ = gateway_client.next_event().await.unwrap();
+            let _ = gateway_client_clone.lock().await.next_event().await.unwrap();
         }
     });
 
@@ -85,5 +89,5 @@ async fn main() {
         }
     }
 
-    gateway_client.graceful_shutdown().await.unwrap();
+    gateway_client.lock().await.graceful_shutdown().await.unwrap();
 }

@@ -195,9 +195,13 @@ impl GatewayClient {
     }
 
     pub async fn graceful_shutdown(&mut self) -> BoxedResult<()> {
-        let mut tx_guard = self.tx.lock().await;
-        tx_guard.send(Message::Close { code: CloseCode::Normal, reason: None }).await?;
-        tx_guard.close().await?;
+        let mut tx = self.tx.lock().await;
+        tx.send(Message::Close {
+            code: CloseCode::Normal,
+            reason: None,
+        })
+        .await?;
+        tx.close().await?;
         Ok(())
     }
 
