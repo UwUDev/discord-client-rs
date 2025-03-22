@@ -49,7 +49,7 @@ pub(crate) fn create_op_35(
     payload["d"]["guild_id"] = Value::from(guild_id);
     payload["d"]["query"] = Value::from(query);
     payload["d"]["continuation_token"] = match continuation_token {
-        Some(token) => Value::from(token),
+        Some(token) => Value::from(token.to_string()),
         None => Value::Null,
     };
     payload["d"]["nonce"] = match nonce {
@@ -98,11 +98,9 @@ pub(crate) fn create_op_8(
         d.insert("nonce".to_string(), json!(n));
     }
 
-    let json = json!({
+    json!({
         "op": 8,
         "d": d
     })
-    .to_string();
-    println!("{}", json);
-    json
+    .to_string()
 }
