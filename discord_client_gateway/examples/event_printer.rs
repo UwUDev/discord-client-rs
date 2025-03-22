@@ -49,6 +49,7 @@ async fn main() {
                 );
             }
         } else if let Event::Unknown(unknown) = event {
+            client.graceful_shutdown().await.unwrap();
             println!("Unknown event found: {}  ({})", unknown.r#type, unknown.op);
             println!("See the event.json file to debug this event.");
             exit(0);

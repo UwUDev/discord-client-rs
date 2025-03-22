@@ -84,4 +84,6 @@ async fn main() {
             }
         }
     }
+
+    gateway_client.graceful_shutdown().await.unwrap();
 }

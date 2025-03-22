@@ -107,4 +107,6 @@ async fn main() {
             exit(0);
         }
     }
+
+    client.graceful_shutdown().await.unwrap();
 }

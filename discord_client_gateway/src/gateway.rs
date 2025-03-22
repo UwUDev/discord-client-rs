@@ -6,7 +6,7 @@ use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt, TryStreamExt};
 use rquest::Impersonate::Chrome133;
 use rquest::ImpersonateOS::Windows;
-use rquest::{Client, Impersonate, Message, WebSocket};
+use rquest::{Client, CloseCode, Impersonate, Message, WebSocket};
 use serde_json::{Value, json};
 #[cfg(feature = "debug_events")]
 use std::io::Write;
@@ -192,6 +192,13 @@ impl GatewayClient {
                 }
             }
         }
+    }
+
+    pub async fn graceful_shutdown(&mut self) -> BoxedResult<()> {
+        let mut tx_guard = self.tx.lock().await;
+        tx_guard.send(Message::Close { code: CloseCode::Normal, reason: None }).await?;
+        tx_guard.close().await?;
+        Ok(())
     }
 
     pub async fn reconnect(&mut self) -> BoxedResult<()> {
