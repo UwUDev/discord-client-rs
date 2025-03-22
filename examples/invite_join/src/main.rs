@@ -15,7 +15,7 @@ async fn main() {
     let gateway_client = Arc::new(Mutex::new(
         GatewayClient::connect(token, 53607934, rest_client.build_number)
             .await
-            .unwrap()
+            .unwrap(),
     ));
 
     let user_id = rest_client.user_id;
@@ -30,7 +30,12 @@ async fn main() {
     let gateway_client_clone = Arc::clone(&gateway_client);
     tokio::spawn(async move {
         loop {
-            let _ = gateway_client_clone.lock().await.next_event().await.unwrap();
+            let _ = gateway_client_clone
+                .lock()
+                .await
+                .next_event()
+                .await
+                .unwrap();
         }
     });
 
@@ -89,5 +94,10 @@ async fn main() {
         }
     }
 
-    gateway_client.lock().await.graceful_shutdown().await.unwrap();
+    gateway_client
+        .lock()
+        .await
+        .graceful_shutdown()
+        .await
+        .unwrap();
 }
