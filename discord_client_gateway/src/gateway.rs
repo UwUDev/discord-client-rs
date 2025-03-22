@@ -187,6 +187,10 @@ impl GatewayClient {
                         }
 
                         return Ok(event);
+                    },
+                    Message::Close { code, reason } => {
+                        self.tx.lock().await.close().await?;
+                        return Err(format!("Gateway closed: {:?} {:?}", code, reason).into());
                     }
                     _ => {}
                 }
