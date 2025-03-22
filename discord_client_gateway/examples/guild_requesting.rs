@@ -12,8 +12,6 @@ async fn main() {
 
     for _ in 0..2 {
         let event = client.next_event().await.unwrap();
-        println!("{}", event);
-
         if let Event::Ready(ready) = event {
             let mut ids: Vec<u64> = Vec::new();
             let guilds = ready.guilds;
@@ -56,7 +54,6 @@ async fn main() {
 
     loop {
         let event = client.next_event().await.unwrap();
-        println!("{}", event);
         if let Event::LastMessages(last_messages) = event.clone() {
             println!(
                 "Got {} last messages for guild {}",
@@ -68,7 +65,29 @@ async fn main() {
     }
 
     // Empty query to get all members (max 1k per page, you can use pagination to get more but can't go over 10k)
-    client.search_recent_members(guild_id, "", None, None).await.unwrap();
+    client
+        .search_recent_members(guild_id, "", None, None)
+        .await
+        .unwrap();
+
+    loop {
+        let event = client.next_event().await.unwrap();
+        if let Event::GuildMembersChunk(members_chunk) = event.clone() {
+            println!(
+                "Got {} members for guild {}",
+                members_chunk.members.len(),
+                members_chunk.guild_id
+            );
+            break;
+        }
+    }
+
+    // Can trigger multiple guild members chunk events
+    // You need at least one oh these 3 permissions: MANAGE_ROLES, KICK_MEMBERS, BAN_MEMBERS
+    client
+        .request_guild_members(vec![752493878334193674], None, None, None, None, None)
+        .await
+        .unwrap();
 
     loop {
         let event = client.next_event().await.unwrap();
@@ -79,7 +98,9 @@ async fn main() {
                 members_chunk.members.len(),
                 members_chunk.guild_id
             );
-            break;
+            if members_chunk.chunk_index + 1 == members_chunk.chunk_count {
+                break;
+            }
         } else if let Event::Unknown(unknown) = event {
             println!("Unknown event found: {}  ({})", unknown.r#type, unknown.op);
             println!("See the event.json file to debug this event.");

@@ -92,7 +92,7 @@ if let Event::Ready(ready) = event {
 - [ ] Delete Stream
 - [ ] Ping Stream Server
 - [x] Bulk guild subscribe
-- [ ] Request Guild Members
+- [x] Request Guild Members
 - [ ] Request Call Connect
 - [ ] Update Guild Subscriptions
 - [ ] Request Forum Unreads
