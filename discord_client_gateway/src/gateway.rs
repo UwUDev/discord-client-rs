@@ -263,24 +263,20 @@ impl GatewayClient {
 
     pub async fn request_guild_members(
         &mut self,
-        guild_ids: Vec<u64>,
+        guild_id: u64,
         query: Option<&str>,
         limit: Option<u64>,
         presences: Option<bool>,
         user_ids: Option<Vec<u64>>,
         nonce: Option<&str>,
     ) -> BoxedResult<()> {
-        if guild_ids.is_empty() {
-            return Err("No guild IDs provided".into());
-        }
-
         if let Some(user_ids) = &user_ids {
             if user_ids.len() > 100 {
                 return Err("User IDs can't be more than 100".into());
             }
         }
 
-        let payload = create_op_8(guild_ids, query, limit, presences, user_ids, nonce);
+        let payload = create_op_8(guild_id, query, limit, presences, user_ids, nonce);
 
         self.tx
             .lock()

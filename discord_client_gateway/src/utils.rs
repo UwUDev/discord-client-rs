@@ -61,7 +61,7 @@ pub(crate) fn create_op_35(
 }
 
 pub(crate) fn create_op_8(
-    guild_ids: Vec<u64>,
+    guild_ids: u64,
     query: Option<&str>,
     limit: Option<u64>,
     presences: Option<bool>,
@@ -72,7 +72,8 @@ pub(crate) fn create_op_8(
 
     let mut d = Map::new();
 
-    let guild_ids_str: Vec<String> = guild_ids.iter().map(|id| id.to_string()).collect();
+    // I tried to put multiple guild_ids, but it didn't work, it just returned the first one
+    let guild_ids_str: Vec<String> = vec![guild_ids.to_string()];
     d.insert("guild_id".to_string(), Value::from(guild_ids_str));
 
     let query_value = query.unwrap_or("");
