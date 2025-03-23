@@ -1,4 +1,4 @@
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use std::str::FromStr;
 
 pub(crate) fn create_op_37(guild_ids: Vec<u64>) -> String {
@@ -68,7 +68,7 @@ pub(crate) fn create_op_8(
     user_ids: Option<Vec<u64>>,
     nonce: Option<&str>,
 ) -> String {
-    use serde_json::{Map, Value, json};
+    use serde_json::{json, Map, Value};
 
     let mut d = Map::new();
 
@@ -103,4 +103,15 @@ pub(crate) fn create_op_8(
         "d": d
     })
     .to_string()
+}
+
+pub(crate) fn create_op_29<T: serde::Serialize>(target_session_id: &str, payload: T) -> String {
+    let payload = json!({
+        "op": 29,
+        "d": {
+            "target_session_id": target_session_id,
+            "payload": payload
+        }
+    });
+    payload.to_string()
 }

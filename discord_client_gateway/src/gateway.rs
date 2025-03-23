@@ -258,8 +258,13 @@ impl GatewayClient {
     }
 
     pub async fn bulk_guild_subscribe(&mut self, guild_ids: Vec<u64>) -> BoxedResult<()> {
-        let op_37 = create_op_37(guild_ids);
-        self.tx.lock().await.send(Message::Text(op_37)).await?;
+        let payload = create_op_37(guild_ids);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload))
+            .await?;
         Ok(())
     }
 
@@ -269,7 +274,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.to_string()))
+            .send(Message::Text(payload))
             .await?;
         Ok(())
     }
@@ -284,7 +289,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.to_string()))
+            .send(Message::Text(payload))
             .await?;
         Ok(())
     }
@@ -301,7 +306,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.to_string()))
+            .send(Message::Text(payload))
             .await?;
         Ok(())
     }
@@ -326,7 +331,22 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.to_string()))
+            .send(Message::Text(payload))
+            .await?;
+        Ok(())
+    }
+
+    pub async fn send_remote_command<T: serde::Serialize>(
+        &mut self,
+        target_session_id: &str,
+        payload: T,
+    ) -> BoxedResult<()> {
+        let payload = create_op_29(target_session_id, payload);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload))
             .await?;
         Ok(())
     }
