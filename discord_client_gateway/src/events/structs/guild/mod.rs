@@ -62,6 +62,7 @@ pub struct GuildMemberAddEvent {
 pub struct GuildMemberRemoveEvent {
     pub guild_id: u64,
     pub user_id: u64,
+    pub user: Option<User>,
 }
 
 impl<'de> Deserialize<'de> for GuildMemberRemoveEvent {
@@ -71,17 +72,26 @@ impl<'de> Deserialize<'de> for GuildMemberRemoveEvent {
     {
         let value = Value::deserialize(deserializer)?;
 
-        let guild_id = value["d"]["guild_id"]
+        let guild_id = value["guild_id"]
             .as_str()
-            .and_then(|s| s.parse::<u64>().ok())
-            .ok_or_else(|| serde::de::Error::custom("Invalid guild_id"))?;
+            .and_then(|s| s.parse().ok())
+            .ok_or_else(|| serde::de::Error::custom("Format guild_id invalide"))?;
 
-        let user_id = value["d"]["user"]["id"]
+        let user_id = value["user"]["id"]
             .as_str()
-            .and_then(|s| s.parse::<u64>().ok())
-            .ok_or_else(|| serde::de::Error::custom("Invalid user_id"))?;
+            .and_then(|s| s.parse().ok())
+            .ok_or_else(|| serde::de::Error::custom("Format user.id invalide"))?;
 
-        Ok(GuildMemberRemoveEvent { guild_id, user_id })
+        let user = match User::deserialize(value["user"].clone()) {
+            Ok(u) => Some(u),
+            Err(_) => None,
+        };
+
+        Ok(GuildMemberRemoveEvent {
+            guild_id,
+            user_id,
+            user,
+        })
     }
 }
 
