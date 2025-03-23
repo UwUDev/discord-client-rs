@@ -7,11 +7,11 @@ use futures_util::{SinkExt, StreamExt, TryStreamExt};
 use rquest::Impersonate::Chrome133;
 use rquest::ImpersonateOS::Windows;
 use rquest::{Client, CloseCode, Impersonate, Message, WebSocket};
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 #[cfg(feature = "debug_events")]
 use std::io::Write;
-use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::Arc;
 use tokio::sync::Mutex;
 use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
 
@@ -25,6 +25,7 @@ pub struct GatewayClient {
     pub session_id: Option<String>,
     pub analytics_token: Option<String>,
     pub auth_session_id_hash: Option<String>,
+    resume_gateway_url: Option<String>,
     capabilities: u32,
     build_number: u32,
     last_sequence: Arc<AtomicU32>,
@@ -138,11 +139,70 @@ impl GatewayClient {
             session_id: None,
             analytics_token: None,
             auth_session_id_hash: None,
+            resume_gateway_url: None,
             capabilities,
             build_number,
             last_sequence,
             automatic_reconnect,
         })
+    }
+
+    pub async fn resume(&mut self) -> BoxedResult<()> {
+        let imp = Impersonate::builder()
+            .impersonate_os(Windows)
+            .impersonate(Chrome133)
+            .build();
+
+        let client = Client::builder().impersonate(imp).build().unwrap();
+
+        let websocket = client
+            .websocket(format!("{}?encoding=json&v=9&compress=zlib-stream", self.resume_gateway_url.as_ref().ok_or("wss://gateway.discord.gg/")?))
+            .send()
+            .await?
+            .into_websocket()
+            .await?;
+
+        let (tx, mut rx) = websocket.split();
+
+        let tx = Arc::new(Mutex::new(tx));
+
+        let message = rx.try_next().await?;
+
+        let mut decompress = ZlibStreamDecompressor::new();
+
+        let mut heartbeat_interval = 30_000;
+        if let Some(message) = message {
+            match message {
+                Message::Binary(bin) => match decompress.decompress(bin) {
+                    Ok(vec) => {
+                        let json: Value = serde_json::from_slice(&vec).unwrap();
+                        match json["d"]["heartbeat_interval"].as_u64() {
+                            Some(interval) => heartbeat_interval = interval,
+                            None => return Err("No heartbeat interval".into()),
+                        }
+                    }
+                    Err(ZlibDecompressionError::NeedMoreData) => {
+                        return Err("Need more data".into());
+                    }
+                    Err(_err) => return Err("Broken frame".into()),
+                },
+                _ => {}
+            }
+        }
+
+        self.tx = tx;
+        self.rx = Arc::new(Mutex::new(rx));
+        self.zlib_decompressor = Arc::new(Mutex::new(decompress));
+        self.heartbeat_interval = heartbeat_interval;
+
+        let session_id = self.session_id.as_ref().ok_or("No session ID")?;
+        let sequence = self.last_sequence.load(Ordering::Relaxed);
+
+        let payload = create_op_6(self.token.as_str(), session_id, sequence);
+
+
+        self.tx.lock().await.send(Message::Text(payload)).await?;
+        Ok(())
     }
 
     pub async fn next_event(&mut self) -> BoxedResult<crate::events::Event> {
@@ -206,6 +266,7 @@ impl GatewayClient {
                         self.session_id = Some(ready.session_id);
                         self.analytics_token = Some(ready.analytics_token);
                         self.auth_session_id_hash = Some(ready.auth_session_id_hash);
+                        self.resume_gateway_url = Some(ready.resume_gateway_url);
                     } else if self.automatic_reconnect {
                         if let crate::events::Event::InvalidSession(ref invalid) = event {
                             println!("Need to reconnect");

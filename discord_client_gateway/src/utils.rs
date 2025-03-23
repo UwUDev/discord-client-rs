@@ -115,3 +115,15 @@ pub(crate) fn create_op_29<T: serde::Serialize>(target_session_id: &str, payload
     });
     payload.to_string()
 }
+
+pub(crate) fn create_op_6(token: &str, session_id: &str, last_seq: u32) -> String {
+    let payload = json!({
+        "op": 6,
+        "d": {
+            "token": token,
+            "session_id": session_id,
+            "seq": last_seq
+        }
+    });
+    payload.to_string()
+}
