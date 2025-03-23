@@ -271,11 +271,17 @@ impl GatewayClient {
                         if let crate::events::Event::InvalidSession(ref invalid) = event {
                             println!("Need to reconnect");
                             if invalid.resumable {
-                                todo!("Automatic reconnect with resuming");
+                                drop(decompress);
+                                self.resume().await?;
                             } else {
                                 drop(decompress);
                                 self.reconnect().await?;
                             }
+                        }
+                    } else if let crate::events::Event::GatewayReconnect(_) = event {
+                        if self.automatic_reconnect {
+                            drop(decompress);
+                            self.reconnect().await?;
                         }
                     }
 
