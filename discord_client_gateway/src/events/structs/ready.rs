@@ -64,3 +64,9 @@ pub struct ReadySupplementalEvent {
     pub lazy_private_channels: Vec<Channel>,
     pub disclose: Vec<String>,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct ResumedEvent {
+    #[serde(rename = "_trace")]
+    pub trace: Vec<String>,
+}

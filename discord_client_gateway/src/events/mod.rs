@@ -134,6 +134,7 @@ define_events! {
     dispatch op 0, {
         Ready { t: "READY", type: ReadyEvent },
         ReadySupplemental { t: "READY_SUPPLEMENTAL", type: ReadySupplementalEvent },
+        Resumed { t: "RESUMED", type: ResumedEvent },
         MessageCreate { t: "MESSAGE_CREATE", type: MessageCreateEvent },
         MessageUpdate { t: "MESSAGE_UPDATE", type: MessageUpdateEvent },
         MessageDelete { t: "MESSAGE_DELETE", type: MessageDeleteEvent },

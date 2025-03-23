@@ -41,6 +41,7 @@ pub enum Event {
     // Ready events
     Ready(ReadyEvent),
     ReadySupplemental(ReadySupplementalEvent),
+    Resumed(ResumedEvent),
 
     // message events
     MessageCreate(MessageCreateEvent),
