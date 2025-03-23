@@ -140,7 +140,7 @@ if let Event::Ready(ready) = event {
     - [ ] Webhooks Update
   - [x] Channel Create
   - [x] Channel Delete
-  - [ ] Channel Statuses
+  - [x] Channel Statuses
   - [x] Channel Update
 - **Friend**
   - [ ] Friend Suggestion Create
