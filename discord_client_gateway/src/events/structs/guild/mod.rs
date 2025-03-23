@@ -14,6 +14,7 @@ pub mod emoji;
 pub mod integration;
 pub mod role;
 pub mod sticker;
+pub mod unread;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct PassiveUpdateV2Event {
@@ -80,10 +81,7 @@ impl<'de> Deserialize<'de> for GuildMemberRemoveEvent {
             .and_then(|s| s.parse::<u64>().ok())
             .ok_or_else(|| serde::de::Error::custom("Invalid user_id"))?;
 
-        Ok(GuildMemberRemoveEvent {
-            guild_id,
-            user_id,
-        })
+        Ok(GuildMemberRemoveEvent { guild_id, user_id })
     }
 }
 

@@ -165,6 +165,8 @@ if let Event::Ready(ready) = event {
   - **Ban**
     - [x] Guild Ban Add
     - [x] Guild Ban Remove
+  - **Channels**
+    - [x] Channels unread update
   - **Emoji**
     - [x] Guild Emojis Update
   - **Integration**

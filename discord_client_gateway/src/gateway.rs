@@ -260,22 +260,14 @@ impl GatewayClient {
     pub async fn bulk_guild_subscribe(&mut self, guild_ids: Vec<u64>) -> BoxedResult<()> {
         let payload = create_op_37(guild_ids);
 
-        self.tx
-            .lock()
-            .await
-            .send(Message::Text(payload))
-            .await?;
+        self.tx.lock().await.send(Message::Text(payload)).await?;
         Ok(())
     }
 
     pub async fn request_channel_statuses(&mut self, guild_id: u64) -> BoxedResult<()> {
         let payload = create_op_36(guild_id);
 
-        self.tx
-            .lock()
-            .await
-            .send(Message::Text(payload))
-            .await?;
+        self.tx.lock().await.send(Message::Text(payload)).await?;
         Ok(())
     }
 
@@ -286,11 +278,7 @@ impl GatewayClient {
     ) -> BoxedResult<()> {
         let payload = create_op_34(guild_id, channel_ids);
 
-        self.tx
-            .lock()
-            .await
-            .send(Message::Text(payload))
-            .await?;
+        self.tx.lock().await.send(Message::Text(payload)).await?;
         Ok(())
     }
 
@@ -303,11 +291,7 @@ impl GatewayClient {
     ) -> BoxedResult<()> {
         let payload = create_op_35(guild_id, query, continuation_token, nonce);
 
-        self.tx
-            .lock()
-            .await
-            .send(Message::Text(payload))
-            .await?;
+        self.tx.lock().await.send(Message::Text(payload)).await?;
         Ok(())
     }
 
@@ -328,11 +312,7 @@ impl GatewayClient {
 
         let payload = create_op_8(guild_id, query, limit, presences, user_ids, nonce);
 
-        self.tx
-            .lock()
-            .await
-            .send(Message::Text(payload))
-            .await?;
+        self.tx.lock().await.send(Message::Text(payload)).await?;
         Ok(())
     }
 
@@ -343,11 +323,7 @@ impl GatewayClient {
     ) -> BoxedResult<()> {
         let payload = create_op_29(target_session_id, payload);
 
-        self.tx
-            .lock()
-            .await
-            .send(Message::Text(payload))
-            .await?;
+        self.tx.lock().await.send(Message::Text(payload)).await?;
         Ok(())
     }
 }

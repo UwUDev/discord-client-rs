@@ -14,6 +14,7 @@ use crate::events::structs::guild::emoji::*;
 use crate::events::structs::guild::integration::*;
 use crate::events::structs::guild::role::*;
 use crate::events::structs::guild::sticker::*;
+use crate::events::structs::guild::unread::*;
 use crate::events::structs::guild::*;
 use crate::events::structs::message::poll::*;
 use crate::events::structs::message::reaction::*;
@@ -151,6 +152,7 @@ define_events! {
         ChannelPinsAck { t: "CHANNEL_PINS_ACK", type: ChannelPinsAckEvent },
         ChannelRecipientAdd { t: "CHANNEL_RECIPIENT_ADD", type: ChannelRecipientAddEvent },
         ChannelRecipientRemove { t: "CHANNEL_RECIPIENT_REMOVE", type: ChannelRecipientRemoveEvent },
+        ChannelUnreadUpdate { t: "CHANNEL_UNREAD_UPDATE", type: ChannelUnreadUpdateEvent },
         ThreadCreate { t: "THREAD_CREATE", type: ThreadCreateEvent },
         ThreadUpdate { t: "THREAD_UPDATE", type: ThreadUpdateEvent },
         ThreadDelete { t: "THREAD_DELETE", type: ThreadDeleteEvent },

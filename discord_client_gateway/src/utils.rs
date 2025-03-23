@@ -1,4 +1,4 @@
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::str::FromStr;
 
 pub(crate) fn create_op_37(guild_ids: Vec<u64>) -> String {
@@ -68,7 +68,7 @@ pub(crate) fn create_op_8(
     user_ids: Option<Vec<u64>>,
     nonce: Option<&str>,
 ) -> String {
-    use serde_json::{json, Map, Value};
+    use serde_json::{Map, Value, json};
 
     let mut d = Map::new();
 

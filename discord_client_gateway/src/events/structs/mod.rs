@@ -13,6 +13,7 @@ use crate::events::structs::guild::emoji::*;
 use crate::events::structs::guild::integration::*;
 use crate::events::structs::guild::role::*;
 use crate::events::structs::guild::sticker::*;
+use crate::events::structs::guild::unread::*;
 use crate::events::structs::guild::*;
 use crate::events::structs::message::poll::*;
 use crate::events::structs::message::reaction::*;
@@ -110,6 +111,7 @@ pub enum Event {
     IntegrationCreate(IntegrationCreateEvent),
     IntegrationUpdate(IntegrationUpdateEvent),
     IntegrationDelete(IntegrationDeleteEvent),
+    ChannelUnreadUpdate(ChannelUnreadUpdateEvent),
 
     // typing events
     TypingStart(TypingStartEvent),
