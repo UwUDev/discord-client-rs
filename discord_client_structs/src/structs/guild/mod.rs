@@ -40,9 +40,15 @@ pub struct GatewayGuild {
     pub permissions: Option<String>,
     #[serde(default)]
     pub region: Option<String>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub afk_channel_id: Option<u64>,
     pub afk_timeout: Option<u32>,
     pub widget_enabled: Option<bool>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub widget_channel_id: Option<u64>,
     pub verification_level: Option<u8>,
     pub default_message_notifications: Option<u8>,
@@ -53,9 +59,18 @@ pub struct GatewayGuild {
     #[serde(default)]
     pub features: Option<Vec<String>>,
     pub mfa_level: Option<u8>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub application_id: Option<u64>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub system_channel_id: Option<u64>,
     pub system_channel_flags: Option<u8>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub rules_channel_id: Option<u64>,
     pub joined_at: Option<String>,
     pub large: Option<bool>,
