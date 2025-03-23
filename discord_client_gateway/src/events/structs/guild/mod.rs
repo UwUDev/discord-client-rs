@@ -1,15 +1,12 @@
 use chrono::{DateTime, Utc};
-use discord_client_structs::deserializer::deserialize_iso8601_string_to_date;
-use discord_client_structs::deserializer::deserialize_option_iso8601_string_to_date;
-use discord_client_structs::deserializer::deserialize_option_string_to_u64;
-use discord_client_structs::deserializer::deserialize_string_to_u64;
-use discord_client_structs::deserializer::deserialize_string_to_vec_u64;
+use discord_client_structs::deserializer::*;
 use discord_client_structs::structs::channel::UpdatedChannel;
 use discord_client_structs::structs::channel::voice::VoiceState;
 use discord_client_structs::structs::guild::log::AuditLogEntry;
 use discord_client_structs::structs::guild::{GatewayGuild, Guild, UnavailableGuild};
 use discord_client_structs::structs::user::{AvatarDecorationData, Member, User};
-use serde::Deserialize;
+use serde::{Deserialize, Deserializer};
+use serde_json::Value;
 
 pub mod automod;
 pub mod ban;
@@ -60,11 +57,34 @@ pub struct GuildMemberAddEvent {
     pub guild_id: u64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Clone)]
 pub struct GuildMemberRemoveEvent {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub guild_id: u64,
-    pub user: User,
+    pub user_id: u64,
+}
+
+impl<'de> Deserialize<'de> for GuildMemberRemoveEvent {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let value = Value::deserialize(deserializer)?;
+
+        let guild_id = value["d"]["guild_id"]
+            .as_str()
+            .and_then(|s| s.parse::<u64>().ok())
+            .ok_or_else(|| serde::de::Error::custom("Invalid guild_id"))?;
+
+        let user_id = value["d"]["user"]["id"]
+            .as_str()
+            .and_then(|s| s.parse::<u64>().ok())
+            .ok_or_else(|| serde::de::Error::custom("Invalid user_id"))?;
+
+        Ok(GuildMemberRemoveEvent {
+            guild_id,
+            user_id,
+        })
+    }
 }
 
 #[derive(Debug, Deserialize, Clone)]
