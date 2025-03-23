@@ -9,6 +9,7 @@ This crate offers a seamless integration for Discord bot developers, featuring:
 - Automatic heartbeat with sequence number handling
 - Efficient handling of Discord's WebSocket events
 - Automatic shard management for scalable bot implementations
+- Reconnect and resume support
 
 Whether you're building a simple bot or a complete Discord client reimplementation, this crate provides the tools you need to establish and maintain a reliable connection to Discord's gateway.
 
@@ -81,7 +82,7 @@ if let Event::Ready(ready) = event {
 ## Supported send events
 
 - [x] Identify
-- [ ] Resume
+- [X] Resume
 - [x] Heartbeat
 - [ ] Update Presence
 - [ ] Update Voice State
@@ -157,7 +158,7 @@ if let Event::Ready(ready) = event {
   - [x] Heartbeat Ack
   - [ ] OAuth2 Token Revoke
   - [ ] Remote Command
-  - [ ] Resumed
+  - [x] Resumed
   - [x] Sessions Replace
 - **Guild**
   - **Auto Moderation**
