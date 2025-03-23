@@ -21,10 +21,9 @@ use discord_client_structs::structs::application::ApplicationCommandIndex;
 use iana_time_zone::get_timezone;
 use log::{error, warn};
 use regex::Regex;
-use rquest::Impersonate::Chrome133;
-use rquest::ImpersonateOS::Windows;
 use rquest::header::HeaderMap;
-use rquest::{Client, Impersonate, Method, Response, redirect};
+use rquest::{Client, Method, Response, redirect};
+use rquest_util::{Emulation, EmulationOS, EmulationOption};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
@@ -61,13 +60,13 @@ impl RestClient {
             Some(build_num) => build_num,
         };
 
-        let imp = Impersonate::builder()
-            .impersonate_os(Windows)
-            .impersonate(Chrome133)
+        let emu = EmulationOption::builder()
+            .emulation(Emulation::Chrome134)
+            .emulation_os(EmulationOS::Windows)
             .build();
 
         let client = Client::builder()
-            .impersonate(imp)
+            .emulation(emu)
             .gzip(true)
             .deflate(true)
             .brotli(true)

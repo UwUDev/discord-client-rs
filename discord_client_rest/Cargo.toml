@@ -30,6 +30,7 @@ path = "examples/guild.rs"
 [dependencies]
 discord_client_structs = {path = "../discord_client_structs"}
 rquest = { workspace = true, features = ["gzip", "deflate", "zstd", "brotli", "json", "cookies"] }
+rquest-util = { workspace = true }
 tokio = { workspace = true, features = ["rt", "macros", "rt-multi-thread"] }
 regex = "1.11.1"
 iana-time-zone = "0.1.61"

@@ -1,17 +1,16 @@
 use crate::BoxedResult;
 use regex::Regex;
-use rquest::Impersonate::Chrome133;
-use rquest::ImpersonateOS::Windows;
-use rquest::{Client, Impersonate};
+use rquest::Client;
+use rquest_util::{Emulation, EmulationOS, EmulationOption};
 
 pub async fn fetch_build_number() -> BoxedResult<u32> {
-    let imp = Impersonate::builder()
-        .impersonate_os(Windows)
-        .impersonate(Chrome133)
+    let emu = EmulationOption::builder()
+        .emulation(Emulation::Chrome134)
+        .emulation_os(EmulationOS::Windows)
         .build();
 
     let client = Client::builder()
-        .impersonate(imp)
+        .emulation(emu)
         .gzip(true)
         .deflate(true)
         .brotli(true)

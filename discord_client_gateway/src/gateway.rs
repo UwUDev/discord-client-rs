@@ -4,14 +4,13 @@ use crate::{BoxedError, BoxedResult};
 use discord_client_structs::parser::parse_id_from_token;
 use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt, TryStreamExt};
-use rquest::Impersonate::Chrome133;
-use rquest::ImpersonateOS::Windows;
-use rquest::{Client, CloseCode, Impersonate, Message, WebSocket};
-use serde_json::{json, Value};
+use rquest::{Client, Message, WebSocket};
+use rquest_util::{Emulation, EmulationOS, EmulationOption};
+use serde_json::{Value, json};
 #[cfg(feature = "debug_events")]
 use std::io::Write;
-use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicU32, Ordering};
 use tokio::sync::Mutex;
 use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
 
@@ -41,12 +40,12 @@ impl GatewayClient {
     ) -> BoxedResult<Self> {
         let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
 
-        let imp = Impersonate::builder()
-            .impersonate_os(Windows)
-            .impersonate(Chrome133)
+        let emu = EmulationOption::builder()
+            .emulation(Emulation::Chrome134)
+            .emulation_os(EmulationOS::Windows)
             .build();
 
-        let client = Client::builder().impersonate(imp).build().unwrap();
+        let client = Client::builder().emulation(emu).build().unwrap();
 
         let websocket = client
             .websocket("wss://gateway.discord.gg/?encoding=json&v=9&compress=zlib-stream")
@@ -94,7 +93,7 @@ impl GatewayClient {
             tx_clone
                 .lock()
                 .await
-                .send(Message::Text(message))
+                .send(Message::Text(message.into()))
                 .await
                 .unwrap();
         });
@@ -120,7 +119,7 @@ impl GatewayClient {
                 if tx_clone
                     .lock()
                     .await
-                    .send(Message::Text(payload.to_string()))
+                    .send(Message::Text(payload.to_string().into()))
                     .await
                     .is_err()
                 {
@@ -148,15 +147,20 @@ impl GatewayClient {
     }
 
     pub async fn resume(&mut self) -> BoxedResult<()> {
-        let imp = Impersonate::builder()
-            .impersonate_os(Windows)
-            .impersonate(Chrome133)
+        let imp = EmulationOption::builder()
+            .emulation(Emulation::Chrome134)
+            .emulation_os(EmulationOS::Windows)
             .build();
 
-        let client = Client::builder().impersonate(imp).build().unwrap();
+        let client = Client::builder().emulation(imp).build().unwrap();
 
         let websocket = client
-            .websocket(format!("{}?encoding=json&v=9&compress=zlib-stream", self.resume_gateway_url.as_ref().ok_or("wss://gateway.discord.gg/")?))
+            .websocket(format!(
+                "{}?encoding=json&v=9&compress=zlib-stream",
+                self.resume_gateway_url
+                    .as_ref()
+                    .ok_or("wss://gateway.discord.gg/")?
+            ))
             .send()
             .await?
             .into_websocket()
@@ -200,8 +204,11 @@ impl GatewayClient {
 
         let payload = create_op_6(self.token.as_str(), session_id, sequence);
 
-
-        self.tx.lock().await.send(Message::Text(payload)).await?;
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
         Ok(())
     }
 
@@ -287,13 +294,13 @@ impl GatewayClient {
 
                     return Ok(event);
                 }
-                Message::Close { code, reason } => {
+                Message::Close(frame) => {
                     if self.automatic_reconnect {
                         self.reconnect().await?;
                         continue;
                     } else {
                         self.tx.lock().await.close().await?;
-                        return Err(format!("Closed: {:?} {:?}", code, reason).into());
+                        return Err(format!("Closed: {:?}", frame).into());
                     }
                 }
                 _ => {}
@@ -303,11 +310,7 @@ impl GatewayClient {
 
     pub async fn graceful_shutdown(&mut self) -> BoxedResult<()> {
         let mut tx = self.tx.lock().await;
-        tx.send(Message::Close {
-            code: CloseCode::Normal,
-            reason: None,
-        })
-        .await?;
+        tx.send(Message::Close(None)).await?;
         tx.close().await?;
         Ok(())
     }
@@ -327,14 +330,22 @@ impl GatewayClient {
     pub async fn bulk_guild_subscribe(&mut self, guild_ids: Vec<u64>) -> BoxedResult<()> {
         let payload = create_op_37(guild_ids);
 
-        self.tx.lock().await.send(Message::Text(payload)).await?;
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
         Ok(())
     }
 
     pub async fn request_channel_statuses(&mut self, guild_id: u64) -> BoxedResult<()> {
         let payload = create_op_36(guild_id);
 
-        self.tx.lock().await.send(Message::Text(payload)).await?;
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
         Ok(())
     }
 
@@ -345,7 +356,11 @@ impl GatewayClient {
     ) -> BoxedResult<()> {
         let payload = create_op_34(guild_id, channel_ids);
 
-        self.tx.lock().await.send(Message::Text(payload)).await?;
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
         Ok(())
     }
 
@@ -358,7 +373,11 @@ impl GatewayClient {
     ) -> BoxedResult<()> {
         let payload = create_op_35(guild_id, query, continuation_token, nonce);
 
-        self.tx.lock().await.send(Message::Text(payload)).await?;
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
         Ok(())
     }
 
@@ -379,7 +398,11 @@ impl GatewayClient {
 
         let payload = create_op_8(guild_id, query, limit, presences, user_ids, nonce);
 
-        self.tx.lock().await.send(Message::Text(payload)).await?;
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
         Ok(())
     }
 
@@ -390,7 +413,11 @@ impl GatewayClient {
     ) -> BoxedResult<()> {
         let payload = create_op_29(target_session_id, payload);
 
-        self.tx.lock().await.send(Message::Text(payload)).await?;
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
         Ok(())
     }
 }
