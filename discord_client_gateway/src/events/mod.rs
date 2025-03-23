@@ -199,5 +199,8 @@ define_events! {
     },
     non_dispatch op 11, {
         HeartbeatAck { type: HeartbeatAckEvent }
+    },
+    non_dispatch op 9, {
+        InvalidSession { type: InvalidSessionEvent }
     }
 }

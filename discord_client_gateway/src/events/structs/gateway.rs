@@ -20,3 +20,20 @@ pub struct HeartbeatAckEvent;
 pub struct SessionsReplaceEvent {
     pub sessions: Vec<Session>,
 }
+
+#[derive(Debug, Clone)]
+pub struct InvalidSessionEvent {
+    pub resumable: bool,
+}
+
+impl<'de> Deserialize<'de> for InvalidSessionEvent {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = bool::deserialize(deserializer)?;
+        Ok(InvalidSessionEvent {
+            resumable: value
+        })
+    }
+}
