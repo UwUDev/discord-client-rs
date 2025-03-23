@@ -32,8 +32,6 @@ impl<'de> Deserialize<'de> for InvalidSessionEvent {
         D: serde::Deserializer<'de>,
     {
         let value = bool::deserialize(deserializer)?;
-        Ok(InvalidSessionEvent {
-            resumable: value
-        })
+        Ok(InvalidSessionEvent { resumable: value })
     }
 }

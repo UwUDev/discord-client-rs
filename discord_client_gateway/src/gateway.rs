@@ -28,10 +28,16 @@ pub struct GatewayClient {
     capabilities: u32,
     build_number: u32,
     last_sequence: Arc<AtomicU32>,
+    automatic_reconnect: bool,
 }
 
 impl GatewayClient {
-    pub async fn connect(token: String, capabilities: u32, build_number: u32) -> BoxedResult<Self> {
+    pub async fn connect(
+        token: String,
+        automatic_reconnect: bool,
+        capabilities: u32,
+        build_number: u32,
+    ) -> BoxedResult<Self> {
         let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
 
         let imp = Impersonate::builder()
@@ -135,65 +141,95 @@ impl GatewayClient {
             capabilities,
             build_number,
             last_sequence,
+            automatic_reconnect,
         })
     }
 
     pub async fn next_event(&mut self) -> BoxedResult<crate::events::Event> {
-        let mut rx = self.rx.lock().await;
-        let mut decompress = self.zlib_decompressor.lock().await;
-
         loop {
-            let message = rx.try_next().await?;
+            let message = {
+                let mut rx_guard = self.rx.lock().await;
+                rx_guard.next().await
+            };
 
-            if let Some(message) = message {
-                match message {
-                    Message::Text(text) => {
-                        let payload: GatewayPayload = serde_json::from_str(&text).unwrap();
-                        return Ok(crate::events::parse_gateway_payload(payload)?);
+            let message = match message {
+                Some(msg) => msg,
+                None => {
+                    if self.automatic_reconnect {
+                        self.reconnect().await?;
+                        continue;
+                    } else {
+                        return Err("Connection closed".into());
                     }
-                    Message::Binary(bin) => {
-                        let vec = match decompress.decompress(bin) {
-                            Ok(vec) => vec,
-                            Err(ZlibDecompressionError::NeedMoreData) => continue,
-                            Err(_err) => return Err("Broken frame".into()),
-                        };
-                        let text = String::from_utf8(vec).unwrap();
-
-                        #[cfg(feature = "debug_events")]
-                        {
-                            std::fs::remove_file("event.json").unwrap_or_default();
-
-                            let mut file = std::fs::OpenOptions::new()
-                                .write(true)
-                                .create(true)
-                                .append(false)
-                                .open("event.json")
-                                .unwrap();
-
-                            file.write_all(text.as_bytes()).unwrap();
-                        }
-
-                        let payload: GatewayPayload = serde_json::from_str(&text).unwrap();
-                        if let Some(sequence) = payload.s {
-                            self.last_sequence.store(sequence, Ordering::Relaxed);
-                        }
-
-                        let event = crate::events::parse_gateway_payload(payload)?;
-
-                        if let crate::events::Event::Ready(ready) = event.clone() {
-                            self.session_id = Some(ready.session_id);
-                            self.analytics_token = Some(ready.analytics_token);
-                            self.auth_session_id_hash = Some(ready.auth_session_id_hash);
-                        }
-
-                        return Ok(event);
-                    }
-                    Message::Close { code, reason } => {
-                        self.tx.lock().await.close().await?;
-                        return Err(format!("Gateway closed: {:?} {:?}", code, reason).into());
-                    }
-                    _ => {}
                 }
+            };
+
+            let message = message?;
+
+            match message {
+                Message::Text(text) => {
+                    let payload: GatewayPayload = serde_json::from_str(&text).unwrap();
+                    return Ok(crate::events::parse_gateway_payload(payload)?);
+                }
+                Message::Binary(bin) => {
+                    let mut decompress = self.zlib_decompressor.lock().await;
+
+                    let vec = match decompress.decompress(bin) {
+                        Ok(vec) => vec,
+                        Err(ZlibDecompressionError::NeedMoreData) => continue,
+                        Err(_err) => return Err("Broken frame".into()),
+                    };
+                    let text = String::from_utf8(vec).unwrap();
+
+                    #[cfg(feature = "debug_events")]
+                    {
+                        std::fs::remove_file("event.json").unwrap_or_default();
+
+                        let mut file = std::fs::OpenOptions::new()
+                            .write(true)
+                            .create(true)
+                            .append(false)
+                            .open("event.json")
+                            .unwrap();
+
+                        file.write_all(text.as_bytes()).unwrap();
+                    }
+
+                    let payload: GatewayPayload = serde_json::from_str(&text).unwrap();
+                    if let Some(sequence) = payload.s {
+                        self.last_sequence.store(sequence, Ordering::Relaxed);
+                    }
+
+                    let event = crate::events::parse_gateway_payload(payload)?;
+
+                    if let crate::events::Event::Ready(ready) = event.clone() {
+                        self.session_id = Some(ready.session_id);
+                        self.analytics_token = Some(ready.analytics_token);
+                        self.auth_session_id_hash = Some(ready.auth_session_id_hash);
+                    } else if self.automatic_reconnect {
+                        if let crate::events::Event::InvalidSession(ref invalid) = event {
+                            println!("Need to reconnect");
+                            if invalid.resumable {
+                                todo!("Automatic reconnect with resuming");
+                            } else {
+                                drop(decompress);
+                                self.reconnect().await?;
+                            }
+                        }
+                    }
+
+                    return Ok(event);
+                }
+                Message::Close { code, reason } => {
+                    if self.automatic_reconnect {
+                        self.reconnect().await?;
+                        continue;
+                    } else {
+                        self.tx.lock().await.close().await?;
+                        return Err(format!("Closed: {:?} {:?}", code, reason).into());
+                    }
+                }
+                _ => {}
             }
         }
     }
@@ -210,8 +246,13 @@ impl GatewayClient {
     }
 
     pub async fn reconnect(&mut self) -> BoxedResult<()> {
-        let new_client =
-            Self::connect(self.token.clone(), self.capabilities, self.build_number).await?;
+        let new_client = Self::connect(
+            self.token.clone(),
+            self.automatic_reconnect,
+            self.capabilities,
+            self.build_number,
+        )
+        .await?;
         *self = new_client;
         Ok(())
     }

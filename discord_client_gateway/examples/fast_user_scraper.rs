@@ -9,7 +9,7 @@ async fn main() {
 
     let start = Instant::now();
 
-    let mut client = GatewayClient::connect(token, 53607934, 369195)
+    let mut client = GatewayClient::connect(token, true, 53607934, 369195)
         .await
         .unwrap();
 
@@ -36,64 +36,64 @@ async fn main() {
             .unwrap();
 
         let mut count = 0;
+        let mut last_received = Instant::now();
+
         loop {
-            let result = client.next_event().await;
+            tokio::select! {
+                result = client.next_event() => {
+                    let event = result.unwrap();
 
-            if result.is_err() {
-                println!("Error: {:?}", result.err());
-                println!("Reconnecting");
+                    if let Event::GuildMembersChunk(members_chunk) = event.clone() {
+                        println!(
+                            "Got {} members for guild {}",
+                            members_chunk.members.len(),
+                            members_chunk.guild_id
+                        );
 
-                tokio::time::sleep(Duration::from_secs(500)).await;
+                    count += members_chunk.members.len();
 
-                client.reconnect().await.unwrap();
-                break;
-            }
+                    let old_size = unique_users.len();
 
-            let event = result.unwrap();
+                    members_chunk.members.iter().for_each(|member| {
+                        unique_users.insert(member.clone().user.unwrap().id);
+                    });
 
-            if let Event::GuildMembersChunk(members_chunk) = event.clone() {
-                println!(
-                    "Got {} members for guild {}",
-                    members_chunk.members.len(),
-                    members_chunk.guild_id
-                );
+                    // if no new users were added, break
+                    let new_size = unique_users.len();
+                    if new_size == old_size {
+                        break;
+                    }
 
-                count += members_chunk.members.len();
+                    let page_member_id = members_chunk
+                        .members
+                        .iter()
+                        .max_by_key(|member| member.joined_at)
+                        .unwrap()
+                        .clone()
+                        .user
+                        .unwrap()
+                        .id;
 
-                let old_size = unique_users.len();
+                    // if there are no more chunks, break
+                    // 10000 is the max pagination limit
+                    // Not getting 1000 members means we are at the end of the server
+                    if count == 10000 || count % 1000 != 0 {
+                        break;
+                    }
 
-                members_chunk.members.iter().for_each(|member| {
-                    unique_users.insert(member.clone().user.unwrap().id);
-                });
-
-                // if no new users were added, break
-                let new_size = unique_users.len();
-                if new_size == old_size {
-                    break;
+                    // ask next chunk
+                    client
+                        .search_recent_members(guild_id, "", Some(page_member_id), None)
+                        .await
+                        .unwrap();
+                        last_received = Instant::now();
+                    }
                 }
 
-                let page_member_id = members_chunk
-                    .members
-                    .iter()
-                    .max_by_key(|member| member.joined_at)
-                    .unwrap()
-                    .clone()
-                    .user
-                    .unwrap()
-                    .id;
-
-                // if there are no more chunks, break
-                // 10000 is the max pagination limit
-                // Not getting 1000 members means we are at the end of the server
-                if count == 10000 || count % 1000 != 0 {
+                _ = tokio::time::sleep_until(last_received + Duration::from_millis(500)) => {
+                    println!("No users received for 500ms, breaking");
                     break;
                 }
-
-                // ask next chunk
-                client
-                    .search_recent_members(guild_id, "", Some(page_member_id), None)
-                    .await
-                    .unwrap();
             }
         }
     }
@@ -112,16 +112,6 @@ async fn main() {
         loop {
             tokio::select! {
                 event_result = client.next_event() => {
-                    if event_result.is_err() {
-                        println!("Error: {:?}", event_result.err());
-                        println!("Reconnecting");
-
-                        tokio::time::sleep(Duration::from_secs(500)).await;
-
-                        client.reconnect().await.unwrap();
-                        break;
-                    }
-
                     let event = event_result.unwrap();
                     if let Event::GuildMembersChunk(members_chunk) = event.clone() {
                         println!(

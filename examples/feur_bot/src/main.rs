@@ -12,9 +12,10 @@ async fn main() {
         .await
         .unwrap();
 
-    let mut gateway_client = GatewayClient::connect(token, 53607934, rest_client.build_number)
-        .await
-        .unwrap();
+    let mut gateway_client =
+        GatewayClient::connect(token, true, 53607934, rest_client.build_number)
+            .await
+            .unwrap();
 
     let user_id = rest_client.user_id;
 

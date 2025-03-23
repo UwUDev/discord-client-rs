@@ -13,7 +13,7 @@ async fn main() {
         .unwrap();
 
     let gateway_client = Arc::new(Mutex::new(
-        GatewayClient::connect(token, 53607934, rest_client.build_number)
+        GatewayClient::connect(token, false, 53607934, rest_client.build_number)
             .await
             .unwrap(),
     ));
