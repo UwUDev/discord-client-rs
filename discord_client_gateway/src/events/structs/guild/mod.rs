@@ -8,6 +8,7 @@ use discord_client_structs::structs::user::{AvatarDecorationData, Member, User};
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
 
+pub mod ack;
 pub mod automod;
 pub mod ban;
 pub mod emoji;
@@ -22,7 +23,7 @@ pub struct PassiveUpdateV2Event {
     pub updated_voice_states: Vec<VoiceState>,
     pub updated_members: Vec<Member>,
     pub updated_channels: Vec<UpdatedChannel>,
-    pub removed_voice_states: Vec<serde_json::Value>,
+    pub removed_voice_states: Vec<Value>,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub guild_id: u64,
 }

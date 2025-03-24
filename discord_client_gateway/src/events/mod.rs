@@ -8,6 +8,7 @@ use crate::events::structs::channel::typing::*;
 use crate::events::structs::channel::voice::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
+use crate::events::structs::guild::ack::*;
 use crate::events::structs::guild::automod::*;
 use crate::events::structs::guild::ban::*;
 use crate::events::structs::guild::emoji::*;
@@ -199,6 +200,7 @@ define_events! {
         GuildScheduledEventExceptionsDelete { t: "GUILD_SCHEDULED_EVENT_EXCEPTIONS_DELETE", type: GuildScheduledEventExceptionsDeleteEvent },
         GuildScheduledEventUserAdd { t: "GUILD_SCHEDULED_EVENT_USER_ADD", type: GuildScheduledEventUserAddEvent },
         GuildScheduledEventUserRemove { t: "GUILD_SCHEDULED_EVENT_USER_REMOVE", type: GuildScheduledEventUserRemoveEvent },
+        GuildFeatureAck { t: "GUILD_FEATURE_ACK", type: GuildFeatureAckEvent },
         AutoModMentionRaidDetection { t: "AUTO_MODERATION_MENTION_RAID_DETECTION", type: AutoModMentionRaidDetectionEvent },
         ContentInventoryInboxStale { t: "CONTENT_INVENTORY_INBOX_STALE", type: ContentInventoryInboxStaleEvent },
         UserSettingsProtoUpdate { t: "USER_SETTINGS_PROTO_UPDATE", type: UserSettingsProtoUpdateEvent },

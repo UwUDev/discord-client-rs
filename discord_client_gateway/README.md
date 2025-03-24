@@ -161,6 +161,8 @@ if let Event::Ready(ready) = event {
   - [x] Resumed
   - [x] Sessions Replace
 - **Guild**
+  - **ACK**
+    - [x] Guild Features Ack
   - **Auto Moderation**
     - [x] Auto Moderation Mention Raid Detection
   - **Ban**

@@ -7,6 +7,7 @@ use crate::events::structs::channel::typing::*;
 use crate::events::structs::channel::voice::*;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
+use crate::events::structs::guild::ack::*;
 use crate::events::structs::guild::automod::*;
 use crate::events::structs::guild::ban::*;
 use crate::events::structs::guild::emoji::*;
@@ -123,6 +124,7 @@ pub enum Event {
     GuildScheduledEventExceptionsDelete(GuildScheduledEventExceptionsDeleteEvent),
     GuildScheduledEventUserAdd(GuildScheduledEventUserAddEvent),
     GuildScheduledEventUserRemove(GuildScheduledEventUserRemoveEvent),
+    GuildFeatureAck(GuildFeatureAckEvent),
 
     // typing events
     TypingStart(TypingStartEvent),
