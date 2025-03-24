@@ -15,6 +15,7 @@ pub mod integration;
 pub mod role;
 pub mod sticker;
 pub mod unread;
+pub mod schedule_event;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct PassiveUpdateV2Event {

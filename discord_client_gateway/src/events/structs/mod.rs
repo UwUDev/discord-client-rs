@@ -24,6 +24,7 @@ use crate::events::structs::ready::*;
 use crate::events::structs::requested::*;
 use crate::events::structs::user::*;
 use serde_json::Value;
+use crate::events::structs::guild::schedule_event::*;
 
 pub mod call;
 pub mod channel;
@@ -113,6 +114,15 @@ pub enum Event {
     IntegrationUpdate(IntegrationUpdateEvent),
     IntegrationDelete(IntegrationDeleteEvent),
     ChannelUnreadUpdate(ChannelUnreadUpdateEvent),
+    GuildScheduledEventCreate(GuildScheduledEventCreateEvent),
+    GuildScheduledEventUpdate(GuildScheduledEventUpdateEvent),
+    GuildScheduledEventDelete(GuildScheduledEventDeleteEvent),
+    GuildScheduledEventExceptionCreate(GuildScheduledEventExceptionCreateEvent),
+    GuildScheduledEventExceptionUpdate(GuildScheduledEventExceptionUpdateEvent),
+    GuildScheduledEventExceptionDelete(GuildScheduledEventExceptionDeleteEvent),
+    GuildScheduledEventExceptionsDelete(GuildScheduledEventExceptionsDeleteEvent),
+    GuildScheduledEventUserAdd(GuildScheduledEventUserAddEvent),
+    GuildScheduledEventUserRemove(GuildScheduledEventUserRemoveEvent),
 
     // typing events
     TypingStart(TypingStartEvent),

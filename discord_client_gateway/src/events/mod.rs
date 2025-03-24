@@ -26,6 +26,7 @@ use crate::events::structs::requested::*;
 use crate::events::structs::user::*;
 use crate::events::structs::*;
 use serde::Deserialize;
+use crate::events::structs::guild::schedule_event::*;
 
 pub(crate) mod deserializer;
 pub mod structs;
@@ -189,6 +190,15 @@ define_events! {
         GuildIntegrationCreate { t: "INTEGRATION_CREATE", type: IntegrationCreateEvent },
         GuildIntegrationUpdate { t: "INTEGRATION_UPDATE", type: IntegrationUpdateEvent },
         GuildIntegrationDelete { t: "INTEGRATION_DELETE", type: IntegrationDeleteEvent },
+        GuildScheduledEventCreate { t: "GUILD_SCHEDULED_EVENT_CREATE", type: GuildScheduledEventCreateEvent },
+        GuildScheduledEventUpdate { t: "GUILD_SCHEDULED_EVENT_UPDATE", type: GuildScheduledEventUpdateEvent },
+        GuildScheduledEventDelete { t: "GUILD_SCHEDULED_EVENT_DELETE", type: GuildScheduledEventDeleteEvent },
+        GuildScheduledEventExceptionCreate { t: "GUILD_SCHEDULED_EVENT_EXCEPTION_CREATE", type: GuildScheduledEventExceptionCreateEvent },
+        GuildScheduledEventExceptionUpdate { t: "GUILD_SCHEDULED_EVENT_EXCEPTION_UPDATE", type: GuildScheduledEventExceptionUpdateEvent },
+        GuildScheduledEventExceptionDelete { t: "GUILD_SCHEDULED_EVENT_EXCEPTION_DELETE", type: GuildScheduledEventExceptionDeleteEvent },
+        GuildScheduledEventExceptionsDelete { t: "GUILD_SCHEDULED_EVENT_EXCEPTIONS_DELETE", type: GuildScheduledEventExceptionsDeleteEvent },
+        GuildScheduledEventUserAdd { t: "GUILD_SCHEDULED_EVENT_USER_ADD", type: GuildScheduledEventUserAddEvent },
+        GuildScheduledEventUserRemove { t: "GUILD_SCHEDULED_EVENT_USER_REMOVE", type: GuildScheduledEventUserRemoveEvent },
         AutoModMentionRaidDetection { t: "AUTO_MODERATION_MENTION_RAID_DETECTION", type: AutoModMentionRaidDetectionEvent },
         ContentInventoryInboxStale { t: "CONTENT_INVENTORY_INBOX_STALE", type: ContentInventoryInboxStaleEvent },
         UserSettingsProtoUpdate { t: "USER_SETTINGS_PROTO_UPDATE", type: UserSettingsProtoUpdateEvent },

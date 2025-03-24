@@ -191,11 +191,15 @@ if let Event::Ready(ready) = event {
     - [x] Guild Role Delete
     - [x] Guild Role Update
   - **Schedule Event**
-    - [ ] Guild Schedule Event Create
-    - [ ] Guild Schedule Event Delete
-    - [ ] Guild Schedule Event Update
-    - [ ] Guild Schedule Event User Add
-    - [ ] Guild Schedule Event User Remove
+    - [x] Guild Schedule Event Create
+    - [x] Guild Schedule Event Delete
+    - [x] Guild Schedule Event Update
+    - [x] Guild Schedule Event User Add
+    - [x] Guild Schedule Event User Remove
+    - [x] Guild Scheduled Event Exception Create
+    - [x] Guild Scheduled Event Exception Delete
+    - [x] Guild Scheduled Event Exceptions Delete
+    - [x] Guild Scheduled Event Exception Update
   - **Soundboard**
     - [ ] Guild Soundboard Sound Create
     - [ ] Guild Soundboard Sound Delete
