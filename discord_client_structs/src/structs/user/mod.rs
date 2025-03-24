@@ -11,6 +11,7 @@ pub mod experiment;
 pub mod presence;
 pub mod relationship;
 pub mod session;
+pub mod status;
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
