@@ -15,7 +15,7 @@ async fn main() {
 
     let channel = client
         .dm()
-        .open_or_create_dm_channel(user_id, Referer::HomePage(HomePageReferer))
+        .open_or_create_dm_channel(user_id, Referer::HomePage(HomePageReferer), None)
         .await
         .unwrap();
 

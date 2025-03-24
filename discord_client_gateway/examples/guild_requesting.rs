@@ -6,7 +6,7 @@ use std::process::exit;
 async fn main() {
     let token = std::fs::read_to_string("token.txt").unwrap();
 
-    let mut client = GatewayClient::connect(token, 53607934, 369195)
+    let mut client = GatewayClient::connect(token, true, 53607934, 369195)
         .await
         .unwrap();
 
@@ -85,7 +85,7 @@ async fn main() {
     // Can trigger multiple guild members chunk events
     // You need at least one oh these 3 permissions: MANAGE_ROLES, KICK_MEMBERS, BAN_MEMBERS
     client
-        .request_guild_members(vec![752493878334193674], None, None, None, None, None)
+        .request_guild_members(752493878334193674, None, None, None, None, None)
         .await
         .unwrap();
 
