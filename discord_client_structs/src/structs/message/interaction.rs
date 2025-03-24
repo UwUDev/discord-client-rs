@@ -29,6 +29,8 @@ pub struct MessageInteractionMetadata {
     pub ephemerality_reason: Option<u8>,
     pub user: User,
     pub authorizing_integration_owners: Option<HashMap<String, String>>,
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub original_response_message_id: Option<u64>,
     pub interacted_message_id: Option<u64>,
     pub triggering_interaction_metadata: Option<Box<MessageInteractionMetadata>>,
