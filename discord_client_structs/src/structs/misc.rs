@@ -1,9 +1,9 @@
-use discord_client_macros::OptionCreatedAt;
 use crate::deserializer::*;
 use crate::serializer::*;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
+use discord_client_macros::OptionCreatedAt;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]

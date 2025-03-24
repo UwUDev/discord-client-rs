@@ -1,4 +1,3 @@
-use discord_client_macros::OptionCreatedAt;
 use crate::deserializer::*;
 use crate::serializer::*;
 use crate::structs::application::ApplicationCommand;
@@ -10,6 +9,7 @@ use crate::structs::user::User;
 use crate::structs::user::connection::PartialIntegration;
 use derive_builder::Builder;
 use discord_client_macros::CreatedAt;
+use discord_client_macros::OptionCreatedAt;
 use serde::{Deserialize, Serialize};
 
 pub mod query;
