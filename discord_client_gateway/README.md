@@ -82,9 +82,9 @@ if let Event::Ready(ready) = event {
 ## Supported send events
 
 - [x] Identify
-- [X] Resume
+- [x] Resume
 - [x] Heartbeat
-- [ ] Update Presence
+- [x] Update Presence
 - [ ] Update Voice State
 - [ ] Ping Voice Server
 - [ ] Create Stream

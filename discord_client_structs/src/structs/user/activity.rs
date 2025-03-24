@@ -33,12 +33,14 @@ pub struct Activity {
 #[builder(setter(into, strip_option), default)]
 pub struct ActivityTimestamp {
     #[serde(
+        default,
         deserialize_with = "deserialize_option_timestamp_to_datetime",
         serialize_with = "serialize_option_datetime_as_timestamp"
     )]
     pub start: Option<DateTime<Utc>>,
 
     #[serde(
+        default,
         deserialize_with = "deserialize_option_timestamp_to_datetime",
         serialize_with = "serialize_option_datetime_as_timestamp"
     )]

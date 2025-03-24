@@ -13,6 +13,9 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
 use tokio::sync::Mutex;
 use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
+use discord_client_structs::structs::user::activity::Activity;
+use discord_client_structs::structs::user::status::StatusType;
+use discord_client_structs::structs::user::status::StatusType::Unknown;
 
 pub struct GatewayClient {
     token: String,
@@ -29,6 +32,10 @@ pub struct GatewayClient {
     build_number: u32,
     last_sequence: Arc<AtomicU32>,
     automatic_reconnect: bool,
+    pub status: StatusType,
+    pub activities: Vec<Activity>,
+    pub idling_millis: u64,
+    pub afk: bool,
 }
 
 impl GatewayClient {
@@ -143,6 +150,10 @@ impl GatewayClient {
             build_number,
             last_sequence,
             automatic_reconnect,
+            status: Unknown,
+            activities: Vec::new(),
+            idling_millis: 0,
+            afk: false,
         })
     }
 
@@ -316,13 +327,17 @@ impl GatewayClient {
     }
 
     pub async fn reconnect(&mut self) -> BoxedResult<()> {
-        let new_client = Self::connect(
+        let mut new_client = Self::connect(
             self.token.clone(),
             self.automatic_reconnect,
             self.capabilities,
             self.build_number,
         )
         .await?;
+        new_client.status = self.status.clone();
+        new_client.activities = self.activities.clone();
+        new_client.idling_millis = self.idling_millis;
+        new_client.afk = self.afk;
         *self = new_client;
         Ok(())
     }
@@ -423,6 +438,65 @@ impl GatewayClient {
 
     pub async fn request_soundboard_sounds(&mut self, guild_ids: Vec<u64>) -> BoxedResult<()> {
         let payload = create_op_31(guild_ids);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
+        Ok(())
+    }
+
+    /*Update Presence Structure
+
+Field	Type	Description
+activities	array[activity object]	The user's activities
+status	string	the user's new status
+since	integer	Unix timestamp (in milliseconds) of when the client went idle, or 0 if it is not
+afk	boolean	Whether or not the client is AFK, used to determine whether to dispatch mobile push notifications
+Example Update Presence
+
+{
+  "op": 3,
+  "d": {
+    "since": 0,
+    "activities": [
+      {
+        "application_id": "383226320970055681",
+        "assets": {
+          "large_image": "565945350846939145",
+          "large_text": "Editing a TEXT file",
+          "small_image": "565945770067623946",
+          "small_text": "Visual Studio Code"
+        },
+        "buttons": ["View Repository"],
+        "created_at": "1695164784863",
+        "details": "Editing index.astro",
+        "flags": 0,
+        "id": "d11307d8c0abb135",
+        "name": "Visual Studio Code",
+        "session_id": "30f32c5d54ae86130fc4a215c7474263",
+        "state": "Workspace: vendicated.dev",
+        "timestamps": {
+          "start": "1695164482423"
+        },
+        "type": 0
+      }
+    ],
+    "status": "online",
+    "afk": false
+  }
+}*/
+
+    pub async fn update_presence(&mut self) -> BoxedResult<()> {
+        let payload = create_op_3(
+            self.idling_millis,
+            self.activities.clone(),
+            self.status,
+            self.afk,
+        );
+
+        println!("Payload: {}", payload);
 
         self.tx
             .lock()
