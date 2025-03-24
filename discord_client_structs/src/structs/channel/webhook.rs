@@ -4,7 +4,7 @@ use crate::structs::user::connection::IntegrationGuild;
 use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct Webhook {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -35,7 +35,7 @@ pub struct Webhook {
     pub url: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct WebhookChannel {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

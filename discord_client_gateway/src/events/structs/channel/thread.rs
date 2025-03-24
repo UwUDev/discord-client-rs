@@ -1,3 +1,4 @@
+use discord_client_macros::CreatedAt;
 use discord_client_structs::deserializer::{
     deserialize_option_string_to_u64, deserialize_option_string_to_vec_u64,
     deserialize_string_to_u64,
@@ -20,7 +21,7 @@ pub struct ThreadUpdateEvent {
     pub channel: Channel,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, CreatedAt)]
 pub struct ThreadDeleteEvent {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,
@@ -51,7 +52,7 @@ pub struct ThreadMemberUpdateEvent {
     pub guild_id: u64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, CreatedAt)]
 pub struct ThreadMembersUpdateEvent {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]

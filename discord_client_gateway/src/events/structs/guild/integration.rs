@@ -1,3 +1,4 @@
+use discord_client_macros::CreatedAt;
 use discord_client_structs::deserializer::*;
 use discord_client_structs::structs::guild::integration::Integration;
 use serde::Deserialize;
@@ -24,7 +25,7 @@ pub struct IntegrationUpdateEvent {
     pub guild_id: u64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, CreatedAt)]
 pub struct IntegrationDeleteEvent {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,

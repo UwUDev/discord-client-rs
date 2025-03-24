@@ -1,3 +1,4 @@
+use discord_client_macros::CreatedAt;
 use crate::deserializer::*;
 use crate::serializer::*;
 use chrono::{DateTime, Utc};
@@ -25,7 +26,7 @@ pub struct AutomodIncidentsData {
     pub dms_disabled_until: Option<DateTime<Utc>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct AutomodRule {
     #[serde(deserialize_with = "deserialize_string_to_u64")]

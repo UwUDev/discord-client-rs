@@ -1,8 +1,9 @@
+use discord_client_macros::CreatedAt;
 use crate::deserializer::*;
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, CreatedAt)]
 pub struct ChannelUnreadUpdate {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,

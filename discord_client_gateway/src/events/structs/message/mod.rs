@@ -1,3 +1,4 @@
+use discord_client_macros::CreatedAt;
 use discord_client_structs::deserializer::*;
 use discord_client_structs::structs::message::Message;
 use discord_client_structs::structs::user::{Member, User};
@@ -34,7 +35,7 @@ pub struct MessageUpdateEvent {
     pub mentions_with_members: Vec<UserWithMember>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, CreatedAt)]
 pub struct MessageDeleteEvent {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub id: u64,

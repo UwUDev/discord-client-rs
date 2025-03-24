@@ -1,3 +1,4 @@
+use discord_client_macros::CreatedAt;
 use discord_client_structs::deserializer::deserialize_option_string_to_u64;
 use discord_client_structs::deserializer::deserialize_string_to_u64;
 use discord_client_structs::structs::channel::voice::VoiceState;
@@ -9,7 +10,7 @@ pub struct VoiceStateUpdateEvent {
     pub voice_state: VoiceState,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, CreatedAt)]
 pub struct VoiceChannelStatusUpdateEvent {
     pub status: Option<String>,
     #[serde(deserialize_with = "deserialize_string_to_u64")]

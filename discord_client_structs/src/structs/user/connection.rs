@@ -1,3 +1,4 @@
+use discord_client_macros::CreatedAt;
 use crate::deserializer::*;
 use crate::serializer::*;
 use serde::{Deserialize, Serialize};
@@ -27,7 +28,7 @@ pub struct ConnectionIntegration {
     pub guild: IntegrationGuild,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, CreatedAt)]
 pub struct PartialIntegration {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     #[serde(serialize_with = "serialize_u64_as_string")]
@@ -46,7 +47,7 @@ pub struct Account {
     pub name: String,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, CreatedAt)]
 pub struct IntegrationGuild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     #[serde(serialize_with = "serialize_u64_as_string")]

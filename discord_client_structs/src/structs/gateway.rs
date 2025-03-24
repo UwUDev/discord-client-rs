@@ -1,3 +1,4 @@
+use discord_client_macros::CreatedAt;
 use crate::deserializer::deserialize_string_to_u64;
 use serde::Deserialize;
 
@@ -112,7 +113,7 @@ impl From<u64> for GatewayApplicationFlags {
     }
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, CreatedAt)]
 pub struct GatewayApplication {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     #[serde(serialize_with = "serialize_u64_as_string")]

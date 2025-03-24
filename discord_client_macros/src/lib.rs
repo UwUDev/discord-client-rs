@@ -46,3 +46,5 @@ pub fn derive_created_at(input: TokenStream) -> TokenStream {
 
     output.into()
 }
+
+// todo: optional ids
