@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, TimeZone, Utc};
 use serde::{Deserialize, Deserializer, de};
 
 pub fn deserialize_string_to_u64<'de, D>(deserializer: D) -> Result<u64, D::Error>
@@ -87,4 +87,33 @@ where
         new_map.insert(k.parse::<u64>().map_err(de::Error::custom)?, v);
     }
     Ok(new_map)
+}
+
+pub fn deserialize_timestamp_to_datetime<'de, D>(
+    deserializer: D,
+) -> Result<DateTime<Utc>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let timestamp = i64::deserialize(deserializer)?;
+    Utc.timestamp_millis_opt(timestamp)
+        .single()
+        .ok_or_else(|| de::Error::custom("Invalid timestamp"))
+}
+
+pub fn deserialize_option_timestamp_to_datetime<'de, D>(
+    deserializer: D,
+) -> Result<Option<DateTime<Utc>>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let opt = Option::<i64>::deserialize(deserializer)?;
+    match opt {
+        Some(timestamp) => Ok(Some(
+            Utc.timestamp_millis_opt(timestamp)
+                .single()
+                .ok_or_else(|| de::Error::custom("Invalid timestamp"))?,
+        )),
+        None => Ok(None),
+    }
 }

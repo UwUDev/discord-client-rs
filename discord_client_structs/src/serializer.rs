@@ -92,3 +92,25 @@ where
         .collect();
     string_map.serialize(serializer)
 }
+
+pub fn serialize_datetime_as_timestamp<S>(
+    date: &DateTime<Utc>,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serializer.serialize_i64(date.timestamp_millis())
+}
+pub fn serialize_option_datetime_as_timestamp<S>(
+    date: &Option<DateTime<Utc>>,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    match date {
+        Some(dt) => serialize_datetime_as_timestamp(dt, serializer),
+        None => serializer.serialize_none(),
+    }
+}
