@@ -1,9 +1,11 @@
 [package]
 name = "discord_client_macros"
-version.workspace = true
-edition.workspace = true
-authors.workspace = true
-description.workspace = true
+version = "0.1.0"
+edition = "2024"
+authors = ["UwUDev"]
+description = "Macros for discord-client-rs crates"
+repository = "https://github.com/UwUDev/discord-client-rs"
+license = "MIT"
 
 [lib]
 proc-macro = true

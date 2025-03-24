@@ -6,6 +6,7 @@ authors = ["UwUDev"]
 description = "Undetected discord client rest API reimplementation"
 repository = "https://github.com/UwUDev/discord-client-rs"
 readme = "README.md"
+license = "MIT"
 
 [[example]]
 name = "message"
