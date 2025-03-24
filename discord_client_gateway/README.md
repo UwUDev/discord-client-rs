@@ -99,7 +99,7 @@ if let Event::Ready(ready) = event {
 - [ ] Request Forum Unreads
 - [ ] Remote Command
 - [ ] Request Deleted Entity IDs
-- [ ] Request Soundboard Sounds
+- [x] Request Soundboard Sounds
 - [x] Request Last Messages
 - [x] Search Recent Members
 - [x] Request Channel Statuses
@@ -206,7 +206,7 @@ if let Event::Ready(ready) = event {
     - [x] Guild Soundboard Sound Create
     - [x] Guild Soundboard Sound Delete
     - [x] Guild Soundboard Sound Update
-    - [ ] Soundboard Sounds
+    - [x] Soundboard Sounds
   - **Sticker**
     - [x] Guild Stickers Update
   - **Update**

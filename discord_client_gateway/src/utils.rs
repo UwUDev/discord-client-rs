@@ -127,3 +127,14 @@ pub(crate) fn create_op_6(token: &str, session_id: &str, last_seq: u32) -> Strin
     });
     payload.to_string()
 }
+
+pub(crate) fn create_op_31(guild_ids: Vec<u64>) -> String {
+    let guild_ids_str: Vec<String> = guild_ids.iter().map(|id| id.to_string()).collect();
+    let payload = json!({
+        "op": 31,
+        "d": {
+            "guild_ids": guild_ids_str
+        }
+    });
+    payload.to_string()
+}

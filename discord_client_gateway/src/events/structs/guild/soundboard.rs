@@ -21,3 +21,10 @@ pub struct GuildSoundboardSoundDeleteEvent {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub sound_id: u64,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct SoundboardSoundsEvent {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub guild_id: u64,
+    pub soundboard_sounds: Vec<SoundboardSound>,
+}

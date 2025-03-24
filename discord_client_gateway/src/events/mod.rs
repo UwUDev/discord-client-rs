@@ -201,6 +201,7 @@ define_events! {
         ReadySupplemental { t: "READY_SUPPLEMENTAL", type: ReadySupplementalEvent },
         Resumed { t: "RESUMED", type: ResumedEvent },
         SessionReplace { t: "SESSIONS_REPLACE", type: SessionsReplaceEvent },
+        SoundboardSounds { t: "SOUNDBOARD_SOUNDS", type: SoundboardSoundsEvent },
         ThreadCreate { t: "THREAD_CREATE", type: ThreadCreateEvent },
         ThreadDelete { t: "THREAD_DELETE", type: ThreadDeleteEvent },
         ThreadListSync { t: "THREAD_LIST_SYNC", type: ThreadListSyncEvent },

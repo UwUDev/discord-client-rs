@@ -91,7 +91,6 @@ async fn main() {
 
     loop {
         let event = client.next_event().await.unwrap();
-        println!("{}", event);
         if let Event::GuildMembersChunk(members_chunk) = event.clone() {
             println!(
                 "Got {} members for guild {}",
@@ -101,6 +100,24 @@ async fn main() {
             if members_chunk.chunk_index + 1 == members_chunk.chunk_count {
                 break;
             }
+        }
+    }
+
+    client
+        .request_soundboard_sounds(vec![guild_id])
+        .await
+        .unwrap();
+
+    loop {
+        let event = client.next_event().await.unwrap();
+        println!("{}", event);
+        if let Event::SoundboardSounds(sounds) = event.clone() {
+            println!(
+                "Got {} soundboard sounds for guild {}",
+                sounds.soundboard_sounds.len(),
+                sounds.guild_id
+            );
+            break;
         } else if let Event::Unknown(unknown) = event {
             println!("Unknown event found: {}  ({})", unknown.r#type, unknown.op);
             println!("See the event.json file to debug this event.");

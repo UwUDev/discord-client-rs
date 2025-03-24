@@ -420,4 +420,15 @@ impl GatewayClient {
             .await?;
         Ok(())
     }
+
+    pub async fn request_soundboard_sounds(&mut self, guild_ids: Vec<u64>) -> BoxedResult<()> {
+        let payload = create_op_31(guild_ids);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
+        Ok(())
+    }
 }
