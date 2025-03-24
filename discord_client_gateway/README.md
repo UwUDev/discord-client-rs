@@ -203,9 +203,9 @@ if let Event::Ready(ready) = event {
     - [x] Guild Scheduled Event Exceptions Delete
     - [x] Guild Scheduled Event Exception Update
   - **Soundboard**
-    - [ ] Guild Soundboard Sound Create
-    - [ ] Guild Soundboard Sound Delete
-    - [ ] Guild Soundboard Sound Update
+    - [x] Guild Soundboard Sound Create
+    - [x] Guild Soundboard Sound Delete
+    - [x] Guild Soundboard Sound Update
     - [ ] Soundboard Sounds
   - **Sticker**
     - [x] Guild Stickers Update

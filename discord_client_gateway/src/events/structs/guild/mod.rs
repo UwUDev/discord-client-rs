@@ -15,6 +15,7 @@ pub mod emoji;
 pub mod integration;
 pub mod role;
 pub mod schedule_event;
+pub mod soundboard;
 pub mod sticker;
 pub mod unread;
 

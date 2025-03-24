@@ -15,6 +15,7 @@ use crate::events::structs::guild::emoji::*;
 use crate::events::structs::guild::integration::*;
 use crate::events::structs::guild::role::*;
 use crate::events::structs::guild::schedule_event::*;
+use crate::events::structs::guild::soundboard::*;
 use crate::events::structs::guild::sticker::*;
 use crate::events::structs::guild::unread::*;
 use crate::events::structs::guild::*;
@@ -201,6 +202,9 @@ define_events! {
         GuildScheduledEventUserAdd { t: "GUILD_SCHEDULED_EVENT_USER_ADD", type: GuildScheduledEventUserAddEvent },
         GuildScheduledEventUserRemove { t: "GUILD_SCHEDULED_EVENT_USER_REMOVE", type: GuildScheduledEventUserRemoveEvent },
         GuildFeatureAck { t: "GUILD_FEATURE_ACK", type: GuildFeatureAckEvent },
+        GuildSoundboardSoundCreate { t: "GUILD_SOUNDBOARD_SOUND_CREATE", type: GuildSoundboardSoundCreateEvent },
+        GuildSoundboardSoundDelete { t: "GUILD_SOUNDBOARD_SOUND_DELETE", type: GuildSoundboardSoundDeleteEvent },
+        GuildSoundboardSoundUpdate { t: "GUILD_SOUNDBOARD_SOUND_UPDATE", type: GuildSoundboardSoundUpdateEvent },
         AutoModMentionRaidDetection { t: "AUTO_MODERATION_MENTION_RAID_DETECTION", type: AutoModMentionRaidDetectionEvent },
         ContentInventoryInboxStale { t: "CONTENT_INVENTORY_INBOX_STALE", type: ContentInventoryInboxStaleEvent },
         UserSettingsProtoUpdate { t: "USER_SETTINGS_PROTO_UPDATE", type: UserSettingsProtoUpdateEvent },

@@ -14,6 +14,7 @@ use crate::events::structs::guild::emoji::*;
 use crate::events::structs::guild::integration::*;
 use crate::events::structs::guild::role::*;
 use crate::events::structs::guild::schedule_event::*;
+use crate::events::structs::guild::soundboard::*;
 use crate::events::structs::guild::sticker::*;
 use crate::events::structs::guild::unread::*;
 use crate::events::structs::guild::*;
@@ -125,6 +126,9 @@ pub enum Event {
     GuildScheduledEventUserAdd(GuildScheduledEventUserAddEvent),
     GuildScheduledEventUserRemove(GuildScheduledEventUserRemoveEvent),
     GuildFeatureAck(GuildFeatureAckEvent),
+    GuildSoundboardSoundCreate(GuildSoundboardSoundCreateEvent),
+    GuildSoundboardSoundUpdate(GuildSoundboardSoundUpdateEvent),
+    GuildSoundboardSoundDelete(GuildSoundboardSoundDeleteEvent),
 
     // typing events
     TypingStart(TypingStartEvent),
