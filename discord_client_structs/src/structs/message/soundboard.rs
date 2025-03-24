@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
 #[builder(setter(into, strip_option), default)]
 pub struct SoundboardSound {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub sound_id: u64,
     pub name: String,
     pub volume: f64,
