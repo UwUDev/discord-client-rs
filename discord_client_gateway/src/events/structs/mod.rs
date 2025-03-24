@@ -52,6 +52,8 @@ pub enum Event {
     MessageDelete(MessageDeleteEvent),
     MessageDeleteBulk(MessageDeleteBulkEvent),
     MessageAck(MessageAckEvent),
+
+    // message reaction events
     MessageReactionAdd(MessageReactionAddEvent),
     MessageReactionRemove(MessageReactionRemoveEvent),
     MessageReactionAddMany(MessageReactionAddManyEvent),
@@ -71,9 +73,16 @@ pub enum Event {
     ChannelCreate(ChannelCreateEvent),
     ChannelUpdate(ChannelUpdateEvent),
     ChannelDelete(ChannelDeleteEvent),
+
+    // channel summary events
     ConversationSummaryUpdate(ConversationSummaryUpdateEvent),
+    ChannelUnreadUpdate(ChannelUnreadUpdateEvent),
+
+    // channel pin events
     ChannelPinsUpdate(ChannelPinsUpdateEvent),
     ChannelPinsAck(ChannelPinsAckEvent),
+
+    // channel recipient events
     ChannelRecipientAdd(ChannelRecipientAddEvent),
     ChannelRecipientRemove(ChannelRecipientRemoveEvent),
 
@@ -96,26 +105,42 @@ pub enum Event {
 
     // guild events
     PassiveUpdateV2(PassiveUpdateV2Event),
-    GuildMemberUpdate(GuildMemberUpdateEvent),
-    GuildMemberAdd(GuildMemberAddEvent),
-    GuildMemberRemove(GuildMemberRemoveEvent),
     GuildCreate(GuildCreateEvent),
     GuildUpdate(GuildUpdateEvent),
     GuildDelete(GuildDeleteEvent),
+    GuildFeatureAck(GuildFeatureAckEvent),
+
+    // guild member events
+    GuildMemberUpdate(GuildMemberUpdateEvent),
+    GuildMemberAdd(GuildMemberAddEvent),
+    GuildMemberRemove(GuildMemberRemoveEvent),
+
+    // guild log events
     GuildAuditLogEntryCreate(GuildAuditLogEntryCreateEvent),
+
+    // guild role events
     GuildRoleCreate(GuildRoleCreateEvent),
     GuildRoleUpdate(GuildRoleUpdateEvent),
     GuildRoleDelete(GuildRoleDeleteEvent),
+
+    // guild automod events
     AutoModMentionRaidDetection(AutoModMentionRaidDetectionEvent),
+
+    // guild emoji and sticker events
     GuildEmojisUpdate(GuildEmojisUpdateEvent),
     GuildStickersUpdate(GuildStickersUpdateEvent),
+
+    // guild ban events
     GuildBanAdd(GuildBanAddEvent),
     GuildBanRemove(GuildBanRemoveEvent),
+
+    // guild integration events
     GuildIntegrationsUpdate(GuildIntegrationsUpdateEvent),
     IntegrationCreate(IntegrationCreateEvent),
     IntegrationUpdate(IntegrationUpdateEvent),
     IntegrationDelete(IntegrationDeleteEvent),
-    ChannelUnreadUpdate(ChannelUnreadUpdateEvent),
+
+    // guild schedule events
     GuildScheduledEventCreate(GuildScheduledEventCreateEvent),
     GuildScheduledEventUpdate(GuildScheduledEventUpdateEvent),
     GuildScheduledEventDelete(GuildScheduledEventDeleteEvent),
@@ -125,7 +150,8 @@ pub enum Event {
     GuildScheduledEventExceptionsDelete(GuildScheduledEventExceptionsDeleteEvent),
     GuildScheduledEventUserAdd(GuildScheduledEventUserAddEvent),
     GuildScheduledEventUserRemove(GuildScheduledEventUserRemoveEvent),
-    GuildFeatureAck(GuildFeatureAckEvent),
+
+    // guild soundboard events
     GuildSoundboardSoundCreate(GuildSoundboardSoundCreateEvent),
     GuildSoundboardSoundUpdate(GuildSoundboardSoundUpdateEvent),
     GuildSoundboardSoundDelete(GuildSoundboardSoundDeleteEvent),
