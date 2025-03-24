@@ -1,6 +1,6 @@
 use discord_client_structs::deserializer::*;
-use serde::Deserialize;
 use discord_client_structs::structs::guild::event::*;
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct GuildScheduledEventCreateEvent {

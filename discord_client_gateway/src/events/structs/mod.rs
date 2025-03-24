@@ -12,6 +12,7 @@ use crate::events::structs::guild::ban::*;
 use crate::events::structs::guild::emoji::*;
 use crate::events::structs::guild::integration::*;
 use crate::events::structs::guild::role::*;
+use crate::events::structs::guild::schedule_event::*;
 use crate::events::structs::guild::sticker::*;
 use crate::events::structs::guild::unread::*;
 use crate::events::structs::guild::*;
@@ -24,7 +25,6 @@ use crate::events::structs::ready::*;
 use crate::events::structs::requested::*;
 use crate::events::structs::user::*;
 use serde_json::Value;
-use crate::events::structs::guild::schedule_event::*;
 
 pub mod call;
 pub mod channel;
