@@ -1,3 +1,4 @@
+use discord_client_macros::OptionCreatedAt;
 use crate::deserializer::*;
 use crate::serializer::*;
 use crate::structs::user::User;
@@ -18,7 +19,7 @@ pub struct Potion {
     pub created_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, OptionCreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct Emoji {
     #[serde(default)]

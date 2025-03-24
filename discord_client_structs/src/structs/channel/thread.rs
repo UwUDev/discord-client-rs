@@ -1,3 +1,4 @@
+use discord_client_macros::OptionCreatedAt;
 use crate::deserializer::*;
 use crate::serializer::*;
 use crate::structs::user::Member;
@@ -6,7 +7,7 @@ use derive_builder::Builder;
 use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, OptionCreatedAt)]
 #[builder(setter(into, strip_option), default)]
 pub struct ThreadMember {
     #[serde(default)]
