@@ -1,6 +1,6 @@
-use discord_client_macros::CreatedAt;
 use crate::deserializer::*;
 use chrono::{DateTime, Utc};
+use discord_client_macros::CreatedAt;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone, CreatedAt)]

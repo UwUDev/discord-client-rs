@@ -1,8 +1,8 @@
-use discord_client_macros::CreatedAt;
 use crate::deserializer::*;
 use crate::structs::application::IntegrationApplication;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
+use discord_client_macros::CreatedAt;
 use serde::Deserialize;
 use std::collections::HashMap;
 

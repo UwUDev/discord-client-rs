@@ -1,7 +1,7 @@
-use discord_client_macros::CreatedAt;
 use crate::deserializer::*;
 use crate::serializer::*;
 use derive_builder::Builder;
+use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]

@@ -1,5 +1,5 @@
-use discord_client_macros::CreatedAt;
 use crate::deserializer::deserialize_string_to_u64;
+use discord_client_macros::CreatedAt;
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

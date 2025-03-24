@@ -1,6 +1,6 @@
-use discord_client_macros::CreatedAt;
 use crate::deserializer::*;
 use crate::serializer::*;
+use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Clone)]
