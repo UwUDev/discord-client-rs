@@ -95,3 +95,30 @@ pub struct MemberVerificationFormField {
     #[serde(default)]
     pub placeholder: Option<String>,
 }
+
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[builder(setter(into, strip_option), default)]
+pub struct ClanBadge {
+    pub tag: String,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[serde(serialize_with = "serialize_u64_as_string")]
+    pub identity_guild_id: u64,
+    pub identity_enabled: bool,
+    pub badge: String,
+}
+
+impl ClanBadge {
+    pub fn get_image_url(&self, custom_size: Option<u16>) -> String {
+        if let Some(size) = custom_size {
+            format!(
+                "https://cdn.discordapp.com/clan-badges/{}/{}.png?size={}",
+                self.identity_guild_id, self.badge, size
+            )
+        } else {
+            format!(
+                "https://cdn.discordapp.com/clan-badges/{}/{}.png",
+                self.identity_guild_id, self.badge
+            )
+        }
+    }
+}
