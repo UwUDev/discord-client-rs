@@ -22,7 +22,7 @@ pub struct Clan {
     pub play_style: Option<u8>,
     pub search_terms: Option<Vec<String>>,
     pub game_application_ids: Option<Vec<u64>>,
-    pub badge: Option<u8>,
+    pub badge: Option<String>,
     pub badge_hash: Option<String>,
     pub badge_color_primary: Option<String>,
     pub badge_color_secondary: Option<String>,
@@ -99,26 +99,30 @@ pub struct MemberVerificationFormField {
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
 #[builder(setter(into, strip_option), default)]
 pub struct ClanBadge {
-    pub tag: String,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
-    pub identity_guild_id: u64,
-    pub identity_enabled: bool,
-    pub badge: String,
+    pub tag: Option<String>,
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    pub identity_guild_id: Option<u64>,
+    pub identity_enabled: Option<bool>,
+    pub badge: Option<String>,
 }
 
 impl ClanBadge {
-    pub fn get_image_url(&self, custom_size: Option<u16>) -> String {
+    pub fn get_image_url(&self, custom_size: Option<u16>) -> Option<String> {
+        if self.badge.is_none() || self.identity_guild_id.is_none() {
+            return None;
+        }
+        
         if let Some(size) = custom_size {
-            format!(
+            Some(format!(
                 "https://cdn.discordapp.com/clan-badges/{}/{}.png?size={}",
-                self.identity_guild_id, self.badge, size
-            )
+                self.identity_guild_id.unwrap(), self.clone().badge.unwrap(), size
+            ))
         } else {
-            format!(
+            Some(format!(
                 "https://cdn.discordapp.com/clan-badges/{}/{}.png",
-                self.identity_guild_id, self.badge
-            )
+                self.identity_guild_id.unwrap(), self.clone().badge.unwrap()
+            ))
         }
     }
 }
