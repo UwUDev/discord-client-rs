@@ -28,7 +28,6 @@ use crate::events::structs::ready::*;
 use crate::events::structs::requested::*;
 use crate::events::structs::user::*;
 use crate::events::structs::*;
-use serde::Deserialize;
 
 pub(crate) mod deserializer;
 pub mod structs;
@@ -98,7 +97,23 @@ macro_rules! define_events {
                 // Dispatch events
                 $dispatch_op => match payload.t.as_deref() {
                     $(
-                        Some($t) => <$event_struct>::deserialize(payload.d).map(Event::$variant),
+                        Some($t) => {
+                            let json_string = serde_json::to_string(&payload.d)
+                                .map_err(|e| serde::de::Error::custom(format!("Unable to process JSON conversion: {}", e)))?;
+
+                            let jd = &mut serde_json::Deserializer::from_str(&json_string);
+                            let result: Result<$event_struct, _> = serde_path_to_error::deserialize(jd);
+
+                            match result {
+                                Ok(event) => Ok(Event::$variant(event)),
+                                Err(err) => {
+                                    let chemin = err.path().to_string();
+                                    let message = format!("Unable to parse event {}: {} at '{}'",
+                                                         $t, err.inner(), chemin);
+                                    Err(serde::de::Error::custom(message))
+                                }
+                            }
+                        },
                     )+
                     Some(other) => Ok(Event::Unknown(UnknownEvent {
                         r#type: other.to_string(),

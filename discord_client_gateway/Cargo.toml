@@ -47,6 +47,7 @@ futures-util = { version = "0.3.0", default-features = false }
 rquest = { workspace = true, features = ["websocket"] }
 rquest-util = { workspace = true }
 serde_json = {workspace = true}
+serde_path_to_error = {workspace = true}
 tokio = { workspace = true, features = ["rt", "macros", "rt-multi-thread"] }
 zlib_stream = "0.1.0"
 serde = {workspace = true}

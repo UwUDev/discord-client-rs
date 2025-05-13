@@ -273,7 +273,18 @@ impl GatewayClient {
                         file.write_all(text.as_bytes()).unwrap();
                     }
 
-                    let payload: GatewayPayload = serde_json::from_str(&text).unwrap();
+                    let jd = &mut serde_json::Deserializer::from_str(&text);
+                    let result: Result<GatewayPayload, _> = serde_path_to_error::deserialize(jd);
+                    let payload = match result {
+                        Ok(payload) => payload,
+                        Err(err) => {
+                            return Err(BoxedError::from(format!(
+                                "Failed to deserialize payload: {}",
+                                err
+                            )));
+                        }
+                    };
+
                     if let Some(sequence) = payload.s {
                         self.last_sequence.store(sequence, Ordering::Relaxed);
                     }

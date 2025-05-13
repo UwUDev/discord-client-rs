@@ -18,6 +18,7 @@ serde = { version = "1.0.217", features = ["derive"] }
 rquest = "5.0.0"
 rquest-util = "2"
 serde_json = "1.0.138"
+serde_path_to_error = "0.1.17"
 chrono = "0.4.39"
 tokio = "1.43.0"
 
