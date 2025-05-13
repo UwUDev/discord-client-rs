@@ -129,7 +129,7 @@ fn verify_if_user_is_clan_member(user: User, found: &mut Vec<ClanBadge>) {
                     .find(|x| x.identity_guild_id == Some(clan_id))
                     .unwrap()
                     .clone();
-                
+
                 if let Some(id_enabled) = clan.identity_enabled {
                     found_clan.identity_enabled = Some(id_enabled);
                 }
@@ -139,7 +139,7 @@ fn verify_if_user_is_clan_member(user: User, found: &mut Vec<ClanBadge>) {
                 if let Some(badge) = clan.badge {
                     found_clan.badge = Some(badge);
                 }
-                
+
                 // replace the old clan with the new one
                 found.retain(|x| x.identity_guild_id != Some(clan_id));
                 found.push(found_clan);

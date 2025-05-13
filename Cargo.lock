@@ -486,7 +486,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "discord_client_macros 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "discord_client_structs 0.1.0",
+ "discord_client_structs",
  "futures-util",
  "rquest",
  "rquest-util",
@@ -528,7 +528,7 @@ dependencies = [
  "chrono",
  "current_locale",
  "derive_builder",
- "discord_client_structs 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "discord_client_structs",
  "iana-time-zone",
  "log",
  "pretty_env_logger",
@@ -543,21 +543,6 @@ dependencies = [
 [[package]]
 name = "discord_client_structs"
 version = "0.1.0"
-dependencies = [
- "base64",
- "chrono",
- "derive_builder",
- "discord_client_macros 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde",
- "serde_json",
- "strum_macros",
-]
-
-[[package]]
-name = "discord_client_structs"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07af8448216a26be0b37d70a63dcb128b1884eaeb234f53dd5db5dbef76d248e"
 dependencies = [
  "base64",
  "chrono",
@@ -641,7 +626,7 @@ version = "0.1.0"
 dependencies = [
  "discord_client_gateway",
  "discord_client_rest",
- "discord_client_structs 0.1.0",
+ "discord_client_structs",
  "tokio",
 ]
 

@@ -1,6 +1,8 @@
 use discord_client_gateway::events::Event;
 use discord_client_gateway::gateway::GatewayClient;
-use discord_client_structs::structs::user::activity::{ActivityAssetBuilder, ActivityBuilder, ActivityTimestampBuilder};
+use discord_client_structs::structs::user::activity::{
+    ActivityAssetBuilder, ActivityBuilder, ActivityTimestampBuilder,
+};
 use discord_client_structs::structs::user::status::StatusType::DoNotDisturb;
 use std::io::Write;
 
@@ -54,7 +56,6 @@ async fn main() {
             client.bulk_guild_subscribe(ids).await.unwrap();
         }
     }
-
 
     let mut count = 100;
     loop {

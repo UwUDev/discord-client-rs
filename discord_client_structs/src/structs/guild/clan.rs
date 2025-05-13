@@ -112,16 +112,19 @@ impl ClanBadge {
         if self.badge.is_none() || self.identity_guild_id.is_none() {
             return None;
         }
-        
+
         if let Some(size) = custom_size {
             Some(format!(
                 "https://cdn.discordapp.com/clan-badges/{}/{}.png?size={}",
-                self.identity_guild_id.unwrap(), self.clone().badge.unwrap(), size
+                self.identity_guild_id.unwrap(),
+                self.clone().badge.unwrap(),
+                size
             ))
         } else {
             Some(format!(
                 "https://cdn.discordapp.com/clan-badges/{}/{}.png",
-                self.identity_guild_id.unwrap(), self.clone().badge.unwrap()
+                self.identity_guild_id.unwrap(),
+                self.clone().badge.unwrap()
             ))
         }
     }

@@ -1,7 +1,7 @@
-use serde_json::{Value, json};
-use std::str::FromStr;
 use discord_client_structs::structs::user::activity::Activity;
 use discord_client_structs::structs::user::status::StatusType;
+use serde_json::{Value, json};
+use std::str::FromStr;
 
 pub(crate) fn create_op_37(guild_ids: Vec<u64>) -> String {
     let mut payload = Value::from_str(r#"{"op":37,"d":{"subscriptions":{}}}"#).unwrap();

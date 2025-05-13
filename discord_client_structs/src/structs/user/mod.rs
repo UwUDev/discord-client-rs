@@ -1,10 +1,10 @@
 use crate::deserializer::*;
 use crate::serializer::*;
+use crate::structs::guild::clan::ClanBadge;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
-use crate::structs::guild::clan::ClanBadge;
 
 pub mod activity;
 pub mod connection;

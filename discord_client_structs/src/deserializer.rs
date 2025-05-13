@@ -89,9 +89,7 @@ where
     Ok(new_map)
 }
 
-pub fn deserialize_timestamp_to_datetime<'de, D>(
-    deserializer: D,
-) -> Result<DateTime<Utc>, D::Error>
+pub fn deserialize_timestamp_to_datetime<'de, D>(deserializer: D) -> Result<DateTime<Utc>, D::Error>
 where
     D: Deserializer<'de>,
 {

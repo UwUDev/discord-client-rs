@@ -2,6 +2,9 @@ use crate::events::structs::gateway::GatewayPayload;
 use crate::utils::*;
 use crate::{BoxedError, BoxedResult};
 use discord_client_structs::parser::parse_id_from_token;
+use discord_client_structs::structs::user::activity::Activity;
+use discord_client_structs::structs::user::status::StatusType;
+use discord_client_structs::structs::user::status::StatusType::Unknown;
 use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt, TryStreamExt};
 use rquest::{Client, Message, WebSocket};
@@ -13,9 +16,6 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
 use tokio::sync::Mutex;
 use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
-use discord_client_structs::structs::user::activity::Activity;
-use discord_client_structs::structs::user::status::StatusType;
-use discord_client_structs::structs::user::status::StatusType::Unknown;
 
 pub struct GatewayClient {
     token: String,
