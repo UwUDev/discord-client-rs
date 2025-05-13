@@ -86,7 +86,7 @@ impl RestClient {
         let api_version = match custom_api_version {
             Some(v) => v,
             None => {
-                let re = Regex::new(r"API_VERSION: (\d+)").unwrap();
+                let re = Regex::new(r#""API_VERSION":(\d+)"#).unwrap();
 
                 re.captures(&body)
                     .ok_or("Failed to find API version")?
