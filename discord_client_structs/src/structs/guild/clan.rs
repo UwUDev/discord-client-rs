@@ -7,17 +7,18 @@ use derive_builder::Builder;
 use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
 #[builder(setter(into, strip_option), default)]
 pub struct Clan {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
-    pub id: u64,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    pub id: Option<u64>,
     #[serde(default)]
     pub name: Option<String>,
-    pub tag: String,
+    pub tag: Option<String>,
     pub icon_hash: Option<String>,
-    pub member_count: u32,
+    pub member_count: Option<u32>,
     pub description: Option<String>,
     pub play_style: Option<u8>,
     pub search_terms: Option<Vec<String>>,
