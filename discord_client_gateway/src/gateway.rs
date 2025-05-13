@@ -447,47 +447,6 @@ impl GatewayClient {
         Ok(())
     }
 
-    /*Update Presence Structure
-
-Field	Type	Description
-activities	array[activity object]	The user's activities
-status	string	the user's new status
-since	integer	Unix timestamp (in milliseconds) of when the client went idle, or 0 if it is not
-afk	boolean	Whether or not the client is AFK, used to determine whether to dispatch mobile push notifications
-Example Update Presence
-
-{
-  "op": 3,
-  "d": {
-    "since": 0,
-    "activities": [
-      {
-        "application_id": "383226320970055681",
-        "assets": {
-          "large_image": "565945350846939145",
-          "large_text": "Editing a TEXT file",
-          "small_image": "565945770067623946",
-          "small_text": "Visual Studio Code"
-        },
-        "buttons": ["View Repository"],
-        "created_at": "1695164784863",
-        "details": "Editing index.astro",
-        "flags": 0,
-        "id": "d11307d8c0abb135",
-        "name": "Visual Studio Code",
-        "session_id": "30f32c5d54ae86130fc4a215c7474263",
-        "state": "Workspace: vendicated.dev",
-        "timestamps": {
-          "start": "1695164482423"
-        },
-        "type": 0
-      }
-    ],
-    "status": "online",
-    "afk": false
-  }
-}*/
-
     pub async fn update_presence(&mut self) -> BoxedResult<()> {
         let payload = create_op_3(
             self.idling_millis,

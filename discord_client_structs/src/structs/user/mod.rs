@@ -4,6 +4,7 @@ use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
+use crate::structs::guild::clan::ClanBadge;
 
 pub mod activity;
 pub mod connection;
@@ -36,6 +37,8 @@ pub struct User {
     pub public_flags: Option<u64>,
     pub avatar_decoration_data: Option<AvatarDecorationData>,
     pub token: Option<String>,
+    pub primary_guild: Option<ClanBadge>,
+    pub clan: Option<ClanBadge>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
