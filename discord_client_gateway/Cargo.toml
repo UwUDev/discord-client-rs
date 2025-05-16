@@ -43,7 +43,7 @@ required-features = ["debug_events"]
 [dependencies]
 discord_client_structs = { path = "../discord_client_structs" }
 discord_client_macros = "0.1.0"
-futures-util = { version = "0.3.0", default-features = false }
+futures-util = { version = "0.3.31", default-features = false }
 rquest = { workspace = true, features = ["websocket"] }
 rquest-util = { workspace = true }
 serde_json = {workspace = true}

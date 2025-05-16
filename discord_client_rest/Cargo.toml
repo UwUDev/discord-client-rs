@@ -28,18 +28,22 @@ path = "examples/group.rs"
 name = "guild"
 path = "examples/guild.rs"
 
+[[example]]
+name = "reverse"
+path = "examples/reverse.rs"
+
 [dependencies]
 discord_client_structs = { path = "../discord_client_structs" }
 rquest = { workspace = true, features = ["gzip", "deflate", "zstd", "brotli", "json", "cookies"] }
 rquest-util = { workspace = true }
 tokio = { workspace = true, features = ["rt", "macros", "rt-multi-thread"] }
 regex = "1.11.1"
-iana-time-zone = "0.1.61"
+iana-time-zone = "0.1.63"
 current_locale = "0.1.1"
 serde_json = {workspace = true, features = ["preserve_order"]}
 base64 = "0.22.1"
 serde = { workspace = true, features = ["derive"] }
-log = "0.4.25"
-pretty_env_logger = "0.4"
+log = "0.4.27"
+pretty_env_logger = "0.5.0"
 derive_builder = "0.20.2"
 chrono.workspace = true
