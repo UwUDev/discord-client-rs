@@ -115,18 +115,18 @@ impl RestClient {
             .as_str()
             .to_string();
 
-        let re = Regex::new(r#"t:'([a-zA-Z0-9_\-=]+)'"#).unwrap();
+        /*let re = Regex::new(r#"t:'([a-zA-Z0-9_\-=]+)'"#).unwrap();
         let t: String = re
             .captures(&body)
             .ok_or("Failed to find t")?
             .get(1)
             .ok_or("Failed to find t")?
             .as_str()
-            .to_string();
+            .to_string();*/
 
         let (key, s) = get_invisible(&client).await?;
 
-        get_clearance_cookie(&client, r, t, key, s).await?;
+        get_clearance_cookie(&client, r, key, s).await?;
 
         // get experiments cookies
         // todo: parse assignments
@@ -537,6 +537,10 @@ impl RestClient {
         }
 
         Ok(headers)
+    }
+
+    pub fn get_http_client(&self) -> &Client {
+        &self.client
     }
 }
 
