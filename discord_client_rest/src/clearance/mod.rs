@@ -1,7 +1,6 @@
 mod compressor;
 
 use crate::BoxedResult;
-use log::warn;
 use rquest::Client;
 
 const LONG_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 OPR/118.0.0.0";
@@ -66,9 +65,16 @@ pub(crate) async fn get_clearance_cookie(
         .send()
         .await?;
     if !response.status().is_success() {
-        warn!("Failed to get clearance cookie: {}", response.status());
         return Err(format!("Failed to get clearance cookie: {}", response.status()).into());
     }
 
-    Ok(())
+    // check if set_cookie with cf_clearance is present
+    let cookies = response.cookies();
+    for cookie in cookies {
+        if cookie.name() == "cf_clearance" {
+            return Ok(());
+        }
+    }
+
+    Err("Failed to get cf_clearance cookie, no cookie found".into())
 }

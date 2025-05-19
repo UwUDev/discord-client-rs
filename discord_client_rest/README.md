@@ -7,6 +7,7 @@ This crate offers a seamless integration for Discord bot developers, featuring:
 - **Automatic ratelimit handling** for all REST requests
 - **TLS impersonation** and **HTTP/2 (H2) mimicing** of Chrome to avoid detection
 - Automated token login and session management
+- Cloudflare clearance challenge solving
 - Efficient handling of Discord's REST responses
 - Captcha detection and handling
 - Automatic headers generation for Discord's REST requests

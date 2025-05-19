@@ -126,7 +126,13 @@ impl RestClient {
 
         let (key, s) = get_invisible(&client).await?;
 
-        get_clearance_cookie(&client, r, key, s).await?;
+        match get_clearance_cookie(&client, r, key, s).await {
+            Ok(_) => {}
+            Err(e) => {
+                warn!("{}", e);
+                return Err(e);
+            }
+        }
 
         // get experiments cookies
         // todo: parse assignments
