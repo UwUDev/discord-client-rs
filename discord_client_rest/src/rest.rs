@@ -61,7 +61,7 @@ impl RestClient {
         };
 
         let emu = EmulationOption::builder()
-            .emulation(Emulation::Chrome134)
+            .emulation(Emulation::Chrome136)
             .emulation_os(EmulationOS::Windows)
             .build();
 

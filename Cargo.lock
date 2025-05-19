@@ -1521,12 +1521,11 @@ dependencies = [
 
 [[package]]
 name = "rquest-util"
-version = "2.0.0"
+version = "2.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64a7e95aec5eb09fd7e5487438bf21335e7cadd91eb91a2c8ed42dd8175afd44"
+checksum = "d3e3762f6e3e0d1674a6e74ebcbcb3b8d56c895757fc2cc2aa0d5e62ccfcb21e"
 dependencies = [
  "rquest",
- "serde",
  "typed-builder",
 ]
 

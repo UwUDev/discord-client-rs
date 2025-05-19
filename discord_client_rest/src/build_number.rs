@@ -5,7 +5,7 @@ use rquest_util::{Emulation, EmulationOS, EmulationOption};
 
 pub async fn fetch_build_number() -> BoxedResult<u32> {
     let emu = EmulationOption::builder()
-        .emulation(Emulation::Chrome134)
+        .emulation(Emulation::Chrome136)
         .emulation_os(EmulationOS::Windows)
         .build();
 

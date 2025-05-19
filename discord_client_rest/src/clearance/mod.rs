@@ -3,8 +3,8 @@ mod compressor;
 use crate::BoxedResult;
 use rquest::Client;
 
-const LONG_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 OPR/118.0.0.0";
-const SHORT_USER_AGENT: &str = "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 OPR/118.0.0.0";
+const LONG_USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 OPR/118.0.0.0";
+const SHORT_USER_AGENT: &str = "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 OPR/118.0.0.0";
 const OPERATING_SYSTEM: &str = "Windows NT 10.0; Win64; x64";
 
 pub(crate) async fn get_invisible(client: &Client) -> BoxedResult<(String, String)> {

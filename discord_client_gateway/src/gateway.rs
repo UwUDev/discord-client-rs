@@ -48,7 +48,7 @@ impl GatewayClient {
         let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
 
         let emu = EmulationOption::builder()
-            .emulation(Emulation::Chrome134)
+            .emulation(Emulation::Chrome136)
             .emulation_os(EmulationOS::Windows)
             .build();
 
@@ -93,7 +93,7 @@ impl GatewayClient {
         let token_var = token.clone();
         tokio::spawn(async move {
             let message = format!(
-                r#"{{"op":2,"d":{{"token":"{}","capabilities":{},"properties":{{"os":"Windows","browser":"Chrome","device":"","system_locale":"en-US","browser_user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36","browser_version":"133.0.0.0","os_version":"10","referrer":"","referring_domain":"","referrer_current":"","referring_domain_current":"","release_channel":"stable","client_build_number":{},"client_event_source":null,"design_id":0}},"presence":{{"status":"unknown","since":0,"activities":[],"afk":false}},"compress":false,"client_state":{{"guild_versions":{{}}}}}}}}"#,
+                r#"{{"op":2,"d":{{"token":"{}","capabilities":{},"properties":{{"os":"Windows","browser":"Chrome","device":"","system_locale":"en-US","browser_user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36","browser_version":"136.0.0.0","os_version":"10","referrer":"","referring_domain":"","referrer_current":"","referring_domain_current":"","release_channel":"stable","client_build_number":{},"client_event_source":null,"design_id":0}},"presence":{{"status":"unknown","since":0,"activities":[],"afk":false}},"compress":false,"client_state":{{"guild_versions":{{}}}}}}}}"#,
                 token_var, capabilities, build_number
             );
 
@@ -159,7 +159,7 @@ impl GatewayClient {
 
     pub async fn resume(&mut self) -> BoxedResult<()> {
         let imp = EmulationOption::builder()
-            .emulation(Emulation::Chrome134)
+            .emulation(Emulation::Chrome136)
             .emulation_os(EmulationOS::Windows)
             .build();
 
