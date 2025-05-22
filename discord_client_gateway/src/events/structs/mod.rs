@@ -5,6 +5,7 @@ use crate::events::structs::channel::summary::*;
 use crate::events::structs::channel::thread::*;
 use crate::events::structs::channel::typing::*;
 use crate::events::structs::channel::voice::*;
+use crate::events::structs::channel::webhook::WebhooksUpdateEvent;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
 use crate::events::structs::guild::ack::*;
@@ -85,6 +86,9 @@ pub enum Event {
     // channel recipient events
     ChannelRecipientAdd(ChannelRecipientAddEvent),
     ChannelRecipientRemove(ChannelRecipientRemoveEvent),
+
+    // Channel webhook events
+    WebhooksUpdate(WebhooksUpdateEvent),
 
     // thread events
     ThreadCreate(ThreadCreateEvent),

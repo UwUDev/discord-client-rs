@@ -95,9 +95,9 @@ if let Event::Ready(ready) = event {
 - [x] Bulk guild subscribe
 - [x] Request Guild Members
 - [ ] Request Call Connect
-- [ ] Update Guild Subscriptions
+- [x] Update Guild Subscriptions
 - [ ] Request Forum Unreads
-- [ ] Remote Command
+- [x] Remote Command
 - [ ] Request Deleted Entity IDs
 - [x] Request Soundboard Sounds
 - [x] Request Last Messages
@@ -137,7 +137,7 @@ if let Event::Ready(ready) = event {
     - [ ] Voice Server Update
     - [x] Voice State Update
   - **Webhook**
-    - [ ] Webhooks Update
+    - [x] Webhooks Update
   - [x] Channel Create
   - [x] Channel Delete
   - [x] Channel Statuses

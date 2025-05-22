@@ -6,6 +6,7 @@ pub mod summary;
 pub mod thread;
 pub mod typing;
 pub mod voice;
+pub mod webhook;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct ChannelCreateEvent {

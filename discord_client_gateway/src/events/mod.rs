@@ -6,6 +6,7 @@ use crate::events::structs::channel::summary::*;
 use crate::events::structs::channel::thread::*;
 use crate::events::structs::channel::typing::*;
 use crate::events::structs::channel::voice::*;
+use crate::events::structs::channel::webhook::WebhooksUpdateEvent;
 use crate::events::structs::channel::*;
 use crate::events::structs::gateway::*;
 use crate::events::structs::guild::ack::*;
@@ -228,6 +229,7 @@ define_events! {
         UserSettingsProtoUpdate { t: "USER_SETTINGS_PROTO_UPDATE", type: UserSettingsProtoUpdateEvent },
         VoiceChannelStatusUpdate { t: "VOICE_CHANNEL_STATUS_UPDATE", type: VoiceChannelStatusUpdateEvent },
         VoiceStateUpdate { t: "VOICE_STATE_UPDATE", type: VoiceStateUpdateEvent },
+        WebhookUpdate { t: "WEBHOOKS_UPDATE", type: WebhooksUpdateEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { type: GatewayReconnectEvent }
