@@ -13,6 +13,7 @@ pub mod automod;
 pub mod ban;
 pub mod emoji;
 pub mod integration;
+pub mod join_request;
 pub mod role;
 pub mod schedule_event;
 pub mod soundboard;

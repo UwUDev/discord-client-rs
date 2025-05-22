@@ -14,6 +14,7 @@ use crate::events::structs::guild::automod::*;
 use crate::events::structs::guild::ban::*;
 use crate::events::structs::guild::emoji::*;
 use crate::events::structs::guild::integration::*;
+use crate::events::structs::guild::join_request::*;
 use crate::events::structs::guild::role::*;
 use crate::events::structs::guild::schedule_event::*;
 use crate::events::structs::guild::soundboard::*;
@@ -177,6 +178,9 @@ define_events! {
         GuildIntegrationDelete { t: "INTEGRATION_DELETE", type: IntegrationDeleteEvent },
         GuildIntegrationsUpdate { t: "GUILD_INTEGRATIONS_UPDATE", type: GuildIntegrationsUpdateEvent },
         GuildIntegrationUpdate { t: "INTEGRATION_UPDATE", type: IntegrationUpdateEvent },
+        GuildJoinRequestCreate { t: "GUILD_JOIN_REQUEST_CREATE", type: GuildJoinRequestCreateEvent },
+        GuildJoinRequestDelete { t: "GUILD_JOIN_REQUEST_DELETE", type: GuildJoinRequestDeleteEvent },
+        GuildJoinRequestUpdate { t: "GUILD_JOIN_REQUEST_UPDATE", type: GuildJoinRequestUpdateEvent },
         GuildMemberAdd { t: "GUILD_MEMBER_ADD", type: GuildMemberAddEvent },
         GuildMemberRemove { t: "GUILD_MEMBER_REMOVE", type: GuildMemberRemoveEvent },
         GuildMembersChunk { t: "GUILD_MEMBERS_CHUNK", type: GuildMembersChunkEvent },

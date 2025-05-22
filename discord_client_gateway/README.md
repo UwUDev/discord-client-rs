@@ -185,9 +185,9 @@ if let Event::Ready(ready) = event {
     - [x] Guild Member Update
     - [x] Guild Members Chunk
   - **Requests**
-    - [ ] Guild Join Request Create
-    - [ ] Guild Join Request Delete
-    - [ ] Guild Join Request Update
+    - [x] Guild Join Request Create
+    - [x] Guild Join Request Delete
+    - [x] Guild Join Request Update
   - **Role**
     - [x] Guild Role Create
     - [x] Guild Role Delete
