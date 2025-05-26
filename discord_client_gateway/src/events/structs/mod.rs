@@ -181,6 +181,9 @@ pub enum Event {
     GuildJoinRequestCreate(GuildJoinRequestCreateEvent),
     GuildJoinRequestUpdate(GuildJoinRequestUpdateEvent),
     GuildJoinRequestDelete(GuildJoinRequestDeleteEvent),
+    
+    // guild boosts
+    GuildAppliedBoostsUpdate(GuildAppliedBoostsUpdateEvent),
 
     // typing events
     TypingStart(TypingStartEvent),

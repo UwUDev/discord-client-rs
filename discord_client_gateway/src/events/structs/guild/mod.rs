@@ -142,3 +142,19 @@ pub struct UserGuildSettingsUpdateEvent {
     #[serde(flatten)]
     pub user_guild_settings: UserGuildSettings,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct GuildAppliedBoostsUpdateEvent {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub user_id: u64,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    pub pause_ends_at: Option<DateTime<Utc>>,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub guild_id: u64,
+    #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
+    pub ends_at: Option<DateTime<Utc>>,
+    pub ended: bool,
+}

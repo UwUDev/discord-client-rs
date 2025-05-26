@@ -177,6 +177,7 @@ define_events! {
         DirectMessageSettingsUpsellShowEvent { t: "DM_SETTINGS_UPSELL_SHOW", type: DirectMessageSettingsUpsellShowEvent },
         GuildAuditLogEntryCreate { t: "GUILD_AUDIT_LOG_ENTRY_CREATE", type: GuildAuditLogEntryCreateEvent },
         GenericPushNotificationSent { t: "GENERIC_PUSH_NOTIFICATION_SENT", type: GenericPushNotificationSentEvent },
+        GuildAppliedBoostsUpdate { t: "GUILD_APPLIED_BOOSTS_UPDATE", type: GuildAppliedBoostsUpdateEvent },
         GuildBanAdd { t: "GUILD_BAN_ADD", type: GuildBanAddEvent },
         GuildBanRemove { t: "GUILD_BAN_REMOVE", type: GuildBanRemoveEvent },
         GuildCreate { t: "GUILD_CREATE", type: GuildCreateEvent },
