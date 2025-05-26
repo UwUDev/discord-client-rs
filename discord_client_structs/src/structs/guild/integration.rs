@@ -42,7 +42,8 @@ pub struct IntegrationAccount {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct ApplicationRoleConnectionMetadata {
-    pub r#type: u8, // todo: enum
+    #[serde(deserialize_with = "deserialize_application_role_connection_metadata_type")]
+    pub r#type: RoleConnectionOperatorType,
     pub key: String,
     pub name: String,
     pub name_localizations: Option<HashMap<String, String>>,
@@ -89,7 +90,7 @@ impl Default for IntegrationType {
     }
 }
 
-pub fn deserialize_integration_type<'de, D>(deserializer: D) -> Result<IntegrationType, D::Error>
+pub(crate) fn deserialize_integration_type<'de, D>(deserializer: D) -> Result<IntegrationType, D::Error>
 where
     D: serde::Deserializer<'de>,
 {
@@ -97,9 +98,64 @@ where
     Ok(IntegrationType::from(s.as_str()))
 }
 
-pub fn serialize_integration_type<S>(integration_type: &IntegrationType, serializer: S) -> Result<S::Ok, S::Error>
+pub(crate) fn serialize_integration_type<S>(integration_type: &IntegrationType, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: serde::Serializer,
 {
     serializer.serialize_str(integration_type.as_str())
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum RoleConnectionOperatorType {
+    IntegerLessThanOrEqual,
+    IntegerGreaterThanOrEqual,
+    IntegerEqual,
+    IntegerNotEqual,
+    DateTimeLessThanOrEqual,
+    DateTimeGreaterThanOrEqual,
+    BooleanEqual,
+    BooleanNotEqual,
+    Unknown(u8),
+}
+
+impl RoleConnectionOperatorType {
+    pub fn as_u8(&self) -> u8 {
+        match self {
+            RoleConnectionOperatorType::IntegerLessThanOrEqual => 1,
+            RoleConnectionOperatorType::IntegerGreaterThanOrEqual => 2,
+            RoleConnectionOperatorType::IntegerEqual => 3,
+            RoleConnectionOperatorType::IntegerNotEqual => 4,
+            RoleConnectionOperatorType::DateTimeLessThanOrEqual => 5,
+            RoleConnectionOperatorType::DateTimeGreaterThanOrEqual => 6,
+            RoleConnectionOperatorType::BooleanEqual => 7,
+            RoleConnectionOperatorType::BooleanNotEqual => 8,
+            RoleConnectionOperatorType::Unknown(value) => *value,
+        }
+    }
+}
+
+impl From<u8> for RoleConnectionOperatorType {
+    fn from(value: u8) -> Self {
+        match value {
+            1 => RoleConnectionOperatorType::IntegerLessThanOrEqual,
+            2 => RoleConnectionOperatorType::IntegerGreaterThanOrEqual,
+            3 => RoleConnectionOperatorType::IntegerEqual,
+            4 => RoleConnectionOperatorType::IntegerNotEqual,
+            5 => RoleConnectionOperatorType::DateTimeLessThanOrEqual,
+            6 => RoleConnectionOperatorType::DateTimeGreaterThanOrEqual,
+            7 => RoleConnectionOperatorType::BooleanEqual,
+            8 => RoleConnectionOperatorType::BooleanNotEqual,
+            _ => RoleConnectionOperatorType::Unknown(value),
+        }
+    }
+}
+
+fn deserialize_application_role_connection_metadata_type<'de, D>(
+    deserializer: D,
+) -> Result<RoleConnectionOperatorType, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = u8::deserialize(deserializer)?;
+    Ok(RoleConnectionOperatorType::from(value))
 }
