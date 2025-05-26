@@ -1,3 +1,5 @@
+pub mod relationship;
+
 use discord_client_structs::deserializer::deserialize_option_string_to_u64;
 use discord_client_structs::structs::user::connection::Connection;
 use serde::Deserialize;

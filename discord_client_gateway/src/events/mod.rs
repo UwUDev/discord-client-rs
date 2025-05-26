@@ -30,6 +30,7 @@ use crate::events::structs::notifications::GenericPushNotificationSentEvent;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::requested::*;
+use crate::events::structs::user::relationship::*;
 use crate::events::structs::user::*;
 use crate::events::structs::*;
 
@@ -222,6 +223,9 @@ define_events! {
         PresenceUpdate { t: "PRESENCE_UPDATE", type: PresenceUpdateEvent },
         Ready { t: "READY", type: ReadyEvent },
         ReadySupplemental { t: "READY_SUPPLEMENTAL", type: ReadySupplementalEvent },
+        RelationshipAdd { t: "RELATIONSHIP_ADD", type: RelationshipAddEvent },
+        RelationshipRemove { t: "RELATIONSHIP_REMOVE", type: RelationshipRemoveEvent },
+        RelationshipUpdate { t: "RELATIONSHIP_UPDATE", type: RelationshipUpdateEvent },
         Resumed { t: "RESUMED", type: ResumedEvent },
         SessionReplace { t: "SESSIONS_REPLACE", type: SessionsReplaceEvent },
         SoundboardSounds { t: "SOUNDBOARD_SOUNDS", type: SoundboardSoundsEvent },

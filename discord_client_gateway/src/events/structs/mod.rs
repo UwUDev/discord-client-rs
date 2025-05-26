@@ -29,6 +29,7 @@ use crate::events::structs::notifications::GenericPushNotificationSentEvent;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::requested::*;
+use crate::events::structs::user::relationship::*;
 use crate::events::structs::user::*;
 use serde_json::Value;
 
@@ -183,6 +184,11 @@ pub enum Event {
 
     // user events
     UserConnectionsUpdate(UserConnectionsUpdateEvent),
+
+    // relationship events
+    RelationshipAdd(RelationshipAddEvent),
+    RelationshipUpdate(RelationshipUpdateEvent),
+    RelationshipRemove(RelationshipRemoveEvent),
 
     // requested events
     ChannelStatuses(ChannelStatusesEvent),

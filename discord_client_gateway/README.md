@@ -142,9 +142,6 @@ if let Event::Ready(ready) = event {
   - [x] Channel Delete
   - [x] Channel Statuses
   - [x] Channel Update
-- **Friend**
-  - [ ] Friend Suggestion Create
-  - [ ] Friend Suggestion Delete
 - **Game Relationship**
   - [ ] Game Relationship Add
   - [ ] Game Relationship Remove
@@ -260,6 +257,8 @@ if let Event::Ready(ready) = event {
   - [ ] User Required Action Update
   - [ ] User Settings Update
   - **Relationship**
-    - [ ] Relationship Add
-    - [ ] Relationship Remove
-    - [ ] Relationship Update
+    - [x] Relationship Add
+    - [x] Relationship Remove
+    - [x] Relationship Update
+    - [ ] Friend Suggestion Create
+    - [ ] Friend Suggestion Delete
