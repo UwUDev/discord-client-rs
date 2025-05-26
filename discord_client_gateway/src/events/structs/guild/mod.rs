@@ -3,11 +3,11 @@ use discord_client_structs::deserializer::*;
 use discord_client_structs::structs::channel::UpdatedChannel;
 use discord_client_structs::structs::channel::voice::VoiceState;
 use discord_client_structs::structs::guild::log::AuditLogEntry;
+use discord_client_structs::structs::guild::user::UserGuildSettings;
 use discord_client_structs::structs::guild::{GatewayGuild, Guild, UnavailableGuild};
 use discord_client_structs::structs::user::{AvatarDecorationData, Member, User};
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
-use discord_client_structs::structs::guild::user::UserGuildSettings;
 
 pub mod ack;
 pub mod automod;
@@ -140,5 +140,5 @@ pub struct GuildAuditLogEntryCreateEvent {
 #[derive(Debug, Deserialize, Clone)]
 pub struct UserGuildSettingsUpdateEvent {
     #[serde(flatten)]
-    pub user_guild_settings: UserGuildSettings
+    pub user_guild_settings: UserGuildSettings,
 }

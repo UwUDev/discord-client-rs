@@ -30,6 +30,7 @@ use crate::events::structs::notifications::GenericPushNotificationSentEvent;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::requested::*;
+use crate::events::structs::user::note::UserNoteUpdateEvent;
 use crate::events::structs::user::relationship::*;
 use crate::events::structs::user::*;
 use crate::events::structs::*;
@@ -241,6 +242,7 @@ define_events! {
         TypingStart { t: "TYPING_START", type: TypingStartEvent },
         UserConnectionsUpdate { t: "USER_CONNECTIONS_UPDATE", type: UserConnectionsUpdateEvent },
         UserGuildSettingsUpdate { t: "USER_GUILD_SETTINGS_UPDATE", type: UserGuildSettingsUpdateEvent },
+        UserNoteUpdateEvent { t: "USER_NOTE_UPDATE", type: UserNoteUpdateEvent },
         UserSettingsProtoUpdate { t: "USER_SETTINGS_PROTO_UPDATE", type: UserSettingsProtoUpdateEvent },
         VoiceChannelStatusUpdate { t: "VOICE_CHANNEL_STATUS_UPDATE", type: VoiceChannelStatusUpdateEvent },
         VoiceStateUpdate { t: "VOICE_STATE_UPDATE", type: VoiceStateUpdateEvent },

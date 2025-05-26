@@ -1,3 +1,4 @@
+pub mod note;
 pub mod relationship;
 
 use discord_client_structs::deserializer::deserialize_option_string_to_u64;

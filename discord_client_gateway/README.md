@@ -250,7 +250,7 @@ if let Event::Ready(ready) = event {
   - [ ] User Connections Update
   - [x] User Guild Settings Update
   - [ ] User Merge Operation Completed
-  - [ ] User Note Update
+  - [x] User Note Update
   - [ ] User Required Action Update
   - [ ] User Settings Update
   - **Game Relationship**
