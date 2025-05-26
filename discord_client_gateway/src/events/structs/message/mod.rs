@@ -4,6 +4,7 @@ use discord_client_structs::structs::message::Message;
 use discord_client_structs::structs::user::{Member, User};
 use serde::Deserialize;
 
+pub mod mention;
 pub mod poll;
 pub mod reaction;
 

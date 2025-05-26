@@ -210,7 +210,7 @@ if let Event::Ready(ready) = event {
   - [x] Guild Update
 - **Message**
   - **Mention**
-    - [ ] Recent Mention Delete
+    - [x] Recent Mention Delete
   - **Poll**
     - [x] Message Poll Vote Add
     - [x] Message Poll Vote Remove
@@ -247,7 +247,7 @@ if let Event::Ready(ready) = event {
 - **User**
   - [ ] User Application Remove
   - [ ] User Application Update
-  - [ ] User Connections Update
+  - [x] User Connections Update
   - [x] User Guild Settings Update
   - [ ] User Merge Operation Completed
   - [x] User Note Update

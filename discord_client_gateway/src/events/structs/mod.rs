@@ -21,6 +21,7 @@ use crate::events::structs::guild::soundboard::*;
 use crate::events::structs::guild::sticker::*;
 use crate::events::structs::guild::unread::*;
 use crate::events::structs::guild::*;
+use crate::events::structs::message::mention::RecentMentionDeleteEvent;
 use crate::events::structs::message::poll::*;
 use crate::events::structs::message::reaction::*;
 use crate::events::structs::message::*;
@@ -67,6 +68,9 @@ pub enum Event {
     MessageReactionAddMany(MessageReactionAddManyEvent),
     MessageReactionRemoveEmoji(MessageReactionRemoveEmojiEvent),
     MessageReactionRemoveAll(MessageReactionRemoveAllEvent),
+
+    // message mention events
+    RecentMentionDelete(RecentMentionDeleteEvent),
 
     // gateway events
     GatewayReconnect(GatewayReconnectEvent),

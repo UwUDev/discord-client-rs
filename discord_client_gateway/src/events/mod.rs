@@ -22,6 +22,7 @@ use crate::events::structs::guild::soundboard::*;
 use crate::events::structs::guild::sticker::*;
 use crate::events::structs::guild::unread::*;
 use crate::events::structs::guild::*;
+use crate::events::structs::message::mention::RecentMentionDeleteEvent;
 use crate::events::structs::message::poll::*;
 use crate::events::structs::message::reaction::*;
 use crate::events::structs::message::*;
@@ -214,6 +215,7 @@ define_events! {
         MessageCreate { t: "MESSAGE_CREATE", type: MessageCreateEvent },
         MessageDelete { t: "MESSAGE_DELETE", type: MessageDeleteEvent },
         MessageDeleteBulk { t: "MESSAGE_DELETE_BULK", type: MessageDeleteBulkEvent },
+        RecentMentionDelete { t: "RECENT_MENTION_DELETE", type: RecentMentionDeleteEvent },
         MessagePollVoteAdd { t: "MESSAGE_POLL_VOTE_ADD", type: MessagePollVoteAddEvent },
         MessagePollVoteRemove { t: "MESSAGE_POLL_VOTE_REMOVE", type: MessagePollVoteRemoveEvent },
         MessageReactionAdd { t: "MESSAGE_REACTION_ADD", type: MessageReactionAddEvent },
