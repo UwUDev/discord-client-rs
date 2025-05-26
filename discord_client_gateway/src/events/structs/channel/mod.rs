@@ -2,6 +2,7 @@ use discord_client_structs::structs::channel::Channel;
 use serde::Deserialize;
 pub mod pin;
 pub mod recipient;
+pub mod stage;
 pub mod summary;
 pub mod thread;
 pub mod typing;

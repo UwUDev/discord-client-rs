@@ -2,6 +2,7 @@ use crate::events::gateway::GatewayPayload;
 use crate::events::structs::call::*;
 use crate::events::structs::channel::pin::*;
 use crate::events::structs::channel::recipient::*;
+use crate::events::structs::channel::stage::*;
 use crate::events::structs::channel::summary::*;
 use crate::events::structs::channel::thread::*;
 use crate::events::structs::channel::typing::*;
@@ -224,6 +225,9 @@ define_events! {
         Resumed { t: "RESUMED", type: ResumedEvent },
         SessionReplace { t: "SESSIONS_REPLACE", type: SessionsReplaceEvent },
         SoundboardSounds { t: "SOUNDBOARD_SOUNDS", type: SoundboardSoundsEvent },
+        StageInstanceCreate { t: "STAGE_INSTANCE_CREATE", type: StageInstanceCreateEvent },
+        StageInstanceDelete { t: "STAGE_INSTANCE_DELETE", type: StageInstanceDeleteEvent },
+        StageInstanceUpdate { t: "STAGE_INSTANCE_UPDATE", type: StageInstanceUpdateEvent },
         ThreadCreate { t: "THREAD_CREATE", type: ThreadCreateEvent },
         ThreadDelete { t: "THREAD_DELETE", type: ThreadDeleteEvent },
         ThreadListSync { t: "THREAD_LIST_SYNC", type: ThreadListSyncEvent },

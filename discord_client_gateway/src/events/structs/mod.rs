@@ -1,6 +1,7 @@
 use crate::events::structs::call::*;
 use crate::events::structs::channel::pin::*;
 use crate::events::structs::channel::recipient::*;
+use crate::events::structs::channel::stage::*;
 use crate::events::structs::channel::summary::*;
 use crate::events::structs::channel::thread::*;
 use crate::events::structs::channel::typing::*;
@@ -92,6 +93,11 @@ pub enum Event {
 
     // Channel webhook events
     WebhooksUpdate(WebhooksUpdateEvent),
+
+    // Stages instance events
+    StageInstanceCreate(StageInstanceCreateEvent),
+    StageInstanceUpdate(StageInstanceUpdateEvent),
+    StageInstanceDelete(StageInstanceDeleteEvent),
 
     // thread events
     ThreadCreate(ThreadCreateEvent),
