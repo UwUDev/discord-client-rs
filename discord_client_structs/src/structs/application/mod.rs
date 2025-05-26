@@ -153,7 +153,7 @@ pub struct ApplicationCommand {
     pub id: u64,
     #[serde(deserialize_with = "deserialize_application_command_type")]
     #[serde(serialize_with = "serialize_application_command_type")]
-    pub r#type: ApplicationCommandType, // todo: parse type
+    pub r#type: ApplicationCommandType,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     #[serde(serialize_with = "serialize_u64_as_string")]
     pub application_id: u64,
@@ -166,8 +166,6 @@ pub struct ApplicationCommand {
     pub integration_types: Vec<u8>,
     pub handler: u8,
 }
-
-
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ApplicationCommandType {
@@ -205,7 +203,9 @@ impl Default for ApplicationCommandType {
     }
 }
 
-fn deserialize_application_command_type<'de, D>(deserializer: D) -> Result<ApplicationCommandType, D::Error>
+fn deserialize_application_command_type<'de, D>(
+    deserializer: D,
+) -> Result<ApplicationCommandType, D::Error>
 where
     D: serde::Deserializer<'de>,
 {
@@ -213,7 +213,10 @@ where
     Ok(ApplicationCommandType::from(value))
 }
 
-fn serialize_application_command_type<S>(command_type: &ApplicationCommandType, serializer: S) -> Result<S::Ok, S::Error>
+fn serialize_application_command_type<S>(
+    command_type: &ApplicationCommandType,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
 where
     S: serde::Serializer,
 {

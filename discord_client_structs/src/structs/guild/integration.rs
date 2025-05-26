@@ -90,7 +90,9 @@ impl Default for IntegrationType {
     }
 }
 
-pub(crate) fn deserialize_integration_type<'de, D>(deserializer: D) -> Result<IntegrationType, D::Error>
+pub(crate) fn deserialize_integration_type<'de, D>(
+    deserializer: D,
+) -> Result<IntegrationType, D::Error>
 where
     D: serde::Deserializer<'de>,
 {
@@ -98,7 +100,10 @@ where
     Ok(IntegrationType::from(s.as_str()))
 }
 
-pub(crate) fn serialize_integration_type<S>(integration_type: &IntegrationType, serializer: S) -> Result<S::Ok, S::Error>
+pub(crate) fn serialize_integration_type<S>(
+    integration_type: &IntegrationType,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
 where
     S: serde::Serializer,
 {

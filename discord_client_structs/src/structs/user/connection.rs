@@ -1,8 +1,8 @@
 use crate::deserializer::*;
 use crate::serializer::*;
+use crate::structs::guild::integration::*;
 use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
-use crate::structs::guild::integration::*;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Connection {
