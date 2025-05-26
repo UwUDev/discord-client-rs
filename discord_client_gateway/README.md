@@ -242,9 +242,9 @@ if let Event::Ready(ready) = event {
   - [x] Ready
   - [x] Ready Supplemental
 - **Stage**
-  - [ ] Stage Instance Create
-  - [ ] Stage Instance Delete
-  - [ ] Stage Instance Update
+  - [x] Stage Instance Create
+  - [x] Stage Instance Delete
+  - [x] Stage Instance Update
 - **Stream**
   - [ ] Stream Create
   - [ ] Stream Delete
