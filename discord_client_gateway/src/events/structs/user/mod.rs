@@ -1,3 +1,4 @@
+pub mod direct_message;
 pub mod note;
 pub mod relationship;
 

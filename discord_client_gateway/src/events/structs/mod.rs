@@ -29,6 +29,7 @@ use crate::events::structs::notifications::GenericPushNotificationSentEvent;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::requested::*;
+use crate::events::structs::user::direct_message::DirectMessageSettingsUpsellShowEvent;
 use crate::events::structs::user::note::UserNoteUpdateEvent;
 use crate::events::structs::user::relationship::*;
 use crate::events::structs::user::*;
@@ -199,6 +200,9 @@ pub enum Event {
     GuildMembersChunk(GuildMembersChunkEvent),
     LastMessages(LastMessagesEvent),
     SoundboardSounds(SoundboardSoundsEvent),
+
+    //DMs
+    DirectMessageSettingsUpsellShow(DirectMessageSettingsUpsellShowEvent),
 
     // misc events
     GenericPushNotificationSent(GenericPushNotificationSentEvent),

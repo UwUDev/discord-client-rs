@@ -30,6 +30,7 @@ use crate::events::structs::notifications::GenericPushNotificationSentEvent;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::requested::*;
+use crate::events::structs::user::direct_message::DirectMessageSettingsUpsellShowEvent;
 use crate::events::structs::user::note::UserNoteUpdateEvent;
 use crate::events::structs::user::relationship::*;
 use crate::events::structs::user::*;
@@ -171,6 +172,7 @@ define_events! {
         ChannelUpdate { t: "CHANNEL_UPDATE", type: ChannelUpdateEvent },
         ContentInventoryInboxStale { t: "CONTENT_INVENTORY_INBOX_STALE", type: ContentInventoryInboxStaleEvent },
         ConversationSummaryUpdate { t: "CONVERSATION_SUMMARY_UPDATE", type: ConversationSummaryUpdateEvent },
+        DirectMessageSettingsUpsellShowEvent { t: "DM_SETTINGS_UPSELL_SHOW", type: DirectMessageSettingsUpsellShowEvent },
         GuildAuditLogEntryCreate { t: "GUILD_AUDIT_LOG_ENTRY_CREATE", type: GuildAuditLogEntryCreateEvent },
         GenericPushNotificationSent { t: "GENERIC_PUSH_NOTIFICATION_SENT", type: GenericPushNotificationSentEvent },
         GuildBanAdd { t: "GUILD_BAN_ADD", type: GuildBanAddEvent },

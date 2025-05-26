@@ -116,7 +116,7 @@ if let Event::Ready(ready) = event {
   - **Conversation**
     - [x] Conversation Summary Update
   - **DM**
-    - [ ] DM Settings Upsell Show
+    - [x] DM Settings Upsell Show
   - **Pin**
     - [x] Channel Pins Update
     - [x] Channel Pins ACX
