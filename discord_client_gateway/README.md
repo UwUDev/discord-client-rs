@@ -151,7 +151,7 @@ if let Event::Ready(ready) = event {
   - [x] Gateway Reconnect
   - [x] Heartbeat Ack
   - [ ] OAuth2 Token Revoke
-  - [ ] Remote Command
+  - [x] Remote Command
   - [x] Resumed
   - [x] Sessions Replace
 - **Guild**

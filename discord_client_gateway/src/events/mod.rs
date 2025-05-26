@@ -227,6 +227,7 @@ define_events! {
         RelationshipAdd { t: "RELATIONSHIP_ADD", type: RelationshipAddEvent },
         RelationshipRemove { t: "RELATIONSHIP_REMOVE", type: RelationshipRemoveEvent },
         RelationshipUpdate { t: "RELATIONSHIP_UPDATE", type: RelationshipUpdateEvent },
+        RemoteCommand { t: "REMOTE_COMMAND", type: RemoteCommandEvent },
         Resumed { t: "RESUMED", type: ResumedEvent },
         SessionReplace { t: "SESSIONS_REPLACE", type: SessionsReplaceEvent },
         SoundboardSounds { t: "SOUNDBOARD_SOUNDS", type: SoundboardSoundsEvent },

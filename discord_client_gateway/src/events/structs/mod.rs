@@ -72,6 +72,7 @@ pub enum Event {
     SessionsReplace(SessionsReplaceEvent),
     HeartbeatAck(HeartbeatAckEvent),
     InvalidSession(InvalidSessionEvent),
+    RemoteCommandEvent(RemoteCommandEvent),
 
     // presence events
     PresenceUpdate(PresenceUpdateEvent),

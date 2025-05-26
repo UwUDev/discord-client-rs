@@ -26,6 +26,12 @@ pub struct InvalidSessionEvent {
     pub resumable: bool,
 }
 
+#[derive(Debug, Deserialize, Clone)]
+pub struct RemoteCommandEvent {
+    #[serde(flatten)]
+    pub payload: Value, // Can be whatever you've sent through the command
+}
+
 impl<'de> Deserialize<'de> for InvalidSessionEvent {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
