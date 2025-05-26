@@ -142,9 +142,6 @@ if let Event::Ready(ready) = event {
   - [x] Channel Delete
   - [x] Channel Statuses
   - [x] Channel Update
-- **Game Relationship**
-  - [ ] Game Relationship Add
-  - [ ] Game Relationship Remove
 - **Gateway**
   - [ ] Auth Session Change
   - [ ] Authenticator Create
@@ -251,11 +248,14 @@ if let Event::Ready(ready) = event {
   - [ ] User Application Remove
   - [ ] User Application Update
   - [ ] User Connections Update
-  - [ ] User Guild Settings Update
+  - [x] User Guild Settings Update
   - [ ] User Merge Operation Completed
   - [ ] User Note Update
   - [ ] User Required Action Update
   - [ ] User Settings Update
+  - **Game Relationship**
+    - [ ] Game Relationship Add
+    - [ ] Game Relationship Remove
   - **Relationship**
     - [x] Relationship Add
     - [x] Relationship Remove

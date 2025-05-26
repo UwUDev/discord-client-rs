@@ -184,6 +184,7 @@ pub enum Event {
 
     // user events
     UserConnectionsUpdate(UserConnectionsUpdateEvent),
+    UserGuildSettingsUpdate(UserGuildSettingsUpdateEvent),
 
     // relationship events
     RelationshipAdd(RelationshipAddEvent),

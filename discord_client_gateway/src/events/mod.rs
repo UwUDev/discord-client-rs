@@ -240,6 +240,7 @@ define_events! {
         ThreadUpdate { t: "THREAD_UPDATE", type: ThreadUpdateEvent },
         TypingStart { t: "TYPING_START", type: TypingStartEvent },
         UserConnectionsUpdate { t: "USER_CONNECTIONS_UPDATE", type: UserConnectionsUpdateEvent },
+        UserGuildSettingsUpdate { t: "USER_GUILD_SETTINGS_UPDATE", type: UserGuildSettingsUpdateEvent },
         UserSettingsProtoUpdate { t: "USER_SETTINGS_PROTO_UPDATE", type: UserSettingsProtoUpdateEvent },
         VoiceChannelStatusUpdate { t: "VOICE_CHANNEL_STATUS_UPDATE", type: VoiceChannelStatusUpdateEvent },
         VoiceStateUpdate { t: "VOICE_STATE_UPDATE", type: VoiceStateUpdateEvent },

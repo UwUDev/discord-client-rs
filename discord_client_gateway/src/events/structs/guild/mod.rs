@@ -7,6 +7,7 @@ use discord_client_structs::structs::guild::{GatewayGuild, Guild, UnavailableGui
 use discord_client_structs::structs::user::{AvatarDecorationData, Member, User};
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
+use discord_client_structs::structs::guild::user::UserGuildSettings;
 
 pub mod ack;
 pub mod automod;
@@ -134,4 +135,10 @@ pub struct GuildAuditLogEntryCreateEvent {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub guild_id: Option<u64>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct UserGuildSettingsUpdateEvent {
+    #[serde(flatten)]
+    pub user_guild_settings: UserGuildSettings
 }
