@@ -151,7 +151,9 @@ pub struct ApplicationCommand {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
-    pub r#type: u64, // todo: parse type
+    #[serde(deserialize_with = "deserialize_application_command_type")]
+    #[serde(serialize_with = "serialize_application_command_type")]
+    pub r#type: ApplicationCommandType, // todo: parse type
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     #[serde(serialize_with = "serialize_u64_as_string")]
     pub application_id: u64,
@@ -163,4 +165,57 @@ pub struct ApplicationCommand {
     pub contexts: Vec<u8>,
     pub integration_types: Vec<u8>,
     pub handler: u8,
+}
+
+
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ApplicationCommandType {
+    ChatInput,
+    User,
+    Message,
+    Unknown(u8),
+}
+
+impl ApplicationCommandType {
+    pub fn as_u8(&self) -> u8 {
+        match self {
+            ApplicationCommandType::ChatInput => 1,
+            ApplicationCommandType::User => 2,
+            ApplicationCommandType::Message => 3,
+            ApplicationCommandType::Unknown(v) => *v,
+        }
+    }
+}
+
+impl From<u8> for ApplicationCommandType {
+    fn from(value: u8) -> Self {
+        match value {
+            1 => ApplicationCommandType::ChatInput,
+            2 => ApplicationCommandType::User,
+            3 => ApplicationCommandType::Message,
+            _ => ApplicationCommandType::Unknown(value),
+        }
+    }
+}
+
+impl Default for ApplicationCommandType {
+    fn default() -> Self {
+        ApplicationCommandType::Unknown(0)
+    }
+}
+
+fn deserialize_application_command_type<'de, D>(deserializer: D) -> Result<ApplicationCommandType, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value: u8 = Deserialize::deserialize(deserializer)?;
+    Ok(ApplicationCommandType::from(value))
+}
+
+fn serialize_application_command_type<S>(command_type: &ApplicationCommandType, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: serde::Serializer,
+{
+    serializer.serialize_u8(command_type.as_u8())
 }
