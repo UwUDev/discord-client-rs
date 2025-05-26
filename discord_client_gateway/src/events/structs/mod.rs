@@ -212,6 +212,7 @@ pub enum Event {
     GenericPushNotificationSent(GenericPushNotificationSentEvent),
     ContentInventoryInboxStale(ContentInventoryInboxStaleEvent),
     UserSettingsProtoUpdate(UserSettingsProtoUpdateEvent),
+    AuthSessionChange(AuthSessionChangeEvent),
     Unknown(UnknownEvent),
 }
 

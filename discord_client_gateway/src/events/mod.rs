@@ -158,6 +158,7 @@ macro_rules! define_events {
 
 define_events! {
     dispatch op 0, {
+        AuthSessionChange { t: "AUTH_SESSION_CHANGE", type: AuthSessionChangeEvent },
         AutoModMentionRaidDetection { t: "AUTO_MODERATION_MENTION_RAID_DETECTION", type: AutoModMentionRaidDetectionEvent },
         CallCreate { t: "CALL_CREATE", type: CallCreateEvent },
         CallDelete { t: "CALL_DELETE", type: CallDeleteEvent },

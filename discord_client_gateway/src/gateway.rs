@@ -312,6 +312,11 @@ impl GatewayClient {
                             drop(decompress);
                             self.reconnect().await?;
                         }
+                    } else if let crate::events::Event::AuthSessionChange(ref session_change) =
+                        event
+                    {
+                        self.auth_session_id_hash =
+                            Some(session_change.auth_session_id_hash.clone());
                     }
 
                     return Ok(event);

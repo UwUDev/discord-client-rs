@@ -143,7 +143,7 @@ if let Event::Ready(ready) = event {
   - [x] Channel Statuses
   - [x] Channel Update
 - **Gateway**
-  - [ ] Auth Session Change
+  - [x] Auth Session Change
   - [ ] Authenticator Create
   - [ ] Authenticator Delete
   - [ ] Authenticator Update

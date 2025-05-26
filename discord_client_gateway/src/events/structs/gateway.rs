@@ -32,6 +32,11 @@ pub struct RemoteCommandEvent {
     pub payload: Value, // Can be whatever you've sent through the command
 }
 
+#[derive(Debug, Deserialize, Clone)]
+pub struct AuthSessionChangeEvent {
+    pub auth_session_id_hash: String,
+}
+
 impl<'de> Deserialize<'de> for InvalidSessionEvent {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
