@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct GenericPushNotificationSentEvent {
-    pub user_username: String,
+    pub user_username: Option<String>,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub user_id: u64,
     pub user_discriminator: Option<String>,
