@@ -25,6 +25,7 @@ use crate::events::structs::message::poll::*;
 use crate::events::structs::message::reaction::*;
 use crate::events::structs::message::*;
 use crate::events::structs::misc::*;
+use crate::events::structs::notifications::GenericPushNotificationSentEvent;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::requested::*;
@@ -168,6 +169,7 @@ define_events! {
         ContentInventoryInboxStale { t: "CONTENT_INVENTORY_INBOX_STALE", type: ContentInventoryInboxStaleEvent },
         ConversationSummaryUpdate { t: "CONVERSATION_SUMMARY_UPDATE", type: ConversationSummaryUpdateEvent },
         GuildAuditLogEntryCreate { t: "GUILD_AUDIT_LOG_ENTRY_CREATE", type: GuildAuditLogEntryCreateEvent },
+        GenericPushNotificationSent { t: "GENERIC_PUSH_NOTIFICATION_SENT", type: GenericPushNotificationSentEvent },
         GuildBanAdd { t: "GUILD_BAN_ADD", type: GuildBanAddEvent },
         GuildBanRemove { t: "GUILD_BAN_REMOVE", type: GuildBanRemoveEvent },
         GuildCreate { t: "GUILD_CREATE", type: GuildCreateEvent },

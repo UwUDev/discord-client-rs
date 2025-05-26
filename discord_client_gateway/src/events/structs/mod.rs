@@ -24,6 +24,7 @@ use crate::events::structs::message::poll::*;
 use crate::events::structs::message::reaction::*;
 use crate::events::structs::message::*;
 use crate::events::structs::misc::*;
+use crate::events::structs::notifications::GenericPushNotificationSentEvent;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::requested::*;
@@ -36,6 +37,7 @@ pub mod gateway;
 pub mod guild;
 pub mod message;
 pub mod misc;
+pub mod notifications;
 pub mod presence;
 pub mod ready;
 pub mod requested;
@@ -183,6 +185,7 @@ pub enum Event {
     SoundboardSounds(SoundboardSoundsEvent),
 
     // misc events
+    GenericPushNotificationSent(GenericPushNotificationSentEvent),
     ContentInventoryInboxStale(ContentInventoryInboxStaleEvent),
     UserSettingsProtoUpdate(UserSettingsProtoUpdateEvent),
     Unknown(UnknownEvent),

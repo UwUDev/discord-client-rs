@@ -235,6 +235,7 @@ if let Event::Ready(ready) = event {
 - **Misc**
   - [x] Content Inventory Inbox Stale
   - [x] User Settings Proto Update
+  - [x] Generic Push Notification Sent
 - **Presence**
   - [x] Presence Update
 - **Ready**
