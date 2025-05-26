@@ -2,6 +2,7 @@ use crate::deserializer::*;
 use crate::serializer::*;
 use discord_client_macros::CreatedAt;
 use serde::{Deserialize, Serialize};
+use crate::structs::guild::integration::*;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Connection {
@@ -34,7 +35,9 @@ pub struct PartialIntegration {
     #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     pub name: String,
-    pub r#type: String, // todo: enum
+    #[serde(deserialize_with = "deserialize_integration_type")]
+    #[serde(serialize_with = "serialize_integration_type")]
+    pub r#type: IntegrationType,
     pub account: Account,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
