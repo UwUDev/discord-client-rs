@@ -10,7 +10,8 @@ use discord_client_structs::structs::user::presence::{MergedPresences, Presence}
 use discord_client_structs::structs::user::relationship::{GameRelationship, Relationship};
 use discord_client_structs::structs::user::session::Session;
 use discord_client_structs::structs::user::{Member, User};
-use serde::Deserialize;
+use serde::{Deserialize, Deserializer};
+
 use std::collections::HashMap;
 
 #[derive(Debug, Deserialize, Clone)]
@@ -44,7 +45,7 @@ pub struct ReadyEvent {
     pub application: Option<GatewayApplication>,
     pub sessions: Vec<Session>,
     #[serde(default)]
-    pub authenticator_types: Option<Vec<u8>>, // todo: https://docs.discord.sex/resources/user#authenticator-type
+    pub authenticator_types: Option<Vec<AuthenticatorType>>,
     pub required_action: Option<String>,
     pub country_code: String,
     pub geo_ordered_rtc_regions: Vec<String>,
@@ -69,4 +70,27 @@ pub struct ReadySupplementalEvent {
 pub struct ResumedEvent {
     #[serde(rename = "_trace")]
     pub trace: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub enum AuthenticatorType {
+    WEBAUTHN,
+    TOTP,
+    SMS,
+    UNKNOWN(u8),
+}
+
+impl<'de> Deserialize<'de> for AuthenticatorType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let value = u8::deserialize(deserializer)?;
+        Ok(match value {
+            1 => AuthenticatorType::WEBAUTHN,
+            2 => AuthenticatorType::TOTP,
+            3 => AuthenticatorType::SMS,
+            n => AuthenticatorType::UNKNOWN(n),
+        })
+    }
 }
