@@ -110,20 +110,40 @@ pub fn derive_option_created_at(input: TokenStream) -> TokenStream {
     generate_created_at_impl(input, true)
 }
 
-#[proc_macro_derive(EnumFromPrimitive)]
+#[proc_macro_derive(EnumFromPrimitive, attributes(default))]
 pub fn derive_enum_from_primitive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let enum_name = &input.ident;
 
     let variants = match input.data {
-        syn::Data::Enum(data) => data.variants,
+        Data::Enum(data) => data.variants,
         _ => panic!("EnumFromPrimitive can only be used on enums"),
     };
 
-    let match_arms = variants.iter().filter_map(|v| {
-        if v.fields.is_empty() {
-            let variant_name = &v.ident;
-            let discriminant = v.discriminant.as_ref().and_then(|(_, expr)| {
+    let mut match_arms = Vec::new();
+    let mut as_u8_arms = Vec::new();
+    let mut default_variant = None;
+    let mut has_unknown = false;
+
+    for variant in &variants {
+        let var_name = &variant.ident;
+
+        if var_name == "Unknown" {
+            if let syn::Fields::Unnamed(fields) = &variant.fields {
+                if fields.unnamed.len() == 1 {
+                    has_unknown = true;
+                    continue;
+                }
+            }
+            panic!("The Unknown variant must be of type Unknown(...)");
+        }
+
+        let is_default = variant.attrs.iter().any(|a| a.path().is_ident("default"));
+
+        let discr = variant
+            .discriminant
+            .as_ref()
+            .and_then(|(_, expr)| {
                 if let syn::Expr::Lit(syn::ExprLit {
                     lit: syn::Lit::Int(lit),
                     ..
@@ -133,27 +153,84 @@ pub fn derive_enum_from_primitive(input: TokenStream) -> TokenStream {
                 } else {
                     None
                 }
+            })
+            .unwrap_or_else(|| {
+                panic!(
+                    "The {} variant must have an explicit discriminant",
+                    var_name
+                )
             });
 
-            discriminant.map(|d| {
-                quote! { #d => Ok(#enum_name::#variant_name), }
-            })
-        } else {
-            None
+        if is_default {
+            if default_variant.is_some() {
+                panic!("Multiple variants marked with #[default]");
+            }
+            default_variant = Some((var_name, discr));
         }
-    });
+
+        match_arms.push(quote! { #discr => #enum_name::#var_name, });
+        as_u8_arms.push(quote! { #enum_name::#var_name => #discr, });
+    }
+
+    if !has_unknown {
+        panic!("The enum must contain a variant Unknown(...)");
+    }
+
+    let default_impl = if let Some((var_name, _discr)) = default_variant {
+        quote! {
+            impl Default for #enum_name {
+                fn default() -> Self {
+                    #enum_name::#var_name
+                }
+            }
+        }
+    } else {
+        quote! {
+            impl Default for #enum_name {
+                fn default() -> Self {
+                    #enum_name::Unknown(0)
+                }
+            }
+        }
+    };
 
     let expanded = quote! {
+        impl From<u8> for #enum_name {
+            fn from(value: u8) -> Self {
+                match value {
+                    #(#match_arms)*
+                    _ => #enum_name::Unknown(value),
+                }
+            }
+        }
+
+        impl #enum_name {
+            pub fn as_u8(&self) -> u8 {
+                match self {
+                    #(#as_u8_arms)*
+                    #enum_name::Unknown(u) => *u,
+                }
+            }
+        }
+
+        #default_impl
+
+        impl serde::Serialize for #enum_name {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: serde::Serializer,
+            {
+                serializer.serialize_u8(self.as_u8())
+            }
+        }
+
         impl<'de> serde::Deserialize<'de> for #enum_name {
             fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
             where
                 D: serde::Deserializer<'de>,
             {
                 let value = u8::deserialize(deserializer)?;
-                match value {
-                    #(#match_arms)*
-                    n => Ok(#enum_name::UNKNOWN(n)),
-                }
+                Ok(Self::from(value))
             }
         }
     };
