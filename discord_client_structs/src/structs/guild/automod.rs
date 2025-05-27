@@ -2,7 +2,7 @@ use crate::deserializer::*;
 use crate::serializer::*;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
-use discord_client_macros::CreatedAt;
+use discord_client_macros::{CreatedAt, EnumFromPrimitive};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
@@ -39,11 +39,7 @@ pub struct AutomodRule {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     #[serde(serialize_with = "serialize_u64_as_string")]
     pub creator_id: u64,
-    #[serde(deserialize_with = "deserialize_automod_event_type")]
-    #[serde(serialize_with = "serialize_automod_event_type")]
     pub event_type: AutomodEventType,
-    #[serde(deserialize_with = "deserialize_automod_trigger_type")]
-    #[serde(serialize_with = "serialize_automod_trigger_type")]
     pub trigger_type: AutomodTriggerType,
     pub trigger_metadata: TriggerMetadata,
     pub actions: Vec<Action>,
@@ -86,119 +82,25 @@ pub struct ActionMetadata {
     pub custom_message: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
+#[repr(u8)]
 pub enum AutomodEventType {
-    MessageSend,
-    GuildMemberEvent,
+    #[default]
+    MessageSend = 1,
+    GuildMemberEvent = 2,
     Unknown(u8),
 }
 
-impl AutomodEventType {
-    pub fn as_u8(&self) -> u8 {
-        match self {
-            AutomodEventType::MessageSend => 1,
-            AutomodEventType::GuildMemberEvent => 2,
-            AutomodEventType::Unknown(u) => *u,
-        }
-    }
-}
-
-impl From<u8> for AutomodEventType {
-    fn from(value: u8) -> Self {
-        match value {
-            1 => AutomodEventType::MessageSend,
-            2 => AutomodEventType::GuildMemberEvent,
-            _ => AutomodEventType::Unknown(value),
-        }
-    }
-}
-
-impl Default for AutomodEventType {
-    fn default() -> Self {
-        AutomodEventType::Unknown(0)
-    }
-}
-
-fn deserialize_automod_event_type<'de, D>(deserializer: D) -> Result<AutomodEventType, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    let value: u8 = Deserialize::deserialize(deserializer)?;
-    Ok(AutomodEventType::from(value))
-}
-
-fn serialize_automod_event_type<S>(
-    event_type: &AutomodEventType,
-    serializer: S,
-) -> Result<S::Ok, S::Error>
-where
-    S: serde::Serializer,
-{
-    serializer.serialize_u8(event_type.as_u8())
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
+#[repr(u8)]
 pub enum AutomodTriggerType {
-    Keyword,
-    HarmfulLink,
-    Spam,
-    KeywordPreset,
-    MentionSpam,
-    UserProfile,
-    GuildPolicy,
+    #[default]
+    Keyword = 1,
+    HarmfulLink = 2,
+    Spam = 3,
+    KeywordPreset = 4,
+    MentionSpam = 5,
+    UserProfile = 6,
+    GuildPolicy = 7,
     Unknown(u8),
-}
-
-impl AutomodTriggerType {
-    pub fn as_u8(&self) -> u8 {
-        match self {
-            AutomodTriggerType::Keyword => 1,
-            AutomodTriggerType::HarmfulLink => 2,
-            AutomodTriggerType::Spam => 3,
-            AutomodTriggerType::KeywordPreset => 4,
-            AutomodTriggerType::MentionSpam => 5,
-            AutomodTriggerType::UserProfile => 6,
-            AutomodTriggerType::GuildPolicy => 7,
-            AutomodTriggerType::Unknown(u) => *u,
-        }
-    }
-}
-
-impl From<u8> for AutomodTriggerType {
-    fn from(value: u8) -> Self {
-        match value {
-            1 => AutomodTriggerType::Keyword,
-            2 => AutomodTriggerType::HarmfulLink,
-            3 => AutomodTriggerType::Spam,
-            4 => AutomodTriggerType::KeywordPreset,
-            5 => AutomodTriggerType::MentionSpam,
-            6 => AutomodTriggerType::UserProfile,
-            7 => AutomodTriggerType::GuildPolicy,
-            _ => AutomodTriggerType::Unknown(value),
-        }
-    }
-}
-
-impl Default for AutomodTriggerType {
-    fn default() -> Self {
-        AutomodTriggerType::Unknown(0)
-    }
-}
-
-fn deserialize_automod_trigger_type<'de, D>(deserializer: D) -> Result<AutomodTriggerType, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    let value: u8 = Deserialize::deserialize(deserializer)?;
-    Ok(AutomodTriggerType::from(value))
-}
-
-fn serialize_automod_trigger_type<S>(
-    trigger_type: &AutomodTriggerType,
-    serializer: S,
-) -> Result<S::Ok, S::Error>
-where
-    S: serde::Serializer,
-{
-    serializer.serialize_u8(trigger_type.as_u8())
 }

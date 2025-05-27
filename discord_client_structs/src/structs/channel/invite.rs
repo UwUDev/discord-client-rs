@@ -22,7 +22,7 @@ pub struct Invite {
     pub guild: Option<InviteGuild>,
     pub inviter: Option<User>,
     pub flags: Option<u64>,
-    pub target_type: Option<u8>,
+    pub target_type: Option<u8>, // todo: use enum
     pub target_user: Option<User>,
     pub target_application: Option<Application>,
     pub approximate_member_count: Option<u32>,

@@ -10,8 +10,9 @@ use discord_client_structs::structs::user::presence::{MergedPresences, Presence}
 use discord_client_structs::structs::user::relationship::{GameRelationship, Relationship};
 use discord_client_structs::structs::user::session::Session;
 use discord_client_structs::structs::user::{Member, User};
-use serde::{Deserialize, Deserializer};
+use serde::Deserialize;
 
+use discord_client_macros::EnumFromPrimitive;
 use std::collections::HashMap;
 
 #[derive(Debug, Deserialize, Clone)]
@@ -45,7 +46,7 @@ pub struct ReadyEvent {
     pub application: Option<GatewayApplication>,
     pub sessions: Vec<Session>,
     #[serde(default)]
-    pub authenticator_types: Option<Vec<AuthenticatorType>>,
+    pub auth: Option<Auth>,
     pub required_action: Option<String>,
     pub country_code: String,
     pub geo_ordered_rtc_regions: Vec<String>,
@@ -55,6 +56,12 @@ pub struct ReadyEvent {
     pub api_code_version: Option<u8>,
     //pub experiments: Vec<UserExperiment>,
     //pub guild_experiments: Vec<GuildExperiment>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Auth {
+    #[serde(default)]
+    pub authenticator_types: Option<Vec<AuthenticatorType>>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -72,25 +79,12 @@ pub struct ResumedEvent {
     pub trace: Vec<String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
+#[repr(u8)]
 pub enum AuthenticatorType {
-    WEBAUTHN,
-    TOTP,
-    SMS,
-    UNKNOWN(u8),
-}
-
-impl<'de> Deserialize<'de> for AuthenticatorType {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let value = u8::deserialize(deserializer)?;
-        Ok(match value {
-            1 => AuthenticatorType::WEBAUTHN,
-            2 => AuthenticatorType::TOTP,
-            3 => AuthenticatorType::SMS,
-            n => AuthenticatorType::UNKNOWN(n),
-        })
-    }
+    #[default]
+    Webauthn = 1,
+    Totp = 2,
+    Sms = 3,
+    Unknown(u8),
 }

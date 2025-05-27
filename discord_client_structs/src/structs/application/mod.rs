@@ -4,7 +4,7 @@ use crate::structs::application::team::{Company, Team};
 use crate::structs::user::User;
 use crate::structs::user::activity::EmbeddedActivityConfig;
 use derive_builder::Builder;
-use discord_client_macros::CreatedAt;
+use discord_client_macros::{CreatedAt, EnumFromPrimitive};
 use serde::{Deserialize, Serialize};
 
 pub mod team;
@@ -64,10 +64,10 @@ pub struct IntegrationApplication {
     pub role_connections_verification_url: Option<String>,
     pub interactions_endpoint_url: String,
     pub interactions_version: u64,
-    pub interactions_event_types: Vec<String>,
+    pub interactions_event_types: Vec<String>, // todo: enum
     pub event_webhooks_status: Option<u64>,
     pub event_webhooks_url: Option<String>,
-    pub event_webhooks_types: Option<Vec<String>>,
+    pub event_webhooks_types: Option<Vec<String>>, // todo: enum
     pub explicit_content_filter: u64,
     pub tags: Option<Vec<String>>,
     pub install_params: Option<ApplicationInstallParams>,
@@ -151,8 +151,6 @@ pub struct ApplicationCommand {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
-    #[serde(deserialize_with = "deserialize_application_command_type")]
-    #[serde(serialize_with = "serialize_application_command_type")]
     pub r#type: ApplicationCommandType,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     #[serde(serialize_with = "serialize_u64_as_string")]
@@ -167,58 +165,12 @@ pub struct ApplicationCommand {
     pub handler: u8,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
+#[repr(u8)]
 pub enum ApplicationCommandType {
-    ChatInput,
-    User,
-    Message,
+    #[default]
+    ChatInput = 1,
+    User = 2,
+    Message = 3,
     Unknown(u8),
-}
-
-impl ApplicationCommandType {
-    pub fn as_u8(&self) -> u8 {
-        match self {
-            ApplicationCommandType::ChatInput => 1,
-            ApplicationCommandType::User => 2,
-            ApplicationCommandType::Message => 3,
-            ApplicationCommandType::Unknown(v) => *v,
-        }
-    }
-}
-
-impl From<u8> for ApplicationCommandType {
-    fn from(value: u8) -> Self {
-        match value {
-            1 => ApplicationCommandType::ChatInput,
-            2 => ApplicationCommandType::User,
-            3 => ApplicationCommandType::Message,
-            _ => ApplicationCommandType::Unknown(value),
-        }
-    }
-}
-
-impl Default for ApplicationCommandType {
-    fn default() -> Self {
-        ApplicationCommandType::Unknown(0)
-    }
-}
-
-fn deserialize_application_command_type<'de, D>(
-    deserializer: D,
-) -> Result<ApplicationCommandType, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    let value: u8 = Deserialize::deserialize(deserializer)?;
-    Ok(ApplicationCommandType::from(value))
-}
-
-fn serialize_application_command_type<S>(
-    command_type: &ApplicationCommandType,
-    serializer: S,
-) -> Result<S::Ok, S::Error>
-where
-    S: serde::Serializer,
-{
-    serializer.serialize_u8(command_type.as_u8())
 }

@@ -1,7 +1,7 @@
 use crate::deserializer::*;
 use crate::serializer::*;
 use crate::structs::guild::integration::*;
-use discord_client_macros::CreatedAt;
+use discord_client_macros::{CreatedAt, EnumFromString};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Clone)]
@@ -24,7 +24,7 @@ pub struct Connection {
 #[derive(Debug, Deserialize, Clone)]
 pub struct ConnectionIntegration {
     pub id: String,
-    r#type: String,
+    pub r#type: ConnectionType,
     pub account: Account,
     pub guild: IntegrationGuild,
 }
@@ -35,8 +35,6 @@ pub struct PartialIntegration {
     #[serde(serialize_with = "serialize_u64_as_string")]
     pub id: u64,
     pub name: String,
-    #[serde(deserialize_with = "deserialize_integration_type")]
-    #[serde(serialize_with = "serialize_integration_type")]
     pub r#type: IntegrationType,
     pub account: Account,
     #[serde(default)]
@@ -59,49 +57,14 @@ pub struct IntegrationGuild {
     pub icon: Option<String>,
 }
 
-impl ConnectionIntegration {
-    pub fn get_type(&self) -> ConnectionType {
-        match self.r#type.as_str() {
-            "amazon-music" => ConnectionType::AmazonMusic,
-            "battlenet" => ConnectionType::BattleNet,
-            "bluesky" => ConnectionType::BlueSky,
-            "bungie" => ConnectionType::Bungie,
-            "contacts 2" => ConnectionType::ContactSync,
-            "crunchyroll" => ConnectionType::Crunchyroll,
-            "domain" => ConnectionType::Domain,
-            "ebay" => ConnectionType::Ebay,
-            "epicgames" => ConnectionType::EpicGames,
-            "facebook" => ConnectionType::Facebook,
-            "github" => ConnectionType::GitHub,
-            "instagram 1" => ConnectionType::Instagram,
-            "leagueoflegends" => ConnectionType::LeagueOfLegends,
-            "mastodon" => ConnectionType::Mastodon,
-            "paypal" => ConnectionType::PayPal,
-            "playstation" => ConnectionType::PlayStation,
-            "playstation-stg" => ConnectionType::PlayStationStaging,
-            "reddit" => ConnectionType::Reddit,
-            "roblox" => ConnectionType::Roblox,
-            "riotgames" => ConnectionType::RiotGames,
-            "samsung 1" => ConnectionType::Samsung,
-            "soundcloud" => ConnectionType::SoundCloud,
-            "spotify" => ConnectionType::Spotify,
-            "skype 1" => ConnectionType::Skype,
-            "steam" => ConnectionType::Steam,
-            "tiktok" => ConnectionType::TikTok,
-            "twitch" => ConnectionType::Twitch,
-            "twitter" => ConnectionType::Twitter,
-            "xbox" => ConnectionType::Xbox,
-            "youtube" => ConnectionType::YouTube,
-            _ => ConnectionType::Unknown(self.r#type.clone()),
-        }
-    }
-}
-
+#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumFromString)]
 pub enum ConnectionType {
+    #[str_value("amazon-music")]
     AmazonMusic,
     BattleNet,
     BlueSky,
     Bungie,
+    #[str_value("contacts 2")]
     ContactSync,
     Crunchyroll,
     Domain,
@@ -109,18 +72,22 @@ pub enum ConnectionType {
     EpicGames,
     Facebook,
     GitHub,
+    #[str_value("instagram 1")]
     Instagram,
     LeagueOfLegends,
     Mastodon,
     PayPal,
     PlayStation,
+    #[str_value("playstation-stg")]
     PlayStationStaging,
     Reddit,
     Roblox,
     RiotGames,
+    #[str_value("samsung 1")]
     Samsung,
     SoundCloud,
     Spotify,
+    #[str_value("skype 1")]
     Skype,
     Steam,
     TikTok,
@@ -128,5 +95,5 @@ pub enum ConnectionType {
     Twitter,
     Xbox,
     YouTube,
-    Unknown(String),
+    Unknown,
 }

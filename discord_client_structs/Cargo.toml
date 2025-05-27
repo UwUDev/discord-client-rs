@@ -12,7 +12,7 @@ name = "discord_client_structs"
 path = "src/lib.rs"
 
 [dependencies]
-discord_client_macros = "0.1.0"
+discord_client_macros = { path = "../discord_client_macros" }
 serde = {workspace = true}
 serde_json = {workspace = true}
 chrono = {workspace = true}
