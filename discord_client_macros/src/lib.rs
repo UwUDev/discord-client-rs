@@ -111,3 +111,50 @@ pub fn derive_option_created_at(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     generate_created_at_impl(input, true)
 }
+
+#[proc_macro_derive(EnumFromPrimitive)]
+pub fn derive_enum_from_primitive(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+    let enum_name = &input.ident;
+
+    let variants = match input.data {
+        syn::Data::Enum(data) => data.variants,
+        _ => panic!("EnumFromPrimitive ne peut être utilisé que sur des enums"),
+    };
+
+    let match_arms = variants.iter().filter_map(|v| {
+        if v.fields.is_empty() {
+            let variant_name = &v.ident;
+            let discriminant = v.discriminant.as_ref().and_then(|(_, expr)| {
+                if let syn::Expr::Lit(syn::ExprLit { lit: syn::Lit::Int(lit), .. }) = expr {
+                    Some(lit.base10_parse::<u8>().unwrap())
+                } else {
+                    None
+                }
+            });
+
+            discriminant.map(|d| {
+                quote! { #d => Ok(#enum_name::#variant_name), }
+            })
+        } else {
+            None
+        }
+    });
+
+    let expanded = quote! {
+        impl<'de> serde::Deserialize<'de> for #enum_name {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                let value = u8::deserialize(deserializer)?;
+                match value {
+                    #(#match_arms)*
+                    n => Ok(#enum_name::UNKNOWN(n)),
+                }
+            }
+        }
+    };
+
+    TokenStream::from(expanded)
+}
