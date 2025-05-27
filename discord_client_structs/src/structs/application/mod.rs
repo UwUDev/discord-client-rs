@@ -4,7 +4,7 @@ use crate::structs::application::team::{Company, Team};
 use crate::structs::user::User;
 use crate::structs::user::activity::EmbeddedActivityConfig;
 use derive_builder::Builder;
-use discord_client_macros::{CreatedAt, EnumFromPrimitive};
+use discord_client_macros::{CreatedAt, EnumFromPrimitive, EnumFromString};
 use serde::{Deserialize, Serialize};
 
 pub mod team;
@@ -20,7 +20,7 @@ pub struct IntegrationApplication {
     pub icon: Option<String>,
     pub cover_image: Option<String>,
     pub splash: Option<String>,
-    pub r#type: Option<u64>,
+    pub r#type: Option<ApplicationType>,
     pub flags: u64,
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     #[serde(serialize_with = "serialize_option_u64_as_string")]
@@ -64,10 +64,10 @@ pub struct IntegrationApplication {
     pub role_connections_verification_url: Option<String>,
     pub interactions_endpoint_url: String,
     pub interactions_version: u64,
-    pub interactions_event_types: Vec<String>, // todo: enum
+    pub interactions_event_types: Vec<String>,
     pub event_webhooks_status: Option<u64>,
     pub event_webhooks_url: Option<String>,
-    pub event_webhooks_types: Option<Vec<String>>, // todo: enum
+    pub event_webhooks_types: Option<Vec<EventWebhookType>>,
     pub explicit_content_filter: u64,
     pub tags: Option<Vec<String>>,
     pub install_params: Option<ApplicationInstallParams>,
@@ -173,4 +173,27 @@ pub enum ApplicationCommandType {
     User = 2,
     Message = 3,
     Unknown(u8),
+}
+
+
+#[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
+#[repr(u8)]
+pub enum ApplicationType {
+    #[default]
+    Game = 1,
+    Music = 2, // Should be disabled by discord
+    TicketedEvents = 3,
+    CreatorMonetization = 4,
+    Unknown(u8),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumFromString)]
+pub enum EventWebhookType {
+    #[str_value("APPLICATION_AUTHORIZED")]
+    ApplicationAuthorized,
+    #[str_value("ENTITLEMENT_CREATE")]
+    EntitlementCreate,
+    #[str_value("QUEST_USER_ENROLLMENT")]
+    QuestUserEnrollment,
+    Unknown,
 }
