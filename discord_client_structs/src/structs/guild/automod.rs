@@ -68,7 +68,7 @@ pub struct TriggerMetadata {
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
 #[builder(setter(into, strip_option), default)]
 pub struct Action {
-    pub action_type: u8, // todo: enum
+    pub action_type: AutomodActionType,
     pub metadata: Option<ActionMetadata>,
 }
 
@@ -102,5 +102,15 @@ pub enum AutomodTriggerType {
     MentionSpam = 5,
     UserProfile = 6,
     GuildPolicy = 7,
+    Unknown(u8),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
+#[repr(u8)]
+pub enum AutomodActionType {
+    BlockMessage = 1,
+    SendAlertMessage = 2,
+    TimeoutUser = 3,
+    QuarantineUser = 4,
     Unknown(u8),
 }

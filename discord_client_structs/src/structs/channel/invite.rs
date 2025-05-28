@@ -5,8 +5,8 @@ use crate::structs::guild::event::GuildScheduledEvent;
 use crate::structs::user::{Member, User};
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
-use serde::{Deserialize, Serialize};
 use discord_client_macros::EnumFromPrimitive;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
 #[builder(setter(into, strip_option), default)]
