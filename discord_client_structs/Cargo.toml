@@ -1,6 +1,6 @@
 [package]
 name = "discord_client_structs"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 authors = ["UwUDev"]
 description = "Discord API/gateway structs with serde support"
