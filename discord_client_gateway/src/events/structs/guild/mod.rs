@@ -1,4 +1,5 @@
 use chrono::{DateTime, Utc};
+use discord_client_macros::Flags;
 use discord_client_structs::deserializer::*;
 use discord_client_structs::structs::channel::UpdatedChannel;
 use discord_client_structs::structs::channel::voice::VoiceState;
@@ -31,7 +32,7 @@ pub struct PassiveUpdateV2Event {
     pub guild_id: u64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Flags)]
 pub struct GuildMemberUpdateEvent {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub guild_id: u64,
@@ -52,6 +53,9 @@ pub struct GuildMemberUpdateEvent {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
     pub communication_disabled_until: Option<DateTime<Utc>>,
+    #[flag_enum(
+        "DidRejoin=0,CompletedOnboarding=1,BypassesVerification=2,StartedOnboarding=3,IsGuest=4,StartedServerGuide=5,CompletedServerGuide=6,AutomodQuarantinedName=7,DmSettingsUpsellAcknowledged=9,AutomodQuarantinedClanTag=10"
+    )]
     pub flags: u64,
 }
 

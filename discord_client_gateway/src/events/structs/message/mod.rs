@@ -1,4 +1,4 @@
-use discord_client_macros::CreatedAt;
+use discord_client_macros::{CreatedAt, Flags};
 use discord_client_structs::deserializer::*;
 use discord_client_structs::structs::message::Message;
 use discord_client_structs::structs::user::{Member, User};
@@ -65,7 +65,7 @@ pub struct UserWithMember {
     pub member: Option<Member>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Flags)]
 pub struct MessageAckEvent {
     pub version: u64,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
