@@ -6,6 +6,7 @@ use crate::structs::user::{Member, User};
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
+use discord_client_macros::EnumFromPrimitive;
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
 #[builder(setter(into, strip_option), default)]
@@ -21,8 +22,8 @@ pub struct Invite {
     pub guild_id: Option<u64>,
     pub guild: Option<InviteGuild>,
     pub inviter: Option<User>,
-    pub flags: Option<u64>,
-    pub target_type: Option<u8>, // todo: use enum
+    pub flags: Option<u64>, // Todo: flags enum
+    pub target_type: Option<InviteTargetType>,
     pub target_user: Option<User>,
     pub target_application: Option<Application>,
     pub approximate_member_count: Option<u32>,
@@ -89,4 +90,14 @@ pub struct InviteMetadata {
     #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
     #[serde(serialize_with = "serialize_date_to_iso8601_string")]
     pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
+#[repr(u8)]
+pub enum InviteTargetType {
+    Stream = 1,
+    EmbeddedApplication = 2,
+    RoleSubscriptions = 3,
+    CreatorPage = 4,
+    Unknown(u8),
 }

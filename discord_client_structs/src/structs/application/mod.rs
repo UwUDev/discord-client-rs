@@ -175,7 +175,6 @@ pub enum ApplicationCommandType {
     Unknown(u8),
 }
 
-
 #[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
 #[repr(u8)]
 pub enum ApplicationType {
