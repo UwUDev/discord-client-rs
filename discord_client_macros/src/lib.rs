@@ -364,7 +364,8 @@ fn generate_flags_impl(input: DeriveInput) -> TokenStream {
                         .expect("flag_enum attribute must contain a string with flag definitions")
                         .value();
 
-                    let enum_name = format_ident!("{}", 
+                    let enum_name = format_ident!("{}{}", 
+                        struct_name.to_string(),
                         field_name.to_string().to_case(Case::Pascal));
 
                     let flag_enum = generate_simple_flag_enum(&enum_name, &flags_content);
