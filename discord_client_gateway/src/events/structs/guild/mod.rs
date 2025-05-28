@@ -158,6 +158,7 @@ pub struct GuildAppliedBoostsUpdateEvent {
     pub id: u64,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     pub guild_id: u64,
+    #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
     pub ends_at: Option<DateTime<Utc>>,
     pub ended: bool,
