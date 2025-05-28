@@ -5,7 +5,7 @@ use crate::structs::permission::Overwrite;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
-use discord_client_macros::CreatedAt;
+use discord_client_macros::{CreatedAt, Flags};
 use serde::{Deserialize, Serialize};
 
 pub mod invite;
@@ -17,7 +17,7 @@ pub mod unread;
 pub mod voice;
 pub mod webhook;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct Channel {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -67,6 +67,9 @@ pub struct Channel {
     pub member: Option<ThreadMember>,
     pub default_auto_archive_duration: Option<u32>,
     pub permissions: Option<String>,
+    #[flag_enum(
+        "GuildFeedRemoved=0,IsPinned=1,ActiveChannelsRemoved=2,RequireTag=4,IsSpam=5,IsGuildResourceChannel=7,ClydeAI=8,IsScheduledForDeletion=9,IsMediaChannel=10,SummariesDisabled=11,ApplicationShelfConsent=12,IsRoleSubscriptionTemplatePreviewChannel=13,IsBroadcasting=14,HideMediaDownloadOptions=15,IsJoinRequestInterviewChannel=16,Obfuscated=17"
+    )]
     pub flags: Option<u64>,
     pub total_message_sent: Option<u32>,
     pub available_tags: Option<Vec<Tag>>,

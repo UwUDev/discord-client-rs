@@ -5,10 +5,10 @@ use crate::structs::guild::event::GuildScheduledEvent;
 use crate::structs::user::{Member, User};
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
-use discord_client_macros::EnumFromPrimitive;
+use discord_client_macros::{EnumFromPrimitive, Flags};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct Invite {
     pub code: String,
@@ -22,7 +22,8 @@ pub struct Invite {
     pub guild_id: Option<u64>,
     pub guild: Option<InviteGuild>,
     pub inviter: Option<User>,
-    pub flags: Option<u64>, // Todo: flags enum
+    #[flag_enum("IsGuestInvite=0,IsViewed=1,IsEnhanced=2,IsApplicationBypass=3")]
+    pub flags: Option<u64>,
     pub target_type: Option<InviteTargetType>,
     pub target_user: Option<User>,
     pub target_application: Option<Application>,
@@ -66,9 +67,10 @@ pub struct InviteGuild {
     pub nsfw_level: u8,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct CreateChannelInvite {
+    #[flag_enum("IsGuestInvite=0,IsViewed=1,IsEnhanced=2,IsApplicationBypass=3")]
     pub flags: Option<u64>,
     pub max_age: Option<u64>,
     pub max_uses: Option<u64>,

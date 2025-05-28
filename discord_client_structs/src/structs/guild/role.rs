@@ -1,10 +1,10 @@
 use crate::deserializer::*;
 use crate::serializer::*;
 use derive_builder::Builder;
-use discord_client_macros::CreatedAt;
+use discord_client_macros::{CreatedAt, Flags};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct Role {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -21,7 +21,8 @@ pub struct Role {
     pub permissions: String,
     pub managed: bool,
     pub mentionable: bool,
-    pub flags: Option<u32>,
+    #[flag_enum("InPrompt=0")]
+    pub flags: Option<u64>,
     pub tags: Option<RoleTags>,
 }
 

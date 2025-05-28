@@ -12,7 +12,7 @@ use crate::structs::misc::Emoji;
 use crate::structs::user::Member;
 use crate::structs::user::presence::Presence;
 use derive_builder::Builder;
-use discord_client_macros::CreatedAt;
+use discord_client_macros::{CreatedAt, Flags};
 use serde::{Deserialize, Serialize};
 
 pub mod activity;
@@ -27,7 +27,7 @@ pub mod role;
 pub mod stage;
 pub mod user;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct GatewayGuild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -67,7 +67,11 @@ pub struct GatewayGuild {
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub system_channel_id: Option<u64>,
-    pub system_channel_flags: Option<u8>,
+    #[serde(default)]
+    #[flag_enum(
+        "SuppressJoinNotifications=0,SuppressPremiumSubscriptions=1,SuppressGuildReminderNotifications=2,SuppressJoinNotificationReplies=3,SuppressRoleSubscriptionPurchaseNotifications=4,SuppressRoleSubscriptionPurchaseNotificationReplies=5,SuppressChannelPromptDeadchat=7"
+    )]
+    pub system_channel_flags: Option<u64>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     #[serde(serialize_with = "serialize_option_u64_as_string")]
@@ -96,7 +100,7 @@ pub struct EntityMetadata {
     pub location: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct Guild {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -144,7 +148,11 @@ pub struct Guild {
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub system_channel_id: Option<u64>,
-    pub system_channel_flags: Option<u8>,
+    #[serde(default)]
+    #[flag_enum(
+        "SuppressJoinNotifications=0,SuppressPremiumSubscriptions=1,SuppressGuildReminderNotifications=2,SuppressJoinNotificationReplies=3,SuppressRoleSubscriptionPurchaseNotifications=4,SuppressRoleSubscriptionPurchaseNotificationReplies=5,SuppressChannelPromptDeadchat=7"
+    )]
+    pub system_channel_flags: Option<u64>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     #[serde(serialize_with = "serialize_option_u64_as_string")]

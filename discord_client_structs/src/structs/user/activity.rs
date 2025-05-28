@@ -3,9 +3,10 @@ use crate::serializer::*;
 use crate::structs::misc::Emoji;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
+use discord_client_macros::Flags;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct Activity {
     pub name: String,
@@ -24,6 +25,9 @@ pub struct Activity {
     pub assets: Option<ActivityAsset>,
     pub secrets: Option<ActivitySecrets>,
     pub instance: Option<bool>,
+    #[flag_enum(
+        "Instance=0,Join=1,Spectate=2,JoinRequest=3,Sync=4,Play=5,PartyPrivacyFriends=6,PartyPrivacyVoiceChannel=7,Embedded=8"
+    )]
     pub flags: Option<u64>,
     pub id: Option<String>,
     pub buttons: Option<Vec<String>>,

@@ -4,10 +4,10 @@ use crate::structs::application::IntegrationApplication;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
-use discord_client_macros::CreatedAt;
+use discord_client_macros::{CreatedAt, Flags};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct Attachment {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -28,6 +28,9 @@ pub struct Attachment {
     pub ephemeral: Option<bool>,
     pub duration_secs: Option<f64>,
     pub waveform: Option<String>,
+    #[flag_enum(
+        "IsClip=0,IsThumbnail=1,IsRemix=2,IsSpoiler=3,ContainsExplicitMedia=4,IsAnimated=5"
+    )]
     pub flags: Option<u64>,
     pub is_clip: Option<bool>,
     pub is_thumbnail: Option<bool>,

@@ -3,11 +3,11 @@ use crate::serializer::*;
 use crate::structs::user::Member;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
-use discord_client_macros::CreatedAt;
 use discord_client_macros::OptionCreatedAt;
+use discord_client_macros::{CreatedAt, Flags};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, OptionCreatedAt)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, OptionCreatedAt, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct ThreadMember {
     #[serde(default)]
@@ -21,6 +21,7 @@ pub struct ThreadMember {
     #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
     #[serde(serialize_with = "serialize_date_to_iso8601_string")]
     pub join_timestamp: DateTime<Utc>,
+    #[flag_enum("HasInteracted=0,AllMessages=1,OnlyMentions=2,NoMessages=3")]
     pub flags: u64,
     pub member: Option<Member>,
 }

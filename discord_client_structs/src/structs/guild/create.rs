@@ -3,9 +3,10 @@ use crate::serializer::*;
 use crate::structs::channel::Channel;
 use crate::structs::guild::role::Role;
 use derive_builder::Builder;
+use discord_client_macros::Flags;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct CreateGuild {
     pub name: String,
@@ -27,7 +28,11 @@ pub struct CreateGuild {
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub system_channel_id: Option<u64>,
-    pub system_channel_flags: Option<u8>,
+    #[serde(default)]
+    #[flag_enum(
+        "SuppressJoinNotifications=0,SuppressPremiumSubscriptions=1,SuppressGuildReminderNotifications=2,SuppressJoinNotificationReplies=3,SuppressRoleSubscriptionPurchaseNotifications=4,SuppressRoleSubscriptionPurchaseNotificationReplies=5,SuppressChannelPromptDeadchat=7"
+    )]
+    pub system_channel_flags: Option<u64>,
     pub guild_template_code: Option<String>,
     pub staff_only: bool,
 }

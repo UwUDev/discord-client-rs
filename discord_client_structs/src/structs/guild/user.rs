@@ -7,7 +7,9 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize, Clone, Flags)]
 pub struct UserGuildSettings {
     pub channel_overrides: Vec<ChannelOverride>,
-    #[flag_enum("UnreadsAllMessages=11,UnreadsOnlyMentions=12,OptInChannelsOff=13,OptInChannelsOn=14")]
+    #[flag_enum(
+        "UnreadsAllMessages=11,UnreadsOnlyMentions=12,OptInChannelsOff=13,OptInChannelsOn=14"
+    )]
     pub flags: u64,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
@@ -53,26 +55,29 @@ pub mod test_macro {
         let active_flags = settings.get_flags();
         println!("Base flags: {:?}", active_flags);
 
-        if settings.has_flags(Flags::UnreadsAllMessages) {
+        if settings.has_flags(UserGuildSettingsFlags::UnreadsAllMessages) {
             println!("UnreadsAllMessages added");
         }
 
-        if settings.has_flags(Flags::OptInChannelsOn) {
+        if settings.has_flags(UserGuildSettingsFlags::OptInChannelsOn) {
             println!("OptInChannelsOn is activated");
         } else {
             println!("OptInChannelsOn is not activated");
         }
 
         let mut settings_mut = settings.clone();
-        settings_mut.add_flags(Flags::OptInChannelsOn);
-        println!("After adding OptInChannelsOn: {:?}", settings_mut.get_flags());
+        settings_mut.add_flags(UserGuildSettingsFlags::OptInChannelsOn);
+        println!(
+            "After adding OptInChannelsOn: {:?}",
+            settings_mut.get_flags()
+        );
 
-        settings_mut.remove_flags(Flags::UnreadsAllMessages);
+        settings_mut.remove_flags(UserGuildSettingsFlags::UnreadsAllMessages);
         println!("After removal: {:?}", settings_mut.get_flags());
 
         settings_mut.set_flags(vec![
-            Flags::OptInChannelsOff,
-            Flags::UnreadsOnlyMentions,
+            UserGuildSettingsFlags::OptInChannelsOff,
+            UserGuildSettingsFlags::UnreadsOnlyMentions,
         ]);
         println!("After setting bulk flags: {:?}", settings_mut.get_flags());
         println!("Final encoded flags: {}", settings_mut.flags);

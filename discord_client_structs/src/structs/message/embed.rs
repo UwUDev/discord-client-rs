@@ -2,10 +2,10 @@ use crate::deserializer::*;
 use crate::serializer::*;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
-use discord_client_macros::EnumFromString;
+use discord_client_macros::{EnumFromString, Flags};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct Embed {
     pub title: Option<String>,
@@ -28,6 +28,7 @@ pub struct Embed {
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub reference_id: Option<u64>,
+    #[flag_enum("ContainsExplicitMedia=4,ContentInventoryEntry=5")]
     pub flags: Option<u64>,
 }
 
@@ -53,7 +54,7 @@ pub struct EmbedFooter {
     pub proxy_icon_url: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
 #[builder(setter(into, strip_option), default)]
 //noinspection DuplicatedCode
 pub struct EmbedImage {
@@ -61,12 +62,15 @@ pub struct EmbedImage {
     pub proxy_url: Option<String>,
     pub height: Option<u64>,
     pub width: Option<u64>,
+    #[flag_enum(
+        "IsClip=0,IsThumbnail=1,IsRemix=2,IsSpoiler=3,ContainsExplicitMedia=4,IsAnimated=5"
+    )]
     pub flags: Option<u64>,
     pub placeholder_version: Option<u64>,
     pub placeholder: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
 #[builder(setter(into, strip_option), default)]
 //noinspection DuplicatedCode
 pub struct EmbedThumbnail {
@@ -74,12 +78,15 @@ pub struct EmbedThumbnail {
     pub proxy_url: Option<String>,
     pub height: Option<u64>,
     pub width: Option<u64>,
+    #[flag_enum(
+        "IsClip=0,IsThumbnail=1,IsRemix=2,IsSpoiler=3,ContainsExplicitMedia=4,IsAnimated=5"
+    )]
     pub flags: Option<u64>,
     pub placeholder_version: Option<u64>,
     pub placeholder: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
 #[builder(setter(into, strip_option), default)]
 //noinspection DuplicatedCode
 pub struct EmbedVideo {
@@ -87,6 +94,9 @@ pub struct EmbedVideo {
     pub proxy_url: Option<String>,
     pub height: Option<u64>,
     pub width: Option<u64>,
+    #[flag_enum(
+        "IsClip=0,IsThumbnail=1,IsRemix=2,IsSpoiler=3,ContainsExplicitMedia=4,IsAnimated=5"
+    )]
     pub flags: Option<u64>,
     pub placeholder_version: Option<u64>,
     pub placeholder: Option<String>,

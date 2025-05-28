@@ -18,7 +18,7 @@ use crate::structs::misc::{Emoji, Potion};
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
-use discord_client_macros::{CreatedAt, EnumFromPrimitive};
+use discord_client_macros::{CreatedAt, EnumFromPrimitive, Flags};
 use serde::{Deserialize, Serialize};
 
 pub mod attachment;
@@ -33,7 +33,7 @@ pub mod select;
 pub mod soundboard;
 pub mod sticker;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct Message {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -90,6 +90,9 @@ pub struct Message {
     pub application_id: Option<u64>,
     #[builder(default)]
     #[serde(skip_serializing)]
+    #[flag_enum(
+        "Crossposted=0,IsCrosspost=1,SuppressEmbeds=2,SourceMessageDeleted=3,Urgent=4,HasThread=5,Ephemeral=6,Loading=7,FailedToMentionSomeRolesInThread=8,GuildFeedHidden=9,ShouldShowLinkNotDiscordWarning=10,SuppressNotifications=12,IsVoiceMessage=13,HasSnapshot=14,IsComponentsV2=15,SentBySocialLayerIntegration=16"
+    )]
     pub flags: u64,
     pub message_reference: Option<MessageReference>,
     pub referenced_message: Option<Box<Message>>,
@@ -207,7 +210,7 @@ pub struct MessageSnapshot {
     pub message: SnapshotMessage,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct SnapshotMessage {
     pub content: Option<String>,
@@ -229,6 +232,9 @@ pub struct SnapshotMessage {
     pub attachments: Option<Vec<Attachment>>,
     pub embeds: Vec<Embed>,
     pub r#type: MessageType,
+    #[flag_enum(
+        "Crossposted=0,IsCrosspost=1,SuppressEmbeds=2,SourceMessageDeleted=3,Urgent=4,HasThread=5,Ephemeral=6,Loading=7,FailedToMentionSomeRolesInThread=8,GuildFeedHidden=9,ShouldShowLinkNotDiscordWarning=10,SuppressNotifications=12,IsVoiceMessage=13,HasSnapshot=14,IsComponentsV2=15,SentBySocialLayerIntegration=16"
+    )]
     pub flags: u64,
     pub components: Option<Vec<MessageComponent>>,
     pub sticker_items: Option<Vec<StickerItem>>,

@@ -4,12 +4,12 @@ use crate::structs::application::team::{Company, Team};
 use crate::structs::user::User;
 use crate::structs::user::activity::EmbeddedActivityConfig;
 use derive_builder::Builder;
-use discord_client_macros::{CreatedAt, EnumFromPrimitive, EnumFromString};
+use discord_client_macros::{CreatedAt, EnumFromPrimitive, EnumFromString, Flags};
 use serde::{Deserialize, Serialize};
 
 pub mod team;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct IntegrationApplication {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -80,10 +80,16 @@ pub struct IntegrationApplication {
     pub creator_monetization_state: Option<u64>,
     pub is_discoverable: bool,
     pub discoverability_state: Option<u64>,
+    #[flag_enum(
+        "Verified=0,Tag=1,Description=2,TermsOfService=3,PrivacyPolicy=4,InstallParams=5,SafeName=6,SafeDescription=7,ApprovedCommands=8,SupportGuild=9,SafeCommands=10,Mfa=11,SafeDirectoryOverview=12,SupportedLocales=13,SafeShortDescription=14,SafeRoleConnections=15"
+    )]
     pub discovery_eligibility_flags: Option<u64>,
     pub is_monetized: bool,
     pub storefront_available: bool,
     pub monetization_state: Option<u64>,
+    #[flag_enum(
+        "Verified=0,HasTeam=1,ApprovedCommands=2,TermsOfService=3,PrivacyPolicy=4,SafeName=5,SafeDescription=6,SafeRoleConnections=7,UserIsTeamOwner=8,NotQuarantined=9,UserLocaleSupported=10,UserAgeSupported=11,UserDateOfBirthDefined=12,UserMfaEnabled=13,UserEmailVerified=14,TeamMembersEmailVerified=15,TeamMembersMfaEnabled=16,NoBlockingIssues=17,ValidPayoutStatus=18"
+    )]
     pub monetization_eligibility_flags: Option<u64>,
     pub max_participants: Option<u64>,
     pub embedded_activity_config: Option<EmbeddedActivityConfig>,
@@ -128,7 +134,7 @@ pub struct ApplicationCommandIndex {
     pub version: u64,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct Application {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -142,6 +148,9 @@ pub struct Application {
     pub bot_id: Option<u64>,
     #[serde(deserialize_with = "deserialize_string_to_u64")]
     #[serde(serialize_with = "serialize_u64_as_string")]
+    #[flag_enum(
+        "EmbeddedReleased=1,ManagedEmoji=2,EmbeddedIap=3,GroupDmCreate=4,AutoModerationRuleCreateBadge=6,GameProfileDisabled=7,PublicOauth2Client=8,ContextlessActivity=9,GatewayPresence=12,GatewayPresenceLimited=13,GatewayGuildMembers=14,GatewayGuildMembersLimited=15,VerificationPendingGuildLimit=16,Embedded=17,GatewayMessageContent=18,GatewayMessageContentLimited=19,EmbeddedFirstParty=20,ApplicationCommandMigrated=21,ApplicationCommandBadge=23,Active=24,ActiveGracePeriod1=25,IframeModal=26,SocialLayerIntegration=27,Promoted=29,Partner=30"
+    )]
     pub flags: u64,
 }
 

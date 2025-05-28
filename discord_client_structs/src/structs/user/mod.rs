@@ -3,7 +3,7 @@ use crate::serializer::*;
 use crate::structs::guild::clan::ClanBadge;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
-use discord_client_macros::CreatedAt;
+use discord_client_macros::{CreatedAt, Flags};
 use serde::{Deserialize, Serialize};
 
 pub mod activity;
@@ -14,7 +14,7 @@ pub mod relationship;
 pub mod session;
 pub mod status;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct User {
     #[serde(deserialize_with = "deserialize_string_to_u64")]
@@ -32,8 +32,14 @@ pub struct User {
     pub locale: Option<String>,
     pub verified: Option<bool>,
     pub email: Option<String>,
+    #[flag_enum(
+        "Staff=0,Partner=1,Hypesquad=2,BugHunterLevelOne=3, MfaSms=4,PremiumPromoDismissed=5,HypesquadOnlineHouse1=6,HypesquadOnlineHouse2=7, HypesquadOnlineHouse3=8,PremiumEarlySupporter=9,TeamPseudoUser=10, IsHubspotContact=11,System=12,HasUnreadUrgentMessages=13,BugHunterLevelTwo=14, UnderageDeleted=15,VerifiedBot=16,VerifiedDeveloper=17,CertifiedModerator=18, BotHttpInteractions=19,Spammer=20,DisablePremium=21,ActiveDeveloper=22, ProvisionalAccount=23,HighGlobalRateLimit=33,Deleted=34,DisabledSuspiciousActivity=35, SelfDeleted=36,PremiumDiscriminator=37,UsedDesktopClient=38,UsedWebClient=39, UsedMobileClient=40,Disabled=41,HasSessionStarted=43,Quarantined=44, PremiumEligibleForUniqueUsername=47,Collaborator=50,RestrictedCollaborator=51"
+    )]
     pub flags: Option<u64>,
     pub premium_type: Option<u64>,
+    #[flag_enum(
+        "Staff=0,Partner=1,Hypesquad=2,BugHunterLevelOne=3, MfaSms=4,PremiumPromoDismissed=5,HypesquadOnlineHouse1=6,HypesquadOnlineHouse2=7, HypesquadOnlineHouse3=8,PremiumEarlySupporter=9,TeamPseudoUser=10, IsHubspotContact=11,System=12,HasUnreadUrgentMessages=13,BugHunterLevelTwo=14, UnderageDeleted=15,VerifiedBot=16,VerifiedDeveloper=17,CertifiedModerator=18, BotHttpInteractions=19,Spammer=20,DisablePremium=21,ActiveDeveloper=22, ProvisionalAccount=23,HighGlobalRateLimit=33,Deleted=34,DisabledSuspiciousActivity=35, SelfDeleted=36,PremiumDiscriminator=37,UsedDesktopClient=38,UsedWebClient=39, UsedMobileClient=40,Disabled=41,HasSessionStarted=43,Quarantined=44, PremiumEligibleForUniqueUsername=47,Collaborator=50,RestrictedCollaborator=51"
+    )]
     pub public_flags: Option<u64>,
     pub avatar_decoration_data: Option<AvatarDecorationData>,
     pub token: Option<String>,
@@ -41,7 +47,7 @@ pub struct User {
     pub clan: Option<ClanBadge>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
 #[builder(setter(into, strip_option), default)]
 pub struct Member {
     pub user: Option<User>,
@@ -60,6 +66,9 @@ pub struct Member {
     pub premium_since: Option<DateTime<Utc>>,
     pub deaf: bool,
     pub mute: bool,
+    #[flag_enum(
+        "DidRejoin=0,CompletedOnboarding=1,BypassesVerification=2,StartedOnboarding=3,IsGuest=4,StartedServerGuide=5,CompletedServerGuide=6,AutomodQuarantinedName=7,DmSettingsUpsellAcknowledged=9,AutomodQuarantinedClanTag=10"
+    )]
     pub flags: u64,
     pub pending: Option<bool>,
     pub permissions: Option<String>,
