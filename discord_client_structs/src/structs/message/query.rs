@@ -39,7 +39,7 @@ impl MessageQuery {
 #[builder(setter(into, strip_option), default)]
 pub struct MessageSearchQuery {
     pub limit: Option<u8>,
-    pub offset: Option<u16>,
+    pub offset: Option<u32>,
     pub max_id: Option<u64>,
     pub min_id: Option<u64>,
     pub include_nsfw: Option<bool>,
@@ -248,6 +248,6 @@ impl MessageSearchQuery {
 pub struct MessageSearchResult {
     pub analytics_id: String,
     pub doing_deep_historical_index: bool,
-    pub total_results: u16,
+    pub total_results: u32,
     pub messages: Vec<Vec<Message>>, // why ????
 }
