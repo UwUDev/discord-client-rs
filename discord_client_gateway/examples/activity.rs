@@ -10,7 +10,7 @@ use std::io::Write;
 async fn main() {
     let token = std::fs::read_to_string("token.txt").unwrap();
 
-    let mut client = GatewayClient::connect(token, true, 53607934, 402402)
+    let mut client = GatewayClient::connect(token, true, 53607934, None)
         .await
         .unwrap();
 

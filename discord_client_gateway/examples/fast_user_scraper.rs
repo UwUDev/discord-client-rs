@@ -9,7 +9,7 @@ async fn main() {
 
     let start = Instant::now();
 
-    let mut client = GatewayClient::connect(token, true, 53607934, 402402)
+    let mut client = GatewayClient::connect(token, true, 53607934, None)
         .await
         .unwrap();
 
