@@ -5,7 +5,6 @@ use crate::api::guild::GuildRest;
 use crate::api::invite::InviteRest;
 use crate::api::message::MessageRest;
 use crate::api::self_user::SelfUserRest;
-use crate::build_number::fetch_build_number;
 use crate::captcha::{CaptchaRequiredError, SolvedCaptcha};
 use crate::clearance::{get_clearance_cookie, get_invisible};
 use crate::mfa::{MfaRequiredError, MfaVerificationRequest};
@@ -31,6 +30,8 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::Mutex;
+use discord_client_structs::structs::client::{BuildNumbers, ClientSession};
+use discord_client_utils::find_build_numbers;
 
 const API_BASE: &str = "https://discord.com/api/";
 
@@ -42,21 +43,23 @@ pub struct RestClient {
     pub application_command_index: Option<ApplicationCommandIndex>,
     locale: String,
     timezone: String,
-    pub build_number: u32,
+    pub build_numbers: BuildNumbers,
     global_rate_limiter: RateLimiter,
     route_rate_limiters: Arc<Mutex<HashMap<String, RateLimiter>>>,
+    client_session: ClientSession,
 }
 
 impl RestClient {
     pub async fn connect(
         token: String,
         custom_api_version: Option<u8>,
-        custom_build_number: Option<u32>,
+        custom_build_numbers: Option<BuildNumbers>,
+        client_session: Option<ClientSession>,
     ) -> BoxedResult<Self> {
         let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
 
-        let build_number = match custom_build_number {
-            None => fetch_build_number().await?,
+        let build_numbers = match custom_build_numbers {
+            None => find_build_numbers().await?,
             Some(build_num) => build_num,
         };
 
@@ -158,6 +161,7 @@ impl RestClient {
 
         let timezone = get_timezone().unwrap_or("America/New_York".to_string());
         let locale = current_locale().unwrap_or("en-US".to_string());
+        let client_session = client_session.unwrap_or_else(|| ClientSession::new());
 
         // get application command index
         let resp = client
@@ -169,7 +173,7 @@ impl RestClient {
             .header("x-debug-options", "bugReporterEnabled")
             .header("x-discord-locale", locale.clone())
             .header("x-discord-timezone", timezone.clone())
-            .header("x-super-properties", build_super_props(build_number))
+            .header("x-super-properties", build_super_props(build_numbers.clone(), client_session.clone()))
             .send()
             .await?;
 
@@ -200,43 +204,44 @@ impl RestClient {
             application_command_index,
             locale,
             timezone,
-            build_number,
+            build_numbers,
             global_rate_limiter: RateLimiter::new(),
             route_rate_limiters: Arc::new(Mutex::new(HashMap::new())),
+            client_session,
         })
     }
 
-    pub fn message(&self, channel_id: u64) -> MessageRest {
+    pub fn message(&self, channel_id: u64) -> MessageRest<'_> {
         MessageRest {
             channel_id,
             client: self,
         }
     }
 
-    pub fn guild(&self, guild_id: Option<u64>) -> GuildRest {
+    pub fn guild(&self, guild_id: Option<u64>) -> GuildRest<'_> {
         GuildRest {
             guild_id,
             client: self,
         }
     }
 
-    pub fn dm(&self) -> DmRest {
+    pub fn dm(&self) -> DmRest<'_> {
         DmRest { client: self }
     }
 
-    pub fn group(&self) -> GroupRest {
+    pub fn group(&self) -> GroupRest<'_> {
         GroupRest { client: self }
     }
 
-    pub fn self_user(&self) -> SelfUserRest {
+    pub fn self_user(&self) -> SelfUserRest<'_> {
         SelfUserRest { client: self }
     }
 
-    pub fn auth(&self) -> AuthRest {
+    pub fn auth(&self) -> AuthRest<'_> {
         AuthRest { client: self }
     }
 
-    pub fn invite(&self) -> InviteRest {
+    pub fn invite(&self) -> InviteRest<'_> {
         InviteRest { client: self }
     }
 
@@ -511,7 +516,7 @@ impl RestClient {
 
         headers.insert(
             "X-Super-Properties",
-            build_super_props(self.build_number)
+            build_super_props(self.build_numbers.clone(), self.client_session.clone())
                 .parse()
                 .map_err(|e| Box::new(e) as BoxedError)?,
         );

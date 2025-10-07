@@ -14,7 +14,7 @@ pub struct GuildRest<'a> {
 }
 
 impl<'a> GuildRest<'a> {
-    pub fn channel(&self, id: Option<u64>) -> Option<ChannelRest> {
+    pub fn channel(&self, id: Option<u64>) -> Option<ChannelRest<'_>> {
         if self.guild_id.is_none() {
             return None;
         }

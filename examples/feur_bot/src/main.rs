@@ -1,6 +1,7 @@
 use discord_client_gateway::events::Event;
 use discord_client_gateway::gateway::GatewayClient;
 use discord_client_rest::rest::RestClient;
+use discord_client_structs::structs::client::ClientSession;
 use discord_client_structs::structs::message::MessageBuilder;
 use discord_client_structs::structs::message::MessageReferenceBuilder;
 
@@ -8,12 +9,14 @@ use discord_client_structs::structs::message::MessageReferenceBuilder;
 async fn main() {
     let token = std::fs::read_to_string("token.txt").unwrap();
 
-    let rest_client = RestClient::connect(token.clone(), None, None)
+    let client_session = ClientSession::new();
+
+    let rest_client = RestClient::connect(token.clone(), None, None, Some(client_session))
         .await
         .unwrap();
 
     let mut gateway_client =
-        GatewayClient::connect(token, true, 53607934, rest_client.build_number)
+        GatewayClient::connect(token, true, 53607934, None)
             .await
             .unwrap();
 

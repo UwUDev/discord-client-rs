@@ -16,6 +16,7 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
 use tokio::sync::Mutex;
 use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
+use discord_client_utils::find_build_numbers;
 
 pub struct GatewayClient {
     token: String,
@@ -43,9 +44,14 @@ impl GatewayClient {
         token: String,
         automatic_reconnect: bool,
         capabilities: u32,
-        build_number: u32,
+        client_build_number: Option<u32>,
     ) -> BoxedResult<Self> {
         let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
+
+        let build_number = match client_build_number {
+            None => find_build_numbers().await?.client_build_number,
+            Some(build_num) => build_num,
+        };
 
         let emu = EmulationOption::builder()
             .emulation(Emulation::Chrome136)
@@ -347,7 +353,7 @@ impl GatewayClient {
             self.token.clone(),
             self.automatic_reconnect,
             self.capabilities,
-            self.build_number,
+            Some(self.build_number),
         )
         .await?;
         new_client.status = self.status.clone();

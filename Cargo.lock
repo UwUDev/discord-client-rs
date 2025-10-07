@@ -491,11 +491,12 @@ dependencies = [
 
 [[package]]
 name = "discord_client_gateway"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "chrono",
  "discord_client_macros",
  "discord_client_structs",
+ "discord_client_utils",
  "futures-util",
  "rquest",
  "rquest-util",
@@ -520,13 +521,14 @@ dependencies = [
 
 [[package]]
 name = "discord_client_rest"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "base64",
  "chrono",
  "current_locale",
  "derive_builder",
  "discord_client_structs",
+ "discord_client_utils",
  "iana-time-zone",
  "log",
  "lz-str",
@@ -550,6 +552,17 @@ dependencies = [
  "serde",
  "serde_json",
  "strum_macros",
+ "uuid",
+]
+
+[[package]]
+name = "discord_client_utils"
+version = "0.1.0"
+dependencies = [
+ "discord_client_structs",
+ "rquest",
+ "rquest-util",
+ "tokio",
 ]
 
 [[package]]
@@ -1122,6 +1135,7 @@ version = "0.1.0"
 dependencies = [
  "discord_client_gateway",
  "discord_client_rest",
+ "discord_client_structs",
  "tokio",
 ]
 
@@ -1999,6 +2013,17 @@ name = "utf8_iter"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6c140620e7ffbb22c2dee59cafe6084a59b5ffc27a8859a5f0d494b5d52b6be"
+
+[[package]]
+name = "uuid"
+version = "1.18.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f87b8aa10b915a06587d0dec516c282ff295b475d94abf425d62b57710070a2"
+dependencies = [
+ "getrandom",
+ "js-sys",
+ "wasm-bindgen",
+]
 
 [[package]]
 name = "version_check"
