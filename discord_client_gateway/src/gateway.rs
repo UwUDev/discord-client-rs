@@ -5,18 +5,30 @@ use discord_client_structs::parser::parse_id_from_token;
 use discord_client_structs::structs::user::activity::Activity;
 use discord_client_structs::structs::user::status::StatusType;
 use discord_client_structs::structs::user::status::StatusType::Unknown;
+use discord_client_utils::find_build_numbers;
 use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt, TryStreamExt};
-use wreq::{Client, Message, WebSocket};
-use wreq_util::{Emulation, EmulationOS, EmulationOption};
 use serde_json::{Value, json};
 #[cfg(feature = "debug_events")]
 use std::io::Write;
 use std::sync::Arc;
+use std::sync::OnceLock;
 use std::sync::atomic::{AtomicU32, Ordering};
 use tokio::sync::Mutex;
+use wreq::{Client, Message, WebSocket};
+use wreq_util::{Emulation, EmulationOS, EmulationOption};
 use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
-use discord_client_utils::find_build_numbers;
+
+fn shared_client() -> &'static Client {
+    static CLIENT: OnceLock<Client> = OnceLock::new();
+    CLIENT.get_or_init(|| {
+        let emu = EmulationOption::builder()
+            .emulation(Emulation::Chrome136)
+            .emulation_os(EmulationOS::Windows)
+            .build();
+        Client::builder().emulation(emu).build().unwrap()
+    })
+}
 
 pub struct GatewayClient {
     token: String,
@@ -33,6 +45,7 @@ pub struct GatewayClient {
     build_number: u32,
     last_sequence: Arc<AtomicU32>,
     automatic_reconnect: bool,
+    heartbeat_handle: Option<tokio::task::JoinHandle<()>>,
     pub status: StatusType,
     pub activities: Vec<Activity>,
     pub idling_millis: u64,
@@ -53,14 +66,7 @@ impl GatewayClient {
             Some(build_num) => build_num,
         };
 
-        let emu = EmulationOption::builder()
-            .emulation(Emulation::Chrome136)
-            .emulation_os(EmulationOS::Windows)
-            .build();
-
-        let client = Client::builder().emulation(emu).build().unwrap();
-
-        let websocket = client
+        let websocket = shared_client()
             .websocket("wss://gateway.discord.gg/?encoding=json&v=9&compress=zlib-stream")
             .send()
             .await?
@@ -113,33 +119,11 @@ impl GatewayClient {
 
         let last_sequence = Arc::new(AtomicU32::new(0));
 
-        let tx_clone = Arc::clone(&tx);
-        let last_seq_clone = Arc::clone(&last_sequence);
-        tokio::spawn(async move {
-            loop {
-                tokio::time::sleep(tokio::time::Duration::from_millis(
-                    heartbeat_interval - 2000,
-                ))
-                .await;
-
-                let d = last_seq_clone.load(Ordering::Relaxed);
-
-                let payload = json!({
-                    "op": 1,
-                    "d": d
-                });
-
-                if tx_clone
-                    .lock()
-                    .await
-                    .send(Message::Text(payload.to_string().into()))
-                    .await
-                    .is_err()
-                {
-                    break;
-                }
-            }
-        });
+        let heartbeat_handle = Self::spawn_heartbeat(
+            Arc::clone(&tx),
+            Arc::clone(&last_sequence),
+            heartbeat_interval,
+        );
 
         Ok(Self {
             token,
@@ -156,6 +140,7 @@ impl GatewayClient {
             build_number,
             last_sequence,
             automatic_reconnect,
+            heartbeat_handle: Some(heartbeat_handle),
             status: Unknown,
             activities: Vec::new(),
             idling_millis: 0,
@@ -163,15 +148,47 @@ impl GatewayClient {
         })
     }
 
+    fn spawn_heartbeat(
+        tx: Arc<Mutex<SplitSink<WebSocket, Message>>>,
+        last_sequence: Arc<AtomicU32>,
+        heartbeat_interval: u64,
+    ) -> tokio::task::JoinHandle<()> {
+        tokio::spawn(async move {
+            loop {
+                tokio::time::sleep(tokio::time::Duration::from_millis(
+                    heartbeat_interval - 2000,
+                ))
+                .await;
+
+                let d = last_sequence.load(Ordering::Relaxed);
+
+                let payload = json!({
+                    "op": 1,
+                    "d": d
+                });
+
+                if tx
+                    .lock()
+                    .await
+                    .send(Message::Text(payload.to_string().into()))
+                    .await
+                    .is_err()
+                {
+                    break;
+                }
+            }
+        })
+    }
+
+    async fn teardown_connection(&mut self) {
+        if let Some(handle) = self.heartbeat_handle.take() {
+            handle.abort();
+        }
+        let _ = self.tx.lock().await.close().await;
+    }
+
     pub async fn resume(&mut self) -> BoxedResult<()> {
-        let imp = EmulationOption::builder()
-            .emulation(Emulation::Chrome136)
-            .emulation_os(EmulationOS::Windows)
-            .build();
-
-        let client = Client::builder().emulation(imp).build().unwrap();
-
-        let websocket = client
+        let websocket = shared_client()
             .websocket(format!(
                 "{}?encoding=json&v=9&compress=zlib-stream",
                 self.resume_gateway_url
@@ -211,10 +228,17 @@ impl GatewayClient {
             }
         }
 
+        self.teardown_connection().await;
+
         self.tx = tx;
         self.rx = Arc::new(Mutex::new(rx));
         self.zlib_decompressor = Arc::new(Mutex::new(decompress));
         self.heartbeat_interval = heartbeat_interval;
+        self.heartbeat_handle = Some(Self::spawn_heartbeat(
+            Arc::clone(&self.tx),
+            Arc::clone(&self.last_sequence),
+            heartbeat_interval,
+        ));
 
         let session_id = self.session_id.as_ref().ok_or("No session ID")?;
         let sequence = self.last_sequence.load(Ordering::Relaxed);
@@ -297,11 +321,11 @@ impl GatewayClient {
 
                     let event = crate::events::parse_gateway_payload(payload)?;
 
-                    if let crate::events::Event::Ready(ready) = event.clone() {
-                        self.session_id = Some(ready.session_id);
-                        self.analytics_token = Some(ready.analytics_token);
-                        self.auth_session_id_hash = Some(ready.auth_session_id_hash);
-                        self.resume_gateway_url = Some(ready.resume_gateway_url);
+                    if let crate::events::Event::Ready(ready) = &event {
+                        self.session_id = Some(ready.session_id.clone());
+                        self.analytics_token = Some(ready.analytics_token.clone());
+                        self.auth_session_id_hash = Some(ready.auth_session_id_hash.clone());
+                        self.resume_gateway_url = Some(ready.resume_gateway_url.clone());
                     } else if self.automatic_reconnect {
                         if let crate::events::Event::InvalidSession(ref invalid) = event {
                             println!("Need to reconnect");
@@ -342,6 +366,9 @@ impl GatewayClient {
     }
 
     pub async fn graceful_shutdown(&mut self) -> BoxedResult<()> {
+        if let Some(handle) = self.heartbeat_handle.take() {
+            handle.abort();
+        }
         let mut tx = self.tx.lock().await;
         tx.send(Message::Close(None)).await?;
         tx.close().await?;
@@ -360,6 +387,8 @@ impl GatewayClient {
         new_client.activities = self.activities.clone();
         new_client.idling_millis = self.idling_millis;
         new_client.afk = self.afk;
+
+        self.teardown_connection().await;
         *self = new_client;
         Ok(())
     }
