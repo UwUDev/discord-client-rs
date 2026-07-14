@@ -20,9 +20,9 @@ use discord_client_structs::structs::application::ApplicationCommandIndex;
 use iana_time_zone::get_timezone;
 use log::{error, warn};
 use regex::Regex;
-use rquest::header::HeaderMap;
-use rquest::{Client, Method, Response, redirect};
-use rquest_util::{Emulation, EmulationOS, EmulationOption};
+use wreq::header::HeaderMap;
+use wreq::{Client, Method, Response, redirect};
+use wreq_util::{Emulation, EmulationOS, EmulationOption};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
@@ -129,13 +129,13 @@ impl RestClient {
 
         let (key, s) = get_invisible(&client).await?;
 
-        match get_clearance_cookie(&client, r, key, s).await {
+        /*match get_clearance_cookie(&client, r, key, s).await {
             Ok(_) => {}
             Err(e) => {
                 warn!("{}", e);
                 return Err(e);
             }
-        }
+        }*/
 
         // get experiments cookies
         // todo: parse assignments

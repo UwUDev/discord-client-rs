@@ -1,6 +1,6 @@
 use std::error::Error;
-use rquest::{redirect, Client};
-use rquest_util::{Emulation, EmulationOS, EmulationOption};
+use wreq::{redirect, Client};
+use wreq_util::{Emulation, EmulationOS, EmulationOption};
 use discord_client_structs::structs::client::BuildNumbers;
 
 type BoxedError = Box<dyn Error + Send + Sync>;

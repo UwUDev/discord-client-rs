@@ -1,6 +1,6 @@
 use discord_client_rest::rest::RestClient;
 use log::*;
-use rquest::Url;
+use wreq::Url;
 
 #[tokio::main]
 async fn main() {

@@ -1,4 +1,4 @@
-use rquest::header::HeaderMap;
+use wreq::header::HeaderMap;
 use serde::Deserialize;
 use std::error::Error;
 use std::fmt::{Debug, Display};

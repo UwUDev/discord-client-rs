@@ -7,8 +7,8 @@ use discord_client_structs::structs::user::status::StatusType;
 use discord_client_structs::structs::user::status::StatusType::Unknown;
 use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt, TryStreamExt};
-use rquest::{Client, Message, WebSocket};
-use rquest_util::{Emulation, EmulationOS, EmulationOption};
+use wreq::{Client, Message, WebSocket};
+use wreq_util::{Emulation, EmulationOS, EmulationOption};
 use serde_json::{Value, json};
 #[cfg(feature = "debug_events")]
 use std::io::Write;
