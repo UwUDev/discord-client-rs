@@ -254,6 +254,7 @@ define_events! {
         UserNoteUpdateEvent { t: "USER_NOTE_UPDATE", type: UserNoteUpdateEvent },
         UserSettingsProtoUpdate { t: "USER_SETTINGS_PROTO_UPDATE", type: UserSettingsProtoUpdateEvent },
         VoiceChannelStatusUpdate { t: "VOICE_CHANNEL_STATUS_UPDATE", type: VoiceChannelStatusUpdateEvent },
+        VoiceChannelStartTimeUpdate { t: "VOICE_CHANNEL_START_TIME_UPDATE", type: VoiceChannelStartTimeUpdateEvent },
         VoiceStateUpdate { t: "VOICE_STATE_UPDATE", type: VoiceStateUpdateEvent },
         WebhookUpdate { t: "WEBHOOKS_UPDATE", type: WebhooksUpdateEvent },
     },
