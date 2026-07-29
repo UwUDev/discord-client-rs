@@ -405,6 +405,24 @@ impl GatewayClient {
         Ok(())
     }
 
+    pub async fn update_voice_state(
+        &mut self,
+        guild_id: Option<u64>,
+        channel_id: Option<u64>,
+        self_mute: bool,
+        self_deaf: bool,
+        self_video: Option<bool>,
+    ) -> BoxedResult<()> {
+        let payload = create_op_4(guild_id, channel_id, self_mute, self_deaf, self_video);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
+        Ok(())
+    }
+
     pub async fn request_channel_statuses(&mut self, guild_id: u64) -> BoxedResult<()> {
         let payload = create_op_36(guild_id);
 

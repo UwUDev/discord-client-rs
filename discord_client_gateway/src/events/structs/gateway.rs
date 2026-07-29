@@ -1,3 +1,4 @@
+use discord_client_structs::deserializer::deserialize_option_string_to_u64;
 use discord_client_structs::structs::user::session::Session;
 use serde::Deserialize;
 use serde_json::Value;
@@ -35,6 +36,41 @@ pub struct RemoteCommandEvent {
 #[derive(Debug, Deserialize, Clone)]
 pub struct AuthSessionChangeEvent {
     pub auth_session_id_hash: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Authenticator {
+    pub id: String,
+    pub r#type: String,
+    pub name: String,
+    pub last_used: Option<String>,
+    pub cred_id: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct AuthenticatorCreateEvent {
+    #[serde(flatten)]
+    pub authenticator: Authenticator,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct AuthenticatorUpdateEvent {
+    #[serde(flatten)]
+    pub authenticator: Authenticator,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct AuthenticatorDeleteEvent {
+    pub id: String,
+    pub r#type: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct OAuth2TokenRevokeEvent {
+    pub access_token: String,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub application_id: Option<u64>,
 }
 
 impl<'de> Deserialize<'de> for InvalidSessionEvent {

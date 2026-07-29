@@ -158,3 +158,34 @@ pub(crate) fn create_op_3(
     });
     payload.to_string()
 }
+
+pub(crate) fn create_op_4(
+    guild_id: Option<u64>,
+    channel_id: Option<u64>,
+    self_mute: bool,
+    self_deaf: bool,
+    self_video: Option<bool>,
+) -> String {
+    use serde_json::Map;
+
+    let mut d = Map::new();
+    d.insert(
+        "guild_id".to_string(),
+        guild_id
+            .map(|g| Value::from(g.to_string()))
+            .unwrap_or(Value::Null),
+    );
+    d.insert(
+        "channel_id".to_string(),
+        channel_id
+            .map(|c| Value::from(c.to_string()))
+            .unwrap_or(Value::Null),
+    );
+    d.insert("self_mute".to_string(), json!(self_mute));
+    d.insert("self_deaf".to_string(), json!(self_deaf));
+    if let Some(v) = self_video {
+        d.insert("self_video".to_string(), json!(v));
+    }
+
+    json!({ "op": 4, "d": d }).to_string()
+}

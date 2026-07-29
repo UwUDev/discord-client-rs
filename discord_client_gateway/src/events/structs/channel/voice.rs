@@ -27,17 +27,27 @@ pub struct VoiceChannelStartTimeUpdateEvent {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub guild_id: Option<u64>,
-    /// Unix timestamp (seconds) the current voice session started, or `None` if ended.
     pub voice_start_time: Option<i64>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct VoiceServerUpdateEvent {
+    pub token: String,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub guild_id: Option<u64>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub channel_id: Option<u64>,
+    pub endpoint: Option<String>,
 }
 
 #[cfg(test)]
 mod tests {
-    use super::VoiceChannelStartTimeUpdateEvent;
+    use super::{VoiceChannelStartTimeUpdateEvent, VoiceServerUpdateEvent};
 
-    // Real captured payload (session ended -> voice_start_time null).
     #[test]
-    fn parses_ended_session() {
+    fn start_time_update_ended() {
         let raw = r#"{"voice_start_time":null,"id":"1274353848894492682","guild_id":"1213802748240199690"}"#;
         let e: VoiceChannelStartTimeUpdateEvent = serde_json::from_str(raw).unwrap();
         assert_eq!(e.id, 1274353848894492682);
@@ -46,9 +56,21 @@ mod tests {
     }
 
     #[test]
-    fn parses_started_session() {
+    fn start_time_update_started() {
         let raw = r#"{"voice_start_time":1700000000,"id":"1","guild_id":"2"}"#;
         let e: VoiceChannelStartTimeUpdateEvent = serde_json::from_str(raw).unwrap();
         assert_eq!(e.voice_start_time, Some(1700000000));
+    }
+
+    #[test]
+    fn voice_server_update_null_guild() {
+        let raw = r#"{"token":"66d29164ee8cd919","guild_id":null,"endpoint":"smart.loyal.discord.media:1337"}"#;
+        let e: VoiceServerUpdateEvent = serde_json::from_str(raw).unwrap();
+        assert_eq!(e.token, "66d29164ee8cd919");
+        assert_eq!(e.guild_id, None);
+        assert_eq!(
+            e.endpoint.as_deref(),
+            Some("smart.loyal.discord.media:1337")
+        );
     }
 }

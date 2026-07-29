@@ -1,5 +1,6 @@
 use serde_json::Value;
 
+pub mod application;
 pub mod call;
 pub mod channel;
 pub mod gateway;
@@ -10,6 +11,7 @@ pub mod notifications;
 pub mod presence;
 pub mod ready;
 pub mod requested;
+pub mod stream;
 pub mod user;
 
 #[derive(Debug, Clone)]
