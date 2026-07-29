@@ -84,11 +84,11 @@ if let Event::Ready(ready) = event {
 - [x] Identify
 - [x] Resume
 - [x] Heartbeat
-- [ ] QoS Heartbeat
-- [ ] Update Time Spent Session ID
+- [x] QoS Heartbeat
+- [x] Update Time Spent Session ID
 - [x] Update Presence
 - [x] Update Voice State
-- [ ] Ping Voice Server
+- [x] Ping Voice Server
 - [x] Create Stream
 - [x] Watch Stream
 - [x] Set Stream Paused
@@ -97,19 +97,19 @@ if let Event::Ready(ready) = event {
 - [ ] Update Lobby Voice States
 - [ ] Ping Lobby Voice Server
 - [x] Request Guild Members
-- [ ] Request Call Connect
+- [x] Request Call Connect
 - [x] Update Guild Subscriptions
 - [ ] Request Forum Unreads
 - [x] Remote Command
 - [ ] Get Deleted Entity IDs Not Matching Hash
 - [x] Request Soundboard Sounds
-- [ ] Create Speed Test
-- [ ] Delete Speed Test
+- [x] Create Speed Test
+- [x] Delete Speed Test
 - [x] Request Last Messages
 - [x] Search Recent Members
-- [ ] Resync Guild Channels
+- [x] Resync Guild Channels
 - [x] Request Channel Statuses
-- [ ] Request Channel Member Count
+- [x] Request Channel Member Count
 - [ ] Request Channel Info
 - [x] Bulk Guild Subscribe *(client helper for Update Guild Subscriptions)*
 
@@ -118,18 +118,18 @@ if let Event::Ready(ready) = event {
 > Only user-account and shared (user + bot) events are listed; bot-only events are omitted.
 
 - **Connection**
-  - [ ] Hello
+  - [x] Hello
   - [x] Heartbeat ACK
   - [x] Reconnect
-  - [ ] Invalid Session
+  - [x] Invalid Session
   - [x] Remote Command
   - [x] Gateway Payload
 - **Ready & Session**
   - [x] Ready
   - [x] Ready Supplemental
   - [x] Resumed
-  - [ ] Rate Limited
-  - [ ] Activity Invite Create
+  - [x] Rate Limited
+  - [x] Activity Invite Create
 - **Authentication**
   - [x] Auth Session Change
   - [x] Authenticator Create
@@ -140,7 +140,7 @@ if let Event::Ready(ready) = event {
 - **Auto Moderation**
   - [x] Auto Moderation Mention Raid Detection
 - **Billing**
-  - [ ] Billing Popup Bridge Callback
+  - [x] Billing Popup Bridge Callback
 - **Calls**
   - [x] Call Create
   - [x] Call Update
@@ -149,22 +149,22 @@ if let Event::Ready(ready) = event {
   - [x] Channel Create
   - [x] Channel Update
   - [x] Channel Delete
-  - [ ] Channel Sync
-  - [ ] Channel Update Partial
-  - [ ] Channel Info
+  - [x] Channel Sync
+  - [x] Channel Update Partial
+  - [x] Channel Info
   - [x] Channel Statuses
-  - [ ] Channel Member Count Update
+  - [x] Channel Member Count Update
   - [x] Channel Unread Update
   - [x] Channel Pins Update
   - [x] Channel Pins Ack
   - [x] Channel Recipient Add
   - [x] Channel Recipient Remove
 - **Consoles**
-  - [ ] Console Command Update
+  - [x] Console Command Update
 - **Misc**
   - [x] Conversation Summary Update
-  - [ ] Creator Monetization Restrictions Update
-  - [ ] Deleted Entity IDs
+  - [x] Creator Monetization Restrictions Update
+  - [x] Deleted Entity IDs
   - [x] DM Settings Upsell Show
   - [x] Content Inventory Inbox Stale
   - [x] Generic Push Notification Sent
@@ -176,36 +176,36 @@ if let Event::Ready(ready) = event {
   - [x] Thread Member Update
   - [x] Thread Members Update
 - **Embedded Activities**
-  - [ ] Embedded Activity Update V2
+  - [x] Embedded Activity Update V2
 - **Entitlements**
-  - [ ] Entitlement Create
-  - [ ] Entitlement Update
-  - [ ] Entitlement Delete
+  - [x] Entitlement Create
+  - [x] Entitlement Update
+  - [x] Entitlement Delete
 - **Experiments**
-  - [ ] Experiment Session Override Create
-  - [ ] Experiment Session Override Delete
+  - [x] Experiment Session Override Create
+  - [x] Experiment Session Override Delete
 - **Friend Suggestions**
   - [x] Friend Suggestion Create
   - [x] Friend Suggestion Delete
 - **Game Servers**
-  - [ ] Game Server Create
-  - [ ] Game Server Update
-  - [ ] Game Server Delete
+  - [x] Game Server Create
+  - [x] Game Server Update
+  - [x] Game Server Delete
 - **Gift Codes**
-  - [ ] Gift Code Create
-  - [ ] Gift Code Update
+  - [x] Gift Code Create
+  - [x] Gift Code Update
 - **Guilds**
   - [x] Guild Create
   - [x] Guild Update
   - [x] Guild Delete
-  - [ ] Guild Application Command Index Update
+  - [x] Guild Application Command Index Update
   - [x] Guild Applied Boosts Update
   - [x] Guild Audit Log Entry Create
   - [x] Guild Ban Add
   - [x] Guild Ban Remove
-  - [ ] Guild Directory Entry Create
-  - [ ] Guild Directory Entry Update
-  - [ ] Guild Directory Entry Delete
+  - [x] Guild Directory Entry Create
+  - [x] Guild Directory Entry Update
+  - [x] Guild Directory Entry Delete
   - [x] Guild Emojis Update
   - [x] Guild Stickers Update
   - [x] Guild Feature Ack
@@ -216,9 +216,9 @@ if let Event::Ready(ready) = event {
   - [x] Guild Member Update
   - [x] Guild Member Remove
   - [x] Guild Members Chunk
-  - [ ] Guild Official Game Applications Update
-  - [ ] Guild Powerup Entitlements Create
-  - [ ] Guild Powerup Entitlements Delete
+  - [x] Guild Official Game Applications Update
+  - [x] Guild Powerup Entitlements Create
+  - [x] Guild Powerup Entitlements Delete
   - [x] Guild Role Create
   - [x] Guild Role Update
   - [x] Guild Role Delete
@@ -236,7 +236,7 @@ if let Event::Ready(ready) = event {
   - [x] Guild Soundboard Sound Create
   - [x] Guild Soundboard Sound Update
   - [x] Guild Soundboard Sound Delete
-  - [ ] Guild Soundboard Sounds Update
+  - [x] Guild Soundboard Sounds Update
   - [x] Soundboard Sounds
 - **Integrations**
   - [x] Guild Integrations Update
@@ -244,13 +244,13 @@ if let Event::Ready(ready) = event {
   - [x] Integration Update
   - [x] Integration Delete
 - **Interactions**
-  - [ ] Interaction Create
-  - [ ] Interaction Failure
-  - [ ] Interaction Success
-  - [ ] Application Command Autocomplete Response
-  - [ ] Interaction Modal Create
-  - [ ] Interaction IFrame Modal Create
-  - [ ] Social Layer SKU Purchase Eligibility Response
+  - [x] Interaction Create
+  - [x] Interaction Failure
+  - [x] Interaction Success
+  - [x] Application Command Autocomplete Response
+  - [x] Interaction Modal Create
+  - [x] Interaction IFrame Modal Create
+  - [x] Social Layer SKU Purchase Eligibility Response
 - **Messages**
   - [x] Message Create
   - [x] Message Update
@@ -264,27 +264,27 @@ if let Event::Ready(ready) = event {
   - [x] Message Reaction Remove
   - [x] Message Reaction Remove All
   - [x] Message Reaction Remove Emoji
-  - [ ] Reaction Notification Sent
+  - [x] Reaction Notification Sent
   - [x] Recent Mention Delete
   - [x] Last Messages
 - **Notification Center**
-  - [ ] Notification Center Item Create
-  - [ ] Notification Center Item Delete
-  - [ ] Notification Center Items Ack
-  - [ ] Notification Center Item Completed
+  - [x] Notification Center Item Create
+  - [x] Notification Center Item Delete
+  - [x] Notification Center Items Ack
+  - [x] Notification Center Item Completed
 - **Notification Settings**
-  - [ ] Notification Settings Update
+  - [x] Notification Settings Update
 - **OAuth2**
-  - [ ] OAuth2 Token Create
-  - [ ] OAuth2 Token Delete
+  - [x] OAuth2 Token Create
+  - [x] OAuth2 Token Delete
   - [x] OAuth2 Token Revoke
 - **Payments**
-  - [ ] Payment Update
+  - [x] Payment Update
 - **Presence**
   - [x] Presence Update
 - **Quests**
-  - [ ] Quests User Status Update
-  - [ ] Quests User Completion Update
+  - [x] Quests User Status Update
+  - [x] Quests User Completion Update
 - **Relationships**
   - [x] Relationship Add
   - [x] Relationship Update
@@ -292,27 +292,27 @@ if let Event::Ready(ready) = event {
   - [x] Game Relationship Add
   - [x] Game Relationship Remove
 - **Game Invites**
-  - [ ] Game Invite Create
-  - [ ] Game Invite Delete
-  - [ ] Game Invite Delete Many
+  - [x] Game Invite Create
+  - [x] Game Invite Delete
+  - [x] Game Invite Delete Many
 - **Lobbies**
-  - [ ] Lobby Create
-  - [ ] Lobby Update
-  - [ ] Lobby Delete
-  - [ ] Lobby Member Add
-  - [ ] Lobby Member Update
-  - [ ] Lobby Member Remove
-  - [ ] Lobby Message Create
-  - [ ] Lobby Message Update
-  - [ ] Lobby Message Delete
-  - [ ] Lobby Voice State Update
-  - [ ] Lobby Voice Server Update
+  - [x] Lobby Create
+  - [x] Lobby Update
+  - [x] Lobby Delete
+  - [x] Lobby Member Add
+  - [x] Lobby Member Update
+  - [x] Lobby Member Remove
+  - [x] Lobby Message Create
+  - [x] Lobby Message Update
+  - [x] Lobby Message Delete
+  - [x] Lobby Voice State Update
+  - [x] Lobby Voice Server Update
 - **Passive Update**
-  - [ ] Passive Update V1
+  - [x] Passive Update V1
   - [x] Passive Update V2
 - **Saved Messages**
-  - [ ] Saved Message Create
-  - [ ] Saved Message Delete
+  - [x] Saved Message Create
+  - [x] Saved Message Delete
 - **Sessions**
   - [x] Sessions Replace
 - **Stage Instances**
@@ -324,41 +324,41 @@ if let Event::Ready(ready) = event {
   - [x] Stream Server Update
   - [x] Stream Update
   - [x] Stream Delete
-  - [ ] Speed Test Create
-  - [ ] Speed Test Server Update
-  - [ ] Speed Test Update
-  - [ ] Speed Test Delete
+  - [x] Speed Test Create
+  - [x] Speed Test Server Update
+  - [x] Speed Test Update
+  - [x] Speed Test Delete
 - **Typing**
   - [x] Typing Start
 - **Current User**
-  - [ ] User Update
+  - [x] User Update
   - [x] User Application Update
   - [x] User Application Remove
-  - [ ] User Application Identity Update
-  - [ ] User Application Identity Remove
+  - [x] User Application Identity Update
+  - [x] User Application Identity Remove
   - [x] User Connections Update
   - [x] User Guild Settings Update
   - [x] User Merge Operation Completed
-  - [ ] User Non Channel Ack
+  - [x] User Non Channel Ack
   - [x] User Note Update
-  - [ ] User Premium Guild Subscription Slot Create
-  - [ ] User Premium Guild Subscription Slot Update
-  - [ ] User Premium Guild Subscription Slot Delete
+  - [x] User Premium Guild Subscription Slot Create
+  - [x] User Premium Guild Subscription Slot Update
+  - [x] User Premium Guild Subscription Slot Delete
   - [x] User Settings Update
-  - [ ] Audio Settings Update
-  - [ ] User Payment Browser Checkout Done
-  - [ ] User Payment Client Add
-  - [ ] User Payment Sources Update
+  - [x] Audio Settings Update
+  - [x] User Payment Browser Checkout Done
+  - [x] User Payment Client Add
+  - [x] User Payment Sources Update
   - [x] User Required Action Update
-  - [ ] User Subscriptions Update
+  - [x] User Subscriptions Update
   - [x] User Settings Proto Update
 - **Voice**
   - [x] Voice State Update
   - [x] Voice Server Update
-  - [ ] Voice Channel Effect Send
+  - [x] Voice Channel Effect Send
   - [x] Voice Channel Start Time Update
   - [x] Voice Channel Status Update
 - **Virtual Currency**
-  - [ ] Virtual Currency Balance Update
+  - [x] Virtual Currency Balance Update
 - **Webhooks**
   - [x] Webhooks Update

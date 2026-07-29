@@ -555,6 +555,74 @@ impl GatewayClient {
         Ok(())
     }
 
+    async fn send_text(&mut self, payload: String) -> BoxedResult<()> {
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
+        Ok(())
+    }
+
+    pub async fn ping_voice_server(&mut self) -> BoxedResult<()> {
+        self.send_text(create_op_5()).await
+    }
+
+    pub async fn request_call_connect(&mut self, channel_id: u64) -> BoxedResult<()> {
+        self.send_text(create_op_13(channel_id)).await
+    }
+
+    pub async fn create_speed_test(&mut self, preferred_region: Option<&str>) -> BoxedResult<()> {
+        self.send_text(create_op_32(preferred_region)).await
+    }
+
+    pub async fn delete_speed_test(&mut self) -> BoxedResult<()> {
+        self.send_text(create_op_33()).await
+    }
+
+    pub async fn resync_guild_channels(
+        &mut self,
+        guild_id: u64,
+        obfuscated_channel_ids: Vec<u64>,
+    ) -> BoxedResult<()> {
+        self.send_text(create_op_38(guild_id, obfuscated_channel_ids))
+            .await
+    }
+
+    pub async fn request_channel_member_count(
+        &mut self,
+        guild_id: u64,
+        channel_id: u64,
+    ) -> BoxedResult<()> {
+        self.send_text(create_op_39(guild_id, channel_id)).await
+    }
+
+    pub async fn update_time_spent_session_id(
+        &mut self,
+        initialization_timestamp: u64,
+        session_id: &str,
+        client_launch_id: &str,
+    ) -> BoxedResult<()> {
+        self.send_text(create_op_41(
+            initialization_timestamp,
+            session_id,
+            client_launch_id,
+        ))
+        .await
+    }
+
+    pub async fn qos_heartbeat(
+        &mut self,
+        seq: Option<u32>,
+        qos: serde_json::Value,
+        ver: u32,
+        active: bool,
+        reasons: Vec<String>,
+    ) -> BoxedResult<()> {
+        self.send_text(create_op_40(seq, qos, ver, active, reasons))
+            .await
+    }
+
     pub async fn request_channel_statuses(&mut self, guild_id: u64) -> BoxedResult<()> {
         let payload = create_op_36(guild_id);
 

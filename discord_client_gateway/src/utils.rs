@@ -225,3 +225,73 @@ pub(crate) fn create_stream_key_op(op: u8, stream_key: &str) -> String {
 pub(crate) fn create_op_22(stream_key: &str, paused: bool) -> String {
     json!({ "op": 22, "d": { "stream_key": stream_key, "paused": paused } }).to_string()
 }
+
+pub(crate) fn create_op_41(
+    initialization_timestamp: u64,
+    session_id: &str,
+    client_launch_id: &str,
+) -> String {
+    json!({
+        "op": 41,
+        "d": {
+            "initialization_timestamp": initialization_timestamp,
+            "session_id": session_id,
+            "client_launch_id": client_launch_id
+        }
+    })
+    .to_string()
+}
+
+pub(crate) fn create_op_5() -> String {
+    json!({ "op": 5, "d": null }).to_string()
+}
+
+pub(crate) fn create_op_13(channel_id: u64) -> String {
+    json!({ "op": 13, "d": { "channel_id": channel_id.to_string() } }).to_string()
+}
+
+pub(crate) fn create_op_32(preferred_region: Option<&str>) -> String {
+    json!({
+        "op": 32,
+        "d": { "preferred_region": preferred_region.map(Value::from).unwrap_or(Value::Null) }
+    })
+    .to_string()
+}
+
+pub(crate) fn create_op_33() -> String {
+    json!({ "op": 33, "d": {} }).to_string()
+}
+
+pub(crate) fn create_op_38(guild_id: u64, obfuscated_channel_ids: Vec<u64>) -> String {
+    let ids: Vec<String> = obfuscated_channel_ids
+        .iter()
+        .map(|id| id.to_string())
+        .collect();
+    json!({
+        "op": 38,
+        "d": { "guild_id": guild_id.to_string(), "obfuscated_channel_ids": ids }
+    })
+    .to_string()
+}
+
+pub(crate) fn create_op_39(guild_id: u64, channel_id: u64) -> String {
+    json!({
+        "op": 39,
+        "d": { "guild_id": guild_id.to_string(), "channel_id": channel_id.to_string() }
+    })
+    .to_string()
+}
+
+pub(crate) fn create_op_40(
+    seq: Option<u32>,
+    qos: Value,
+    ver: u32,
+    active: bool,
+    reasons: Vec<String>,
+) -> String {
+    json!({
+        "op": 40,
+        "d": { "seq": seq, "qos": qos, "ver": ver, "active": active, "reasons": reasons }
+    })
+    .to_string()
+}
