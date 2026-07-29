@@ -13,11 +13,13 @@ pub mod reaction;
 pub struct MessageCreateEvent {
     #[serde(flatten)]
     pub message: Message,
-    pub channel_type: u8,
+    #[serde(default)]
+    pub channel_type: Option<u8>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub guild_id: Option<u64>,
     pub member: Option<Member>,
+    #[serde(default)]
     #[serde(rename = "mentions")]
     pub mentions_with_members: Vec<UserWithMember>,
 }
@@ -27,11 +29,13 @@ pub struct MessageCreateEvent {
 pub struct MessageUpdateEvent {
     #[serde(flatten)]
     pub message: Message,
-    pub channel_type: u8,
+    #[serde(default)]
+    pub channel_type: Option<u8>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_u64")]
     pub guild_id: Option<u64>,
     pub member: Option<Member>,
+    #[serde(default)]
     #[serde(rename = "mentions")]
     pub mentions_with_members: Vec<UserWithMember>,
 }
