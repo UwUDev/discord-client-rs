@@ -25,3 +25,35 @@ pub struct VoiceState {
     #[serde(serialize_with = "serialize_option_u64_as_string")]
     pub channel_id: Option<u64>, // null on left voice channel event
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Stream {
+    pub stream_key: String,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub rtc_server_id: Option<u64>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    pub rtc_channel_id: Option<u64>,
+    pub region: Option<String>,
+    #[serde(default)]
+    #[serde(deserialize_with = "deserialize_string_to_vec_u64")]
+    pub viewer_ids: Vec<u64>,
+    pub paused: Option<bool>,
+}
+
+#[cfg(test)]
+mod stream_tests {
+    use super::Stream;
+
+    #[test]
+    fn parses_stream_create_shape() {
+        let raw = r#"{"stream_key":"guild:1:2:3","rtc_server_id":"4","region":"paris","viewer_ids":[],"paused":false}"#;
+        let s: Stream = serde_json::from_str(raw).unwrap();
+        assert_eq!(s.stream_key, "guild:1:2:3");
+        assert_eq!(s.rtc_server_id, Some(4));
+        assert_eq!(s.region.as_deref(), Some("paris"));
+        assert!(s.viewer_ids.is_empty());
+        assert_eq!(s.paused, Some(false));
+    }
+}

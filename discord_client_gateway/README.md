@@ -87,13 +87,13 @@ if let Event::Ready(ready) = event {
 - [ ] QoS Heartbeat
 - [ ] Update Time Spent Session ID
 - [x] Update Presence
-- [ ] Update Voice State
+- [x] Update Voice State
 - [ ] Ping Voice Server
-- [ ] Create Stream
-- [ ] Watch Stream
-- [ ] Set Stream Paused
-- [ ] Delete Stream
-- [ ] Ping Stream Server
+- [x] Create Stream
+- [x] Watch Stream
+- [x] Set Stream Paused
+- [x] Delete Stream
+- [x] Ping Stream Server
 - [ ] Update Lobby Voice States
 - [ ] Ping Lobby Voice Server
 - [x] Request Guild Members
@@ -132,11 +132,11 @@ if let Event::Ready(ready) = event {
   - [ ] Activity Invite Create
 - **Authentication**
   - [x] Auth Session Change
-  - [ ] Authenticator Create
-  - [ ] Authenticator Update
-  - [ ] Authenticator Delete
+  - [x] Authenticator Create
+  - [x] Authenticator Update
+  - [x] Authenticator Delete
 - **Application Commands**
-  - [ ] Application Command Permissions Update
+  - [x] Application Command Permissions Update
 - **Auto Moderation**
   - [x] Auto Moderation Mention Raid Detection
 - **Billing**
@@ -185,8 +185,8 @@ if let Event::Ready(ready) = event {
   - [ ] Experiment Session Override Create
   - [ ] Experiment Session Override Delete
 - **Friend Suggestions**
-  - [ ] Friend Suggestion Create
-  - [ ] Friend Suggestion Delete
+  - [x] Friend Suggestion Create
+  - [x] Friend Suggestion Delete
 - **Game Servers**
   - [ ] Game Server Create
   - [ ] Game Server Update
@@ -277,7 +277,7 @@ if let Event::Ready(ready) = event {
 - **OAuth2**
   - [ ] OAuth2 Token Create
   - [ ] OAuth2 Token Delete
-  - [ ] OAuth2 Token Revoke
+  - [x] OAuth2 Token Revoke
 - **Payments**
   - [ ] Payment Update
 - **Presence**
@@ -289,8 +289,8 @@ if let Event::Ready(ready) = event {
   - [x] Relationship Add
   - [x] Relationship Update
   - [x] Relationship Remove
-  - [ ] Game Relationship Add
-  - [ ] Game Relationship Remove
+  - [x] Game Relationship Add
+  - [x] Game Relationship Remove
 - **Game Invites**
   - [ ] Game Invite Create
   - [ ] Game Invite Delete
@@ -320,10 +320,10 @@ if let Event::Ready(ready) = event {
   - [x] Stage Instance Update
   - [x] Stage Instance Delete
 - **Streams**
-  - [ ] Stream Create
-  - [ ] Stream Server Update
-  - [ ] Stream Update
-  - [ ] Stream Delete
+  - [x] Stream Create
+  - [x] Stream Server Update
+  - [x] Stream Update
+  - [x] Stream Delete
   - [ ] Speed Test Create
   - [ ] Speed Test Server Update
   - [ ] Speed Test Update
@@ -332,31 +332,31 @@ if let Event::Ready(ready) = event {
   - [x] Typing Start
 - **Current User**
   - [ ] User Update
-  - [ ] User Application Update
-  - [ ] User Application Remove
+  - [x] User Application Update
+  - [x] User Application Remove
   - [ ] User Application Identity Update
   - [ ] User Application Identity Remove
   - [x] User Connections Update
   - [x] User Guild Settings Update
-  - [ ] User Merge Operation Completed
+  - [x] User Merge Operation Completed
   - [ ] User Non Channel Ack
   - [x] User Note Update
   - [ ] User Premium Guild Subscription Slot Create
   - [ ] User Premium Guild Subscription Slot Update
   - [ ] User Premium Guild Subscription Slot Delete
-  - [ ] User Settings Update
+  - [x] User Settings Update
   - [ ] Audio Settings Update
   - [ ] User Payment Browser Checkout Done
   - [ ] User Payment Client Add
   - [ ] User Payment Sources Update
-  - [ ] User Required Action Update
+  - [x] User Required Action Update
   - [ ] User Subscriptions Update
   - [x] User Settings Proto Update
 - **Voice**
   - [x] Voice State Update
-  - [ ] Voice Server Update
+  - [x] Voice Server Update
   - [ ] Voice Channel Effect Send
-  - [ ] Voice Channel Start Time Update
+  - [x] Voice Channel Start Time Update
   - [x] Voice Channel Status Update
 - **Virtual Currency**
   - [ ] Virtual Currency Balance Update

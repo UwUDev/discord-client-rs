@@ -1,4 +1,5 @@
 use crate::events::gateway::GatewayPayload;
+use crate::events::structs::application::*;
 use crate::events::structs::call::*;
 use crate::events::structs::channel::pin::*;
 use crate::events::structs::channel::recipient::*;
@@ -31,6 +32,7 @@ use crate::events::structs::notifications::GenericPushNotificationSentEvent;
 use crate::events::structs::presence::*;
 use crate::events::structs::ready::*;
 use crate::events::structs::requested::*;
+use crate::events::structs::stream::*;
 use crate::events::structs::user::direct_message::DirectMessageSettingsUpsellShowEvent;
 use crate::events::structs::user::note::UserNoteUpdateEvent;
 use crate::events::structs::user::relationship::*;
@@ -257,6 +259,25 @@ define_events! {
         VoiceChannelStartTimeUpdate { t: "VOICE_CHANNEL_START_TIME_UPDATE", type: VoiceChannelStartTimeUpdateEvent },
         VoiceStateUpdate { t: "VOICE_STATE_UPDATE", type: VoiceStateUpdateEvent },
         WebhookUpdate { t: "WEBHOOKS_UPDATE", type: WebhooksUpdateEvent },
+        ApplicationCommandPermissionsUpdate { t: "APPLICATION_COMMAND_PERMISSIONS_UPDATE", type: ApplicationCommandPermissionsUpdateEvent },
+        VoiceServerUpdate { t: "VOICE_SERVER_UPDATE", type: VoiceServerUpdateEvent },
+        AuthenticatorCreate { t: "AUTHENTICATOR_CREATE", type: AuthenticatorCreateEvent },
+        AuthenticatorUpdate { t: "AUTHENTICATOR_UPDATE", type: AuthenticatorUpdateEvent },
+        AuthenticatorDelete { t: "AUTHENTICATOR_DELETE", type: AuthenticatorDeleteEvent },
+        OAuth2TokenRevoke { t: "OAUTH2_TOKEN_REVOKE", type: OAuth2TokenRevokeEvent },
+        StreamCreate { t: "STREAM_CREATE", type: StreamCreateEvent },
+        StreamUpdate { t: "STREAM_UPDATE", type: StreamUpdateEvent },
+        StreamServerUpdate { t: "STREAM_SERVER_UPDATE", type: StreamServerUpdateEvent },
+        StreamDelete { t: "STREAM_DELETE", type: StreamDeleteEvent },
+        UserApplicationUpdate { t: "USER_APPLICATION_UPDATE", type: UserApplicationUpdateEvent },
+        UserApplicationRemove { t: "USER_APPLICATION_REMOVE", type: UserApplicationRemoveEvent },
+        UserMergeOperationCompleted { t: "USER_MERGE_OPERATION_COMPLETED", type: UserMergeOperationCompletedEvent },
+        UserRequiredActionUpdate { t: "USER_REQUIRED_ACTION_UPDATE", type: UserRequiredActionUpdateEvent },
+        UserSettingsUpdate { t: "USER_SETTINGS_UPDATE", type: UserSettingsUpdateEvent },
+        GameRelationshipAdd { t: "GAME_RELATIONSHIP_ADD", type: GameRelationshipAddEvent },
+        GameRelationshipRemove { t: "GAME_RELATIONSHIP_REMOVE", type: GameRelationshipRemoveEvent },
+        FriendSuggestionCreate { t: "FRIEND_SUGGESTION_CREATE", type: FriendSuggestionCreateEvent },
+        FriendSuggestionDelete { t: "FRIEND_SUGGESTION_DELETE", type: FriendSuggestionDeleteEvent },
     },
     non_dispatch op 7, {
         GatewayReconnect { t: "RECONNECT", type: GatewayReconnectEvent }

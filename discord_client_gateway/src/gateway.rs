@@ -476,6 +476,85 @@ impl GatewayClient {
         Ok(())
     }
 
+    pub async fn update_voice_state(
+        &mut self,
+        guild_id: Option<u64>,
+        channel_id: Option<u64>,
+        self_mute: bool,
+        self_deaf: bool,
+        self_video: Option<bool>,
+    ) -> BoxedResult<()> {
+        let payload = create_op_4(guild_id, channel_id, self_mute, self_deaf, self_video);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
+        Ok(())
+    }
+
+    pub async fn create_stream(
+        &mut self,
+        stream_type: &str,
+        guild_id: Option<u64>,
+        channel_id: u64,
+        preferred_region: Option<&str>,
+    ) -> BoxedResult<()> {
+        let payload = create_op_18(stream_type, guild_id, channel_id, preferred_region);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
+        Ok(())
+    }
+
+    pub async fn delete_stream(&mut self, stream_key: &str) -> BoxedResult<()> {
+        let payload = create_stream_key_op(19, stream_key);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
+        Ok(())
+    }
+
+    pub async fn watch_stream(&mut self, stream_key: &str) -> BoxedResult<()> {
+        let payload = create_stream_key_op(20, stream_key);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
+        Ok(())
+    }
+
+    pub async fn ping_stream_server(&mut self, stream_key: &str) -> BoxedResult<()> {
+        let payload = create_stream_key_op(21, stream_key);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
+        Ok(())
+    }
+
+    pub async fn set_stream_paused(&mut self, stream_key: &str, paused: bool) -> BoxedResult<()> {
+        let payload = create_op_22(stream_key, paused);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
+        Ok(())
+    }
+
     pub async fn request_channel_statuses(&mut self, guild_id: u64) -> BoxedResult<()> {
         let payload = create_op_36(guild_id);
 
