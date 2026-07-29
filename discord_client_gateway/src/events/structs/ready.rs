@@ -86,5 +86,5 @@ pub enum AuthenticatorType {
     Webauthn = 1,
     Totp = 2,
     Sms = 3,
-    Unknown(u8),
+    Unknown(u16),
 }

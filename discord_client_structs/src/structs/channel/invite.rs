@@ -101,5 +101,5 @@ pub enum InviteTargetType {
     EmbeddedApplication = 2,
     RoleSubscriptions = 3,
     CreatorPage = 4,
-    Unknown(u8),
+    Unknown(u16),
 }

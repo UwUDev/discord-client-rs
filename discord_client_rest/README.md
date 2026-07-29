@@ -150,8 +150,41 @@ self.client
   - [ ] Set Application Embeddability
   - [ ] Transfer Application
   - [ ] Upload Unverified Application Icon
+  - [ ] List Application Testers
+  - [ ] Add Application Tester
+  - [ ] Accept Application Tester Invitation
+  - [ ] Remove Application Tester
+  - [ ] Request Application Gateway Intents
+  - [ ] Query Application Test Mode
+  - [ ] Launch Embedded Activity
+  - [ ] Leave Embedded Activity Instance
+  - [ ] List OAuth2 Application Assets
+  - [ ] Create OAuth2 Application Asset
+  - [ ] Delete OAuth2 Application Asset
+  - [ ] Proxy Application Assets
+  - [ ] Upload Application Asset
+  - [ ] Update Application Asset
+  - [ ] Get RPC Application
+  - [ ] List User Application Role Connections
+  - [ ] List Application Managed Links
+  - [ ] Create Application Managed Link
+  - [ ] Get Application Managed Link
+  - [ ] Update Application Managed Link
+  - [ ] Delete Application Managed Link
+  - [ ] Create Application Quick Link
+  - [ ] Get Application Quick Link
+  - [ ] Get Application Verification Eligibility _(deprecated)_
+  - [ ] Verify Application
+  - [ ] List Social SDK Releases
+  - [ ] Get Social SDK Release
+  - [ ] Enable Social SDK
+  - [ ] List Application External Identity Provider Configurations
+  - [ ] Create Application External Identity Provider Configuration
+  - [ ] Remove Application External Identity Provider Configuration
+  - [ ] Get Application Undeletable Reason
 - **Audit log**
   - [x] Get Guild Audit Log
+  - [ ] List Guild Audit Log Entries
 - **Auto moderation**
   - [ ] Clear Mention Raid Incident
   - [ ] Create Guild AutoMod Rule
@@ -215,6 +248,9 @@ self.client
   - [ ] Stop Ringing Channel Recipients
   - [ ] Trigger Typing Indicator
   - [ ] Update Message Request
+  - [ ] Create Group DM Shell
+  - [ ] Get Channel Linked Accounts
+  - [ ] Remove Lobby Link
 - **Clan**
   - [ ] Create Clan
   - [ ] Disable Clan
@@ -234,6 +270,8 @@ self.client
   - [ ] Search Discoverable Guilds
   - [ ] Search Published Guilds
   - [ ] Validate Discovery Search Term
+  - [ ] Get Guild Profile
+  - [ ] Modify Guild Profile
 - **Emoji**
   - [ ] Create Application Emoji
   - [ ] Create Guild Emoji
@@ -254,6 +292,7 @@ self.client
   - [ ] Get Link Code
   - [ ] Get Linked Users
   - [ ] Modify Linked User
+  - [ ] Remove Linked User
 - **Guild scheduled events**
   - [ ] Create Guild Scheduled Event
   - [ ] Create Guild Scheduled Event Exception
@@ -347,6 +386,74 @@ self.client
   - [ ] Reset Guild Join Request
   - [ ] Search Guild Bans
   - [ ] Search Guild Members
+  - [ ] Get Guild Ownership Transfer Code
+  - [ ] List Guild Members With Unusual DM Activity
+  - [ ] Get Current Guild Member
+  - [ ] List Guild Role Connections Configurations
+  - [ ] Get Guild Role Connection Configuration
+  - [ ] Modify Guild Role Connection Configuration
+  - [ ] Get Guild Role Connection Eligibility
+  - [ ] Assign Guild Role Connection
+  - [ ] Unassign Guild Role Connection
+  - [ ] Get Current User Guild Join Request
+  - [ ] Acknowledge Guild Join Request
+  - [ ] Action Guild Join Request by ID _(deprecated)_
+  - [ ] List User Guild Join Requests
+  - [ ] List Guild Onboarding Allowed Applications
+  - [ ] Create Guild Onboarding Responses
+  - [ ] Modify Guild Onboarding Responses
+  - [ ] Get Guild New Member Welcome
+  - [ ] Modify Guild New Member Welcome
+  - [ ] Modify Guild New Member Action
+  - [ ] Modify Guild Resource Channel
+  - [ ] Get Guild New Member Actions
+  - [ ] Complete Guild New Member Action
+  - [ ] List Guild Top Games
+  - [ ] List Premium Guild Subscriptions
+  - [ ] Create Premium Guild Subscriptions
+  - [ ] Delete Premium Guild Subscription
+  - [ ] List Guild Powerups
+  - [ ] Add Guild Powerup
+  - [ ] Modify Guild Powerup
+  - [ ] Remove Guild Powerup
+  - [ ] List Guild Game Servers
+  - [ ] List Guild Game Server Regions
+  - [ ] Wake Guild Game Server
+  - [ ] Migrate Pin Permission
+  - [ ] Migrate Bypass Slowmode Permission
+  - [ ] Query Student Hubs
+  - [ ] Join Student Hub
+  - [ ] Join Student Hub Waitlist
+  - [ ] Get Guild Role Subscriptions Settings
+  - [ ] Modify Guild Role Subscriptions Settings
+  - [ ] Create Guild Role Subscription Group Listing
+  - [ ] Get Guild Role Subscription Group Listing
+  - [ ] List Guild Role Subscription Group Listings
+  - [ ] Modify Guild Role Subscription Group Listing
+  - [ ] Delete Guild Role Subscription Group Listing
+  - [ ] Create Guild Role Subscription Listing
+  - [ ] Modify Guild Role Subscription Listing
+  - [ ] Delete Guild Role Subscription Listing
+  - [ ] Archive Guild Role Subscription Listing
+  - [ ] List Guild Role Subscription Trials
+  - [ ] Modify Guild Role Subscription Listing Trial
+  - [ ] List Guild Role Subscription Listing Templates
+  - [ ] Get Guild Role Subscription Listing Trial Eligibility
+  - [ ] Get Creator Monetization Eligibility
+  - [ ] Create Creator Monetization Enable Request
+  - [ ] Accept Creator Monetization Enable Request Terms _(deprecated)_
+  - [ ] Accept Creator Monetization Terms
+  - [ ] Get Creator Monetization Restrictions
+  - [ ] Get Creator Monetization Marketing Onboarding
+  - [ ] Update Creator Monetization Team
+  - [ ] Accept Creator Monetization New Terms Demonetized
+  - [ ] Remove Creator Monetization
+  - [ ] Create Guild Product Listing
+  - [ ] List Guild Product Listings
+  - [ ] Get Guild Product Listing
+  - [ ] Modify Guild Product Listing
+  - [ ] Delete Guild Product Listing
+  - [ ] Get Guild Product Listing Attachment URL
 - **Integration**
   - [ ] Delete Channel Integration
   - [ ] Delete Guild Integration
@@ -365,6 +472,7 @@ self.client
   - [ ] Search Tenor GIFs
   - [ ] Sync Guild Integration
   - [ ] Track Selected GIF
+  - [ ] Create Guild Integration
 - **Invite**
   - [ ] Accept Invite
   - [x] Create Channel Invite
@@ -375,6 +483,10 @@ self.client
   - [ ] Get Invite
   - [ ] Get User Invites
   - [ ] Revoke User Invites
+  - [ ] List Invite Friend Members
+  - [ ] List Invite Target Users
+  - [ ] Update Invite Target Users
+  - [ ] Get Invite Target Users Job Status
 - **Message**
   - [ ] Acknowledge Message
   - [ ] Acknowledge Pinned Messages
@@ -411,12 +523,28 @@ self.client
   - [ ] Unfurl Embed
   - [ ] Unfurl Embeds
   - [x] Unpin Message
+  - [ ] List DM Messages
+  - [ ] Search Guild Messages
+  - [ ] Search Channel Messages
+  - [ ] Search Guild Messages by Tab
+  - [ ] Search Channel Messages by Tab
+  - [ ] Search User Messages by Tab
+  - [ ] Scan Explicit Media
+  - [ ] Bulk Scan Explicit Media
+  - [ ] Report Sent Explicit Content False Positive
+  - [ ] Report Explicit Content False Positive
+  - [ ] Unhide Message from Guild Feed
+  - [ ] Get Message Interaction Data
+  - [ ] List Message Pins
+  - [ ] List Poll Answer Voters
+  - [ ] List User Message Summaries
 - **Premium referrals**
   - [ ] Create Premium Referral
   - [ ] Get Premium Referral
   - [ ] Get Premium Referral Eligibility
   - [ ] Get Premium Referral Eligible Users
   - [ ] Preview Premium Referral
+  - [ ] Get Premium Referral Incentive Eligibility
 - **Presence**
   - [ ] Create Headless Session
   - [ ] Delete Headless Session
@@ -424,6 +552,12 @@ self.client
   - [ ] Get Activity Secret
   - [ ] Get Presences
   - [ ] Update Presence
+  - [ ] List Presences for Xbox
+  - [ ] List Global Activity Statistics
+  - [ ] List Application Activity Statistics
+  - [ ] List User Application Activity Statistics
+  - [ ] Update Activity Session
+  - [ ] Update Activity Subscriptions
 - **Quest**
   - [ ] Accept Quest
   - [ ] Claim Quest Reward
@@ -434,6 +568,19 @@ self.client
   - [ ] Reset Quest
   - [ ] Reset Quest Dismissibility
   - [ ] Send Quest Heartbeat
+  - [ ] List Current User Quests
+  - [ ] List Claimed Quests
+  - [ ] Get Quest Config
+  - [ ] Get Quest Preview
+  - [ ] Get Quest Placement
+  - [ ] Get Earned Quest Placement
+  - [ ] Get Quest Decisions
+  - [ ] Get Quest Creative Preview
+  - [ ] Claim Quest Creative Reward
+  - [ ] Send Quest Video Progress
+  - [ ] Start Console Quest
+  - [ ] Stop Console Quest
+  - [ ] Reset Recent Quest Completions
 - **Relationship**
   - [ ] Bulk Remove Relationships
   - [ ] Create Game Relationship
@@ -451,6 +598,7 @@ self.client
   - [ ] Send Friend Request
   - [ ] Send Game Friend Request
   - [ ] Unignore User
+  - [ ] Bulk Add Relationships
 - **Soundboard**
   - [ ] Create Guild Soundboard Sound
   - [ ] Delete Guild Soundboard Sound
@@ -464,6 +612,7 @@ self.client
   - [ ] Delete Stage Instance
   - [ ] Get Stage Instance
   - [ ] Modify Stage Instance
+  - [ ] Create Stage Instance
 - **Sticker**
   - [ ] Create Guild Sticker
   - [ ] Delete Guild Sticker
@@ -492,6 +641,9 @@ self.client
   - [ ] Modify Team Member
   - [ ] Remove Team Member
   - [ ] Search Companies
+  - [ ] Get Company
+  - [ ] Create Team Identity Verification
+  - [ ] Get Team Identity Verification
 - **User settings**
   - [x] Change username
   - [x] Change global name
@@ -520,6 +672,12 @@ self.client
   - [ ] Modify User Settings
   - [ ] Modify User Settings Proto
   - [ ] Restore Notification Settings Snapshot
+  - [ ] Modify Email Settings
+  - [ ] Modify Audio Settings
+  - [ ] List Video Filter Assets
+  - [ ] Create Video Filter Asset
+  - [ ] Delete Video Filter Asset
+  - [ ] Mark Video Filter Asset Last Used
 - **User**
   - [ ] Apply Confetti Potion
   - [ ] Authorize User Connection
@@ -578,6 +736,26 @@ self.client
   - [ ] Suppress Tutorial
   - [ ] Verify User Captcha
   - [ ] Verify User Email Change
+  - [ ] Report Meaningfully Online
+  - [ ] List Recent Avatars
+  - [ ] Delete Recent Avatar
+  - [ ] Disable User Account
+  - [ ] Delete User Account
+  - [ ] Modify User Agreements
+  - [ ] Get Unique Username Suggestions _(deprecated)_
+  - [ ] Get Unique Username Eligibility
+  - [ ] Create Unique Username _(deprecated)_
+  - [ ] Set Guild Identity
+  - [ ] Get User Survey
+  - [ ] Acknowledge User Survey
+  - [ ] Get Tutorial
+  - [ ] Submit Developer Portal CSAT Survey
+  - [ ] List Saved Messages
+  - [ ] Save Message
+  - [ ] Unsave Message
+  - [ ] Verify Age
+  - [ ] Create User Identity Verification _(deprecated)_
+  - [ ] Get User Identity Verification _(deprecated)_
 - **Voice**
   - [ ] Broadcast Stream Notification
   - [ ] Get Current User Voice State
@@ -590,6 +768,11 @@ self.client
   - [ ] Modify User Voice State
   - [ ] Send Voice Channel Effect
   - [ ] Upload Stream Preview
+  - [ ] Upload Voice Public Key
+  - [ ] Verify Voice Public Key
+  - [ ] Send Custom Call Sound
+  - [ ] Modify Stream
+  - [ ] Upload Video Stream Preview
 - **Webhook**
   - [ ] Create Webhook
   - [ ] Delete Webhook
@@ -606,3 +789,275 @@ self.client
   - [ ] Get Webhook with Token
   - [ ] Modify Webhook
   - [ ] Modify Webhook with Token
+  - [ ] Get Service Webhook
+  - [ ] Execute Service Webhook
+- **Application Directory**
+  - [ ] List Application Directory Categories
+  - [ ] List Application Directory Collections
+  - [ ] Get Application Directory Application
+  - [ ] Get Application Directory Application Embed
+  - [ ] List Application Directory Similar Applications
+  - [ ] Search Applications Directory
+- **Billing**
+  - [ ] Get Billing Country Code
+  - [ ] Get Billing Location Info
+  - [ ] List Payment Sources
+  - [ ] Get Payment Source
+  - [ ] Get Payment Source Creation Context
+  - [ ] Create Payment Source
+  - [ ] Modify Payment Source
+  - [ ] Delete Payment Source
+  - [ ] Validate Billing Address
+  - [ ] Get Stripe Setup Intent Secret
+  - [ ] Create PayPal Billing Agreement Token
+  - [ ] List Available Adyen Payment Methods
+  - [ ] Create Billing Popup Bridge
+  - [ ] Create Billing Popup Bridge Redirect
+  - [ ] Create Billing Popup Bridge Callback
+  - [ ] Get Localized Pricing Promo
+  - [ ] Get User Offer
+  - [ ] Acknowledge User Offer
+  - [ ] Create Churn User Offer
+  - [ ] Get Churn User Offer
+  - [ ] Get User Trial Offer _(deprecated)_
+  - [ ] Acknowledge User Trial Offer _(deprecated)_
+  - [ ] Redeem User Offer
+  - [ ] Get Checkout Recovery
+  - [ ] List Premium User Affinities
+  - [ ] List Eligible Application Subscription Guilds
+- **Collectibles**
+  - [ ] List Collectibles Categories _(deprecated)_
+  - [ ] List Collectibles Categories V2
+  - [ ] Get Collectibles Shop
+  - [ ] Search Collectibles
+  - [ ] Get Collectibles Product
+  - [ ] List User Purchased Collectibles
+  - [ ] Get Valid Collectibles Gift Recipient
+  - [ ] Get Valid Collectibles Gift Recipients Batch
+  - [ ] Claim Premium Collectibles Product
+  - [ ] Claim Reward Category Product
+  - [ ] Get Collectibles Marketing
+  - [ ] Get Collectibles Shop Tab Layout
+- **Connected Accounts**
+  - [ ] Authorize User Connection
+  - [ ] Create User Connection Callback
+  - [ ] Create Contact Sync Connection
+  - [ ] Update External Friend List Entries
+  - [ ] Contact Sync Settings
+  - [ ] Create Domain Connection
+  - [ ] List User Connections
+  - [ ] Get User Connection Access Token
+  - [ ] List User Connection Subreddits
+  - [ ] Refresh User Connection
+  - [ ] Modify User Connection
+  - [ ] Delete User Connection
+  - [ ] List User Linked Connections
+  - [ ] Create Console Connection
+  - [ ] Cancel Console Connection Request
+  - [ ] List Console Devices
+  - [ ] Send Console Command
+  - [ ] Cancel Console Command
+- **Directory Entry**
+  - [ ] Get Directory Counts
+  - [ ] List Directory Entries
+  - [ ] List Partial Directory Entries
+  - [ ] Search Directory Entries
+  - [ ] Get Directory Entry
+  - [ ] Create Directory Entry
+  - [ ] Modify Directory Entry
+  - [ ] Delete Directory Entry
+  - [ ] Get Directory Broadcast Info
+- **Entitlements**
+  - [ ] List User Entitlements
+  - [ ] List User Giftable Entitlements
+  - [ ] List Guild Entitlements
+  - [ ] List Application Entitlements
+  - [ ] List User Application Entitlements
+  - [ ] Get Application Entitlement
+  - [ ] Consume Application Entitlement
+  - [ ] Delete Application Entitlement
+  - [ ] Get Gift Code
+  - [ ] Redeem Gift Code
+  - [ ] List User Gift Codes
+  - [ ] Create User Gift Code
+  - [ ] Revoke User Gift Code
+  - [ ] List Application Gift Code Batches
+  - [ ] Create Application Gift Code Batch
+  - [ ] Get Application Gift Code Batch
+- **Game Invites**
+  - [ ] Create Game Invite
+  - [ ] Delete Game Invite
+  - [ ] Delete Game Invites
+- **Game**
+  - [ ] List Application Game Claims
+  - [ ] Get Application Game Claim
+  - [ ] Create Application Game Claim
+  - [ ] Modify Application Game Claim
+  - [ ] Delete Application Game Claim
+  - [ ] List Detectable Non Game Applications
+  - [ ] List Detectable Games
+  - [ ] List Detectable Game Exclusions
+  - [ ] List Games
+  - [ ] Get Game
+  - [ ] List Game Announcements
+- **Guild Analytics**
+  - [ ] List Guild Growth Activation Overview
+  - [ ] List Guild Growth Activation Joins
+  - [ ] List Guild Growth Activation Joins by Invite
+  - [ ] List Guild Growth Activation Joins by Referrer
+  - [ ] List Guild Growth Activation Joins by Sources
+  - [ ] List Guild Growth Activation Leavers
+  - [ ] List Guild Growth Activation Percentages
+  - [ ] List Guild Growth Activation Retention
+  - [ ] List Guild Growth Activation Membership
+  - [ ] List Guild Engagement Base
+  - [ ] List Guild Engagement Overview
+  - [ ] List Guild Engagement Muters
+  - [ ] List Guild Engagement Pruneable Members
+  - [ ] List Guild Engagement Text Channels
+  - [ ] List Guild Engagement Voice Channels
+  - [ ] List Guild Audience New Members by Discord Tenure
+  - [ ] List Guild Audience Participators by Guild Tenure
+  - [ ] List Guild Audience Participators by Platform
+  - [ ] List Guild Audience Participators by Registration Country
+  - [ ] List Guild Channel Following Overview
+  - [ ] List Guild Channel Following by Channel
+  - [ ] List Guild Channel Following Reach
+  - [ ] List Guild Channel Following Guild Size _(deprecated)_
+  - [ ] List Guild Channel Following Guild Size by Channel
+  - [ ] List Guild Welcome Screen Funnel
+  - [ ] List Guild Welcome Screen Users _(deprecated)_
+- **Lobby**
+  - [ ] Leave Lobby
+  - [ ] Create Lobby Invite for Current User
+  - [ ] Create Lobby Invite
+  - [ ] Modify Lobby Linked Channel
+  - [ ] List Lobby Messages
+  - [ ] Create Lobby Message
+- **Notification Center**
+  - [ ] List Notification Center Items
+  - [ ] Delete Notification Center Item
+  - [ ] Acknowledge Notification Center Item
+  - [ ] Bulk Acknowledge Notification Center Items
+- **Payment**
+  - [ ] Verify Purchase Request
+  - [ ] Resend Payment Verification Email
+  - [ ] List Payments
+  - [ ] Get Payment
+  - [ ] Void Payment
+  - [ ] Get Payment Invoice Breakdown
+- **Promotion**
+  - [ ] List Outbound Promotions _(deprecated)_
+  - [ ] List Promotions
+  - [ ] List BOGO Promotions
+  - [ ] List Claimed Promotions
+  - [ ] Claim Promotion
+- **Safety Hub**
+  - [ ] Get User Safety Hub
+  - [ ] Get Suspended User Safety Hub
+  - [ ] Request Classification Review
+  - [ ] Request Classification Review for Suspended User
+  - [ ] Check Age Verification for Suspended User
+  - [ ] Request Age Verification for Suspended User
+- **Store**
+  - [ ] List Application SKUs
+  - [ ] Create SKU
+  - [ ] Get SKU
+  - [ ] Modify SKU
+  - [ ] List SKU Store Listings
+  - [ ] Create Store Listing
+  - [ ] Get Store Listing
+  - [ ] Modify Store Listing
+  - [ ] Delete Store Listing
+  - [ ] List Application Published Store Listings
+  - [ ] Get Application Primary Store Listing
+  - [ ] List Bulk Application Primary Store Listing
+  - [ ] Get SKU Published Store Listing
+  - [ ] List Subscription Plans
+  - [ ] List Published Subscription Plans
+  - [ ] List Bulk Published Subscription Plans
+  - [ ] Get Subscription Group Listing By Subscription Plan
+  - [ ] Get SKU Purchase Preview
+  - [ ] Create SKU Purchase
+  - [ ] List Application Store Assets
+  - [ ] Create Application Store Asset
+  - [ ] Delete Application Store Asset
+  - [ ] List Store Price Tiers
+  - [ ] Get Store Price Tier
+  - [ ] Get EULA
+  - [ ] Get Application Store Layout
+  - [ ] Modify Application Storefront Publish States
+  - [ ] Get Consumable SKU Pricing
+  - [ ] Get HD Streaming Consumable
+  - [ ] Apply HD Streaming Consumable
+  - [ ] Get Confetti Consumable
+  - [ ] Apply Confetti Consumable
+  - [ ] Get Virtual Currency Balance
+  - [ ] Redeem Virtual Currency
+  - [ ] Get Application Storefront for Premium Button
+  - [ ] Get Storefront Collection
+  - [ ] Get Storefront Product
+  - [ ] Get Storefront Product By SKU ID
+  - [ ] List Storefront Products By SKU ID
+  - [ ] List Storefront SKU Prices
+  - [ ] Get Guild Application Storefront
+  - [ ] List Social Layer SKUs
+  - [ ] Create Social Layer SKU
+  - [ ] Get Application Storefront
+  - [ ] Modify Application Storefront
+  - [ ] Delete Application Storefront
+  - [ ] Get Guild Application SKU Storefront _(deprecated)_
+  - [ ] Get Application SKU Storefront
+  - [ ] Get Guild Application Storefront Announcement
+  - [ ] Check Social Layer SKU Purchase Eligibility By Guild _(deprecated)_
+  - [ ] Check Social Layer SKU Purchase Eligibility
+  - [ ] Get Social Layer Storefront Config
+  - [ ] Get Social Layer Storefront Eligibilities
+- **Subscription**
+  - [ ] List Subscriptions
+  - [ ] Get Subscription
+  - [ ] Create Subscription
+  - [ ] Modify Subscription
+  - [ ] Delete Subscription
+  - [ ] Create Subscription Preview
+  - [ ] Get Subscription Preview
+  - [ ] Modify Subscription Preview
+  - [ ] List Subscription Invoices
+  - [ ] Pay Subscription Invoice
+  - [ ] Claim Subscription Promotion Reward
+  - [ ] Get Premium Guild Subscription Cooldown
+  - [ ] List Applied Premium Guild Subscriptions
+  - [ ] List Premium Guild Subscription Slots
+  - [ ] Cancel Premium Guild Subscription Slot
+  - [ ] Uncancel Premium Guild Subscription Slot
+- **Checkpoint**
+  - [ ] Get Checkpoint
+  - [ ] Claim Checkpoint Avatar Decoration
+- **Application Commands**
+  - [ ] Get Application Command Index
+  - [ ] Get Channel Application Command Index
+  - [ ] Get Guild Application Command Index
+  - [ ] Get User Application Command Index
+  - [ ] List Global Application Commands
+  - [ ] Create Global Application Command
+  - [ ] Get Global Application Command
+  - [ ] Modify Global Application Command
+  - [ ] Delete Global Application Command
+  - [ ] List Guild Application Commands
+  - [ ] Create Guild Application Command
+  - [ ] Get Guild Application Command
+  - [ ] Modify Guild Application Command
+  - [ ] Delete Guild Application Command
+  - [ ] List Guild Application Command Permissions
+  - [ ] Get Application Command Permissions
+  - [ ] Modify Application Command Permissions
+- **Interactions**
+  - [ ] Create Interaction Response
+  - [ ] Get Original Interaction Response
+  - [ ] Modify Original Interaction Response
+  - [ ] Delete Original Interaction Response
+  - [ ] Create Followup Message
+  - [ ] Get Followup Message
+  - [ ] Modify Followup Message
+  - [ ] Delete Followup Message
+  - [ ] Create Interaction

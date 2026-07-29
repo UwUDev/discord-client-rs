@@ -66,11 +66,10 @@ fn generate_created_at_impl(input: DeriveInput, is_option: bool) -> TokenStream 
                 quote! {
                     impl #struct_name {
                         pub fn created_at(&self) -> Option<chrono::DateTime<chrono::Utc>> {
-                            self.id.map(|id| {
+                            self.id.and_then(|id| {
                                 let timestamp = (id >> 22) + 1420070400000;
                                 <chrono::Utc as chrono::TimeZone>::timestamp_millis_opt(&chrono::Utc, timestamp as i64)
                                     .single()
-                                    .unwrap()
                             })
                         }
                     }
@@ -150,7 +149,7 @@ pub fn derive_enum_from_primitive(input: TokenStream) -> TokenStream {
                     ..
                 }) = expr
                 {
-                    Some(lit.base10_parse::<u8>().unwrap())
+                    Some(lit.base10_parse::<u16>().unwrap())
                 } else {
                     None
                 }
@@ -196,8 +195,8 @@ pub fn derive_enum_from_primitive(input: TokenStream) -> TokenStream {
     };
 
     let expanded = quote! {
-        impl From<u8> for #enum_name {
-            fn from(value: u8) -> Self {
+        impl From<u16> for #enum_name {
+            fn from(value: u16) -> Self {
                 match value {
                     #(#match_arms)*
                     _ => #enum_name::Unknown(value),
@@ -206,7 +205,7 @@ pub fn derive_enum_from_primitive(input: TokenStream) -> TokenStream {
         }
 
         impl #enum_name {
-            pub fn as_u8(&self) -> u8 {
+            pub fn as_u16(&self) -> u16 {
                 match self {
                     #(#as_u8_arms)*
                     #enum_name::Unknown(u) => *u,
@@ -221,7 +220,7 @@ pub fn derive_enum_from_primitive(input: TokenStream) -> TokenStream {
             where
                 S: serde::Serializer,
             {
-                serializer.serialize_u8(self.as_u8())
+                serializer.serialize_u16(self.as_u16())
             }
         }
 
@@ -230,7 +229,7 @@ pub fn derive_enum_from_primitive(input: TokenStream) -> TokenStream {
             where
                 D: serde::Deserializer<'de>,
             {
-                let value = u8::deserialize(deserializer)?;
+                let value = u16::deserialize(deserializer)?;
                 Ok(Self::from(value))
             }
         }

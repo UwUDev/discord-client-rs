@@ -39,5 +39,5 @@ pub enum RelationshipType {
     OutgoingRequest = 4,
     Implicit = 5,
     Suggestion = 6,
-    Unknown(u8),
+    Unknown(u16),
 }

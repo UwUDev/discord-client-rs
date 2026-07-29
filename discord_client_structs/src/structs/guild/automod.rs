@@ -88,7 +88,7 @@ pub enum AutomodEventType {
     #[default]
     MessageSend = 1,
     GuildMemberEvent = 2,
-    Unknown(u8),
+    Unknown(u16),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
@@ -102,7 +102,7 @@ pub enum AutomodTriggerType {
     MentionSpam = 5,
     UserProfile = 6,
     GuildPolicy = 7,
-    Unknown(u8),
+    Unknown(u16),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
@@ -112,5 +112,5 @@ pub enum AutomodActionType {
     SendAlertMessage = 2,
     TimeoutUser = 3,
     QuarantineUser = 4,
-    Unknown(u8),
+    Unknown(u16),
 }
