@@ -17,12 +17,11 @@ use current_locale::current_locale;
 use derive_builder::Builder;
 use discord_client_structs::parser::parse_id_from_token;
 use discord_client_structs::structs::application::ApplicationCommandIndex;
+use discord_client_structs::structs::client::{BuildNumbers, ClientSession};
+use discord_client_utils::find_build_numbers;
 use iana_time_zone::get_timezone;
 use log::{error, warn};
 use regex::Regex;
-use wreq::header::HeaderMap;
-use wreq::{Client, Method, Response, redirect};
-use wreq_util::{Emulation, EmulationOS, EmulationOption};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
@@ -30,8 +29,9 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::Mutex;
-use discord_client_structs::structs::client::{BuildNumbers, ClientSession};
-use discord_client_utils::find_build_numbers;
+use wreq::header::HeaderMap;
+use wreq::{Client, Method, Response, redirect};
+use wreq_util::{Emulation, EmulationOS, EmulationOption};
 
 const API_BASE: &str = "https://discord.com/api/";
 
@@ -173,7 +173,10 @@ impl RestClient {
             .header("x-debug-options", "bugReporterEnabled")
             .header("x-discord-locale", locale.clone())
             .header("x-discord-timezone", timezone.clone())
-            .header("x-super-properties", build_super_props(build_numbers.clone(), client_session.clone()))
+            .header(
+                "x-super-properties",
+                build_super_props(build_numbers.clone(), client_session.clone()),
+            )
             .send()
             .await?;
 

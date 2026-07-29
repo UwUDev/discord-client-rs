@@ -118,10 +118,6 @@ macro_rules! define_events {
                             match result {
                                 Ok(event) => Ok(Event::$variant(event)),
                                 Err(err) => {
-                                    // Keep the raw payload instead of dropping it into an
-                                    // opaque Err: a single malformed/outdated event must not
-                                    // abort next_event(), and the raw JSON is needed to fix
-                                    // the struct. Surfaced as a first-class Event::ParseError.
                                     Ok(Event::ParseError(ParseErrorEvent {
                                         event_type: $t.to_string(),
                                         op: payload.op,

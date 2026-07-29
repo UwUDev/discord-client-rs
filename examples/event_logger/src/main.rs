@@ -1,14 +1,3 @@
-//! Connects, subscribes to every guild, and prints the name of each gateway
-//! event as it arrives. Two kinds of event are saved raw to disk for later work:
-//!
-//!   * `Event::ParseError` — a *known* event whose payload no longer matches its
-//!     struct → dumped to `failed_events/` so the struct can be fixed.
-//!   * `Event::Unknown`    — an event type the library doesn't implement yet →
-//!     dumped to `unknown_events/` so it can be implemented.
-//!
-//! Each capture is its own timestamped file, so nothing is ever clobbered.
-//! Put a user token in `token.txt` next to where you run it.
-
 use std::collections::BTreeMap;
 
 use discord_client_gateway::events::Event;

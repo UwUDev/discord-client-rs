@@ -305,9 +305,6 @@ impl GatewayClient {
 
                     let event = crate::events::parse_gateway_payload(payload)?;
 
-                    // On a known event whose payload failed to deserialize, dump the raw
-                    // JSON to ./failed_events/<TYPE>-<nanos>.json so it can be inspected
-                    // and the struct fixed. One file per failure — nothing is clobbered.
                     #[cfg(feature = "debug_events")]
                     if let crate::events::Event::ParseError(ref e) = event {
                         match e.dump_to("failed_events") {
