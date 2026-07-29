@@ -181,7 +181,7 @@ pub enum ApplicationCommandType {
     ChatInput = 1,
     User = 2,
     Message = 3,
-    Unknown(u8),
+    Unknown(u16),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
@@ -192,7 +192,7 @@ pub enum ApplicationType {
     Music = 2, // Should be disabled by discord
     TicketedEvents = 3,
     CreatorMonetization = 4,
-    Unknown(u8),
+    Unknown(u16),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, EnumFromString)]

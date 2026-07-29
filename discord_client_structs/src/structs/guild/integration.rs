@@ -71,5 +71,5 @@ pub enum RoleConnectionOperatorType {
     DateTimeGreaterThanOrEqual = 6,
     BooleanEqual = 7,
     BooleanNotEqual = 8,
-    Unknown(u8),
+    Unknown(u16),
 }
