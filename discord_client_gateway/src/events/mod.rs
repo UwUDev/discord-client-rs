@@ -65,6 +65,7 @@ macro_rules! define_events {
                 )+
             )*
 
+            ParseError(ParseErrorEvent),
             Unknown(UnknownEvent),
         }
 
@@ -79,6 +80,7 @@ macro_rules! define_events {
                             Event::$nd_variant(_) => stringify!($nd_variant),
                         )+
                     )*
+                    Event::ParseError(e) => &e.event_type,
                     Event::Unknown(unknown) => &unknown.r#type,
                 }
             }
@@ -95,6 +97,7 @@ macro_rules! define_events {
                             Event::$nd_variant(_) => write!(f, "{}", stringify!($nd_variant)),
                         )+
                     )*
+                    Event::ParseError(e) => write!(f, "ParseError ({}): {} at '{}'", e.event_type, e.error, e.path),
                     Event::Unknown(unknown) => write!(f, "Unknown ({}): {}", unknown.op, unknown.r#type),
                 }
             }
@@ -115,10 +118,17 @@ macro_rules! define_events {
                             match result {
                                 Ok(event) => Ok(Event::$variant(event)),
                                 Err(err) => {
-                                    let chemin = err.path().to_string();
-                                    let message = format!("Unable to parse event {}: {} at '{}'",
-                                                         $t, err.inner(), chemin);
-                                    Err(serde::de::Error::custom(message))
+                                    // Keep the raw payload instead of dropping it into an
+                                    // opaque Err: a single malformed/outdated event must not
+                                    // abort next_event(), and the raw JSON is needed to fix
+                                    // the struct. Surfaced as a first-class Event::ParseError.
+                                    Ok(Event::ParseError(ParseErrorEvent {
+                                        event_type: $t.to_string(),
+                                        op: payload.op,
+                                        error: err.inner().to_string(),
+                                        path: err.path().to_string(),
+                                        raw: payload.d,
+                                    }))
                                 }
                             }
                         },

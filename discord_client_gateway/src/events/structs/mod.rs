@@ -225,3 +225,42 @@ pub struct UnknownEvent {
     pub data: Value,
     pub op: u8,
 }
+
+/// A dispatch event whose type is known and registered, but whose payload
+/// failed to deserialize into its struct. Unlike [`UnknownEvent`] (an event
+/// type we don't handle at all), this carries the parse error *and* the raw
+/// JSON, so a single malformed/outdated event no longer aborts the stream and
+/// the offending payload can be dumped and inspected to fix the struct.
+#[derive(Debug, Clone)]
+pub struct ParseErrorEvent {
+    /// The dispatch event type, e.g. `"MESSAGE_CREATE"`.
+    pub event_type: String,
+    /// The gateway opcode the payload arrived on.
+    pub op: u8,
+    /// The deserializer error message.
+    pub error: String,
+    /// The JSON path to the field that failed, from `serde_path_to_error`.
+    pub path: String,
+    /// The raw, untouched event data (`payload.d`).
+    pub raw: Value,
+}
+
+impl ParseErrorEvent {
+    /// Write the raw payload to `<dir>/<EVENT_TYPE>-<nanos>.json` (pretty-printed),
+    /// creating `dir` if needed, and return the path written. Each capture gets its
+    /// own file so failures never clobber one another — unlike a single rolling
+    /// dump file, which is overwritten by the next frame before you can inspect it.
+    pub fn dump_to<P: AsRef<std::path::Path>>(&self, dir: P) -> std::io::Result<std::path::PathBuf> {
+        let dir = dir.as_ref();
+        std::fs::create_dir_all(dir)?;
+        let nanos = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|d| d.as_nanos())
+            .unwrap_or(0);
+        let path = dir.join(format!("{}-{}.json", self.event_type, nanos));
+        let json =
+            serde_json::to_string_pretty(&self.raw).unwrap_or_else(|_| self.raw.to_string());
+        std::fs::write(&path, json)?;
+        Ok(path)
+    }
+}

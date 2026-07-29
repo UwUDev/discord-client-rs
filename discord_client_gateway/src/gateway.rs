@@ -9,8 +9,6 @@ use discord_client_utils::find_build_numbers;
 use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt, TryStreamExt};
 use serde_json::{Value, json};
-#[cfg(feature = "debug_events")]
-use std::io::Write;
 use std::sync::Arc;
 use std::sync::OnceLock;
 use std::sync::atomic::{AtomicU32, Ordering};
@@ -289,20 +287,6 @@ impl GatewayClient {
                     };
                     let text = String::from_utf8(vec).unwrap();
 
-                    #[cfg(feature = "debug_events")]
-                    {
-                        std::fs::remove_file("event.json").unwrap_or_default();
-
-                        let mut file = std::fs::OpenOptions::new()
-                            .write(true)
-                            .create(true)
-                            .append(false)
-                            .open("event.json")
-                            .unwrap();
-
-                        file.write_all(text.as_bytes()).unwrap();
-                    }
-
                     let jd = &mut serde_json::Deserializer::from_str(&text);
                     let result: Result<GatewayPayload, _> = serde_path_to_error::deserialize(jd);
                     let payload = match result {
@@ -320,6 +304,26 @@ impl GatewayClient {
                     }
 
                     let event = crate::events::parse_gateway_payload(payload)?;
+
+                    // On a known event whose payload failed to deserialize, dump the raw
+                    // JSON to ./failed_events/<TYPE>-<nanos>.json so it can be inspected
+                    // and the struct fixed. One file per failure — nothing is clobbered.
+                    #[cfg(feature = "debug_events")]
+                    if let crate::events::Event::ParseError(ref e) = event {
+                        match e.dump_to("failed_events") {
+                            Ok(path) => eprintln!(
+                                "[debug_events] {} failed to parse ({} at '{}') -> {}",
+                                e.event_type,
+                                e.error,
+                                e.path,
+                                path.display()
+                            ),
+                            Err(io) => eprintln!(
+                                "[debug_events] {} failed to parse and could not be dumped: {}",
+                                e.event_type, io
+                            ),
+                        }
+                    }
 
                     if let crate::events::Event::Ready(ready) = &event {
                         self.session_id = Some(ready.session_id.clone());
