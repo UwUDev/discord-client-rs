@@ -157,7 +157,7 @@ pub enum MessageType {
     GuildIncidentReportFalseAlarm = 39,
     PurchaseNotification = 44,
     PollResult = 46,
-    Unknown(u8),
+    Unknown(u16),
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
@@ -176,7 +176,7 @@ pub enum MessageActivityType {
     Spectate = 2,
     Listen = 3,
     JoinRequest = 5,
-    Unknown(u8),
+    Unknown(u16),
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
@@ -270,5 +270,5 @@ pub enum ComponentType {
     RoleSelect = 6,
     MentionableSelect = 7,
     ChannelSelect = 8,
-    Unknown(u8),
+    Unknown(u16),
 }

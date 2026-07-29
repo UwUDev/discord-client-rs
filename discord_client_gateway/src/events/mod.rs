@@ -47,7 +47,7 @@ macro_rules! define_events {
         }
         $(
             , non_dispatch op $nd_op:expr, {
-                $( $nd_variant:ident { type: $nd_struct:ty } ),+ $(,)?
+                $( $nd_variant:ident { t: $nd_t:expr, type: $nd_struct:ty } ),+ $(,)?
             }
         )*
     ) => {
@@ -76,7 +76,7 @@ macro_rules! define_events {
                     )+
                     $(
                         $(
-                            Event::$nd_variant(_) => stringify!($nd_variant),
+                            Event::$nd_variant(_) => $nd_t,
                         )+
                     )*
                     Event::Unknown(unknown) => &unknown.r#type,
@@ -92,7 +92,7 @@ macro_rules! define_events {
                     )+
                     $(
                         $(
-                            Event::$nd_variant(_) => write!(f, "{}", stringify!($nd_variant)),
+                            Event::$nd_variant(_) => write!(f, "{}", $nd_t),
                         )+
                     )*
                     Event::Unknown(unknown) => write!(f, "Unknown ({}): {}", unknown.op, unknown.r#type),
@@ -106,11 +106,7 @@ macro_rules! define_events {
                 $dispatch_op => match payload.t.as_deref() {
                     $(
                         Some($t) => {
-                            let json_string = serde_json::to_string(&payload.d)
-                                .map_err(|e| serde::de::Error::custom(format!("Unable to process JSON conversion: {}", e)))?;
-
-                            let jd = &mut serde_json::Deserializer::from_str(&json_string);
-                            let result: Result<$event_struct, _> = serde_path_to_error::deserialize(jd);
+                            let result: Result<$event_struct, _> = serde_path_to_error::deserialize(&payload.d);
 
                             match result {
                                 Ok(event) => Ok(Event::$variant(event)),
@@ -169,7 +165,7 @@ define_events! {
         ChannelPinsUpdate { t: "CHANNEL_PINS_UPDATE", type: ChannelPinsUpdateEvent },
         ChannelRecipientAdd { t: "CHANNEL_RECIPIENT_ADD", type: ChannelRecipientAddEvent },
         ChannelRecipientRemove { t: "CHANNEL_RECIPIENT_REMOVE", type: ChannelRecipientRemoveEvent },
-        ChannelStatues { t: "CHANNEL_STATUSES", type: ChannelStatusesEvent },
+        ChannelStatuses { t: "CHANNEL_STATUSES", type: ChannelStatusesEvent },
         ChannelUnreadUpdate { t: "CHANNEL_UNREAD_UPDATE", type: ChannelUnreadUpdateEvent },
         ChannelUpdate { t: "CHANNEL_UPDATE", type: ChannelUpdateEvent },
         ContentInventoryInboxStale { t: "CONTENT_INVENTORY_INBOX_STALE", type: ContentInventoryInboxStaleEvent },
@@ -256,12 +252,12 @@ define_events! {
         WebhookUpdate { t: "WEBHOOKS_UPDATE", type: WebhooksUpdateEvent },
     },
     non_dispatch op 7, {
-        GatewayReconnect { type: GatewayReconnectEvent }
+        GatewayReconnect { t: "RECONNECT", type: GatewayReconnectEvent }
     },
     non_dispatch op 11, {
-        HeartbeatAck { type: HeartbeatAckEvent }
+        HeartbeatAck { t: "HEARTBEAT_ACK", type: HeartbeatAckEvent }
     },
     non_dispatch op 9, {
-        InvalidSession { type: InvalidSessionEvent }
+        InvalidSession { t: "INVALID_SESSION", type: InvalidSessionEvent }
     }
 }
