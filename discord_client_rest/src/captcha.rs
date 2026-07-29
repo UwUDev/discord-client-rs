@@ -1,7 +1,7 @@
-use wreq::header::HeaderMap;
 use serde::Deserialize;
 use std::error::Error;
 use std::fmt::{Debug, Display};
+use wreq::header::HeaderMap;
 
 #[derive(Debug, Deserialize)]
 pub struct CaptchaRequiredError {

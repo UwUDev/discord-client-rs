@@ -11,6 +11,7 @@ members = [
     "examples/invite_join",
     "examples/react_bot",
     "examples/backward_react_bot",
+    "examples/event_logger",
 ]
 
 resolver = "3"

@@ -1,7 +1,7 @@
-use std::error::Error;
-use wreq::{redirect, Client};
-use wreq_util::{Emulation, EmulationOS, EmulationOption};
 use discord_client_structs::structs::client::BuildNumbers;
+use std::error::Error;
+use wreq::{Client, redirect};
+use wreq_util::{Emulation, EmulationOS, EmulationOption};
 
 type BoxedError = Box<dyn Error + Send + Sync>;
 type BoxedResult<T> = Result<T, BoxedError>;
@@ -40,7 +40,7 @@ pub async fn find_build_numbers() -> BoxedResult<BuildNumbers> {
 
     Ok(BuildNumbers {
         client_build_number,
-        native_build_number: None
+        native_build_number: None,
     })
 }
 

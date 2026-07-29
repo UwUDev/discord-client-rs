@@ -1,9 +1,9 @@
 use discord_client_gateway::gateway::GatewayClient;
 use discord_client_rest::captcha::{CaptchaRequiredError, SolvedCaptcha};
 use discord_client_rest::rest::RestClient;
+use discord_client_structs::structs::client::ClientSession;
 use std::sync::Arc;
 use tokio::sync::Mutex;
-use discord_client_structs::structs::client::ClientSession;
 
 #[tokio::main]
 async fn main() {
@@ -16,9 +16,14 @@ async fn main() {
         .unwrap();
 
     let gateway_client = Arc::new(Mutex::new(
-        GatewayClient::connect(token, false, 53607934, Some(rest_client.build_numbers.client_build_number))
-            .await
-            .unwrap(),
+        GatewayClient::connect(
+            token,
+            false,
+            53607934,
+            Some(rest_client.build_numbers.client_build_number),
+        )
+        .await
+        .unwrap(),
     ));
 
     let user_id = rest_client.user_id;
