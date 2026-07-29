@@ -84,6 +84,8 @@ if let Event::Ready(ready) = event {
 - [x] Identify
 - [x] Resume
 - [x] Heartbeat
+- [ ] QoS Heartbeat
+- [ ] Update Time Spent Session ID
 - [x] Update Presence
 - [ ] Update Voice State
 - [ ] Ping Voice Server
@@ -92,175 +94,271 @@ if let Event::Ready(ready) = event {
 - [ ] Set Stream Paused
 - [ ] Delete Stream
 - [ ] Ping Stream Server
-- [x] Bulk guild subscribe
+- [ ] Update Lobby Voice States
+- [ ] Ping Lobby Voice Server
 - [x] Request Guild Members
 - [ ] Request Call Connect
 - [x] Update Guild Subscriptions
 - [ ] Request Forum Unreads
 - [x] Remote Command
-- [ ] Request Deleted Entity IDs
+- [ ] Get Deleted Entity IDs Not Matching Hash
 - [x] Request Soundboard Sounds
+- [ ] Create Speed Test
+- [ ] Delete Speed Test
 - [x] Request Last Messages
 - [x] Search Recent Members
+- [ ] Resync Guild Channels
 - [x] Request Channel Statuses
+- [ ] Request Channel Member Count
+- [ ] Request Channel Info
+- [x] Bulk Guild Subscribe *(client helper for Update Guild Subscriptions)*
 
 ## Supported receive events
 
-- **Application**
-  - [ ] Application Command Permissions Update
-- **Channel**
-  - **Call**
-    - [x] Call Create
-    - [x] Call Delete
-    - [x] Call Update
-  - **Conversation**
-    - [x] Conversation Summary Update
-  - **DM**
-    - [x] DM Settings Upsell Show
-  - **Pin**
-    - [x] Channel Pins Update
-    - [x] Channel Pins ACX
-  - **Recipient**
-    - [x] Channel Recipient Add
-    - [x] Channel Recipient Remove
-  - **Thread**
-    - [x] Thread Create
-    - [x] Thread Delete
-    - [x] Thread List Sync
-    - [x] Thread Member Update
-    - [x] Thread Members Update
-    - [x] Thread Update
-  - **Typing**
-    - [x] Typing Start
-  - **Voice**
-    - [x] Voice Channel State Update
-    - [ ] Voice Server Update
-    - [x] Voice State Update
-  - **Webhook**
-    - [x] Webhooks Update
-  - [x] Channel Create
-  - [x] Channel Delete
-  - [x] Channel Statuses
-  - [x] Channel Update
-- **Gateway**
-  - [x] Auth Session Change
-  - [ ] Authenticator Create
-  - [ ] Authenticator Delete
-  - [ ] Authenticator Update
-  - [x] Gateway Payload
-  - [x] Gateway Reconnect
-  - [x] Heartbeat Ack
-  - [ ] OAuth2 Token Revoke
+> Only user-account and shared (user + bot) events are listed; bot-only events are omitted.
+
+- **Connection**
+  - [ ] Hello
+  - [x] Heartbeat ACK
+  - [x] Reconnect
+  - [ ] Invalid Session
   - [x] Remote Command
-  - [x] Resumed
-  - [x] Sessions Replace
-- **Guild**
-  - **ACK**
-    - [x] Guild Features Ack
-  - **Auto Moderation**
-    - [x] Auto Moderation Mention Raid Detection
-  - **Ban**
-    - [x] Guild Ban Add
-    - [x] Guild Ban Remove
-  - **Boosts**
-    - [x] Guild Applied Boosts Update
-  - **Channels**
-    - [x] Channels unread update
-  - **Emoji**
-    - [x] Guild Emojis Update
-  - **Integration**
-    - [x] Guild Integration Create
-    - [x] Guild Integration Delete
-    - [x] Guild Integration Update
-    - [x] Guild Integrations Update
-  - **Log**
-    - [x] Guild Audit Log Entry Create
-  - **Member**
-    - [x] Guild Member Add
-    - [x] Guild Member Remove
-    - [x] Guild Member Update
-    - [x] Guild Members Chunk
-  - **Requests**
-    - [x] Guild Join Request Create
-    - [x] Guild Join Request Delete
-    - [x] Guild Join Request Update
-  - **Role**
-    - [x] Guild Role Create
-    - [x] Guild Role Delete
-    - [x] Guild Role Update
-  - **Schedule Event**
-    - [x] Guild Schedule Event Create
-    - [x] Guild Schedule Event Delete
-    - [x] Guild Schedule Event Update
-    - [x] Guild Schedule Event User Add
-    - [x] Guild Schedule Event User Remove
-    - [x] Guild Scheduled Event Exception Create
-    - [x] Guild Scheduled Event Exception Delete
-    - [x] Guild Scheduled Event Exceptions Delete
-    - [x] Guild Scheduled Event Exception Update
-  - **Soundboard**
-    - [x] Guild Soundboard Sound Create
-    - [x] Guild Soundboard Sound Delete
-    - [x] Guild Soundboard Sound Update
-    - [x] Soundboard Sounds
-  - **Sticker**
-    - [x] Guild Stickers Update
-  - **Update**
-    - [x] Passive Update V2
-  - [x] Guild Create
-  - [x] Guild Delete
-  - [x] Guild Update
-- **Message**
-  - **Mention**
-    - [x] Recent Mention Delete
-  - **Poll**
-    - [x] Message Poll Vote Add
-    - [x] Message Poll Vote Remove
-  - **Reactions**
-    - [x] Message Reaction Add
-    - [x] Message Reaction Add Many
-    - [x] Message Reaction Remove
-    - [x] Message Reaction Remove All
-    - [x] Message Reaction Remove Emoji
-  - [x] Last Messages
-  - [x] Message Ack
-  - [x] Message Create
-  - [x] Message Delete
-  - [x] Message Delete Bulk
-  - [x] Message Update
-- **Misc**
-  - [x] Content Inventory Inbox Stale
-  - [x] User Settings Proto Update
-  - [x] Generic Push Notification Sent
-- **Presence**
-  - [x] Presence Update
-- **Ready**
+  - [x] Gateway Payload
+- **Ready & Session**
   - [x] Ready
   - [x] Ready Supplemental
-- **Stage**
+  - [x] Resumed
+  - [ ] Rate Limited
+  - [ ] Activity Invite Create
+- **Authentication**
+  - [x] Auth Session Change
+  - [ ] Authenticator Create
+  - [ ] Authenticator Update
+  - [ ] Authenticator Delete
+- **Application Commands**
+  - [ ] Application Command Permissions Update
+- **Auto Moderation**
+  - [x] Auto Moderation Mention Raid Detection
+- **Billing**
+  - [ ] Billing Popup Bridge Callback
+- **Calls**
+  - [x] Call Create
+  - [x] Call Update
+  - [x] Call Delete
+- **Channels**
+  - [x] Channel Create
+  - [x] Channel Update
+  - [x] Channel Delete
+  - [ ] Channel Sync
+  - [ ] Channel Update Partial
+  - [ ] Channel Info
+  - [x] Channel Statuses
+  - [ ] Channel Member Count Update
+  - [x] Channel Unread Update
+  - [x] Channel Pins Update
+  - [x] Channel Pins Ack
+  - [x] Channel Recipient Add
+  - [x] Channel Recipient Remove
+- **Consoles**
+  - [ ] Console Command Update
+- **Misc**
+  - [x] Conversation Summary Update
+  - [ ] Creator Monetization Restrictions Update
+  - [ ] Deleted Entity IDs
+  - [x] DM Settings Upsell Show
+  - [x] Content Inventory Inbox Stale
+  - [x] Generic Push Notification Sent
+- **Threads**
+  - [x] Thread Create
+  - [x] Thread Update
+  - [x] Thread Delete
+  - [x] Thread List Sync
+  - [x] Thread Member Update
+  - [x] Thread Members Update
+- **Embedded Activities**
+  - [ ] Embedded Activity Update V2
+- **Entitlements**
+  - [ ] Entitlement Create
+  - [ ] Entitlement Update
+  - [ ] Entitlement Delete
+- **Experiments**
+  - [ ] Experiment Session Override Create
+  - [ ] Experiment Session Override Delete
+- **Friend Suggestions**
+  - [ ] Friend Suggestion Create
+  - [ ] Friend Suggestion Delete
+- **Game Servers**
+  - [ ] Game Server Create
+  - [ ] Game Server Update
+  - [ ] Game Server Delete
+- **Gift Codes**
+  - [ ] Gift Code Create
+  - [ ] Gift Code Update
+- **Guilds**
+  - [x] Guild Create
+  - [x] Guild Update
+  - [x] Guild Delete
+  - [ ] Guild Application Command Index Update
+  - [x] Guild Applied Boosts Update
+  - [x] Guild Audit Log Entry Create
+  - [x] Guild Ban Add
+  - [x] Guild Ban Remove
+  - [ ] Guild Directory Entry Create
+  - [ ] Guild Directory Entry Update
+  - [ ] Guild Directory Entry Delete
+  - [x] Guild Emojis Update
+  - [x] Guild Stickers Update
+  - [x] Guild Feature Ack
+  - [x] Guild Join Request Create
+  - [x] Guild Join Request Update
+  - [x] Guild Join Request Delete
+  - [x] Guild Member Add
+  - [x] Guild Member Update
+  - [x] Guild Member Remove
+  - [x] Guild Members Chunk
+  - [ ] Guild Official Game Applications Update
+  - [ ] Guild Powerup Entitlements Create
+  - [ ] Guild Powerup Entitlements Delete
+  - [x] Guild Role Create
+  - [x] Guild Role Update
+  - [x] Guild Role Delete
+- **Guild Scheduled Events**
+  - [x] Guild Scheduled Event Create
+  - [x] Guild Scheduled Event Update
+  - [x] Guild Scheduled Event Delete
+  - [x] Guild Scheduled Event Exception Create
+  - [x] Guild Scheduled Event Exception Update
+  - [x] Guild Scheduled Event Exception Delete
+  - [x] Guild Scheduled Event Exceptions Delete
+  - [x] Guild Scheduled Event User Add
+  - [x] Guild Scheduled Event User Remove
+- **Guild Soundboard**
+  - [x] Guild Soundboard Sound Create
+  - [x] Guild Soundboard Sound Update
+  - [x] Guild Soundboard Sound Delete
+  - [ ] Guild Soundboard Sounds Update
+  - [x] Soundboard Sounds
+- **Integrations**
+  - [x] Guild Integrations Update
+  - [x] Integration Create
+  - [x] Integration Update
+  - [x] Integration Delete
+- **Interactions**
+  - [ ] Interaction Create
+  - [ ] Interaction Failure
+  - [ ] Interaction Success
+  - [ ] Application Command Autocomplete Response
+  - [ ] Interaction Modal Create
+  - [ ] Interaction IFrame Modal Create
+  - [ ] Social Layer SKU Purchase Eligibility Response
+- **Messages**
+  - [x] Message Create
+  - [x] Message Update
+  - [x] Message Delete
+  - [x] Message Delete Bulk
+  - [x] Message Ack
+  - [x] Message Poll Vote Add
+  - [x] Message Poll Vote Remove
+  - [x] Message Reaction Add
+  - [x] Message Reaction Add Many
+  - [x] Message Reaction Remove
+  - [x] Message Reaction Remove All
+  - [x] Message Reaction Remove Emoji
+  - [ ] Reaction Notification Sent
+  - [x] Recent Mention Delete
+  - [x] Last Messages
+- **Notification Center**
+  - [ ] Notification Center Item Create
+  - [ ] Notification Center Item Delete
+  - [ ] Notification Center Items Ack
+  - [ ] Notification Center Item Completed
+- **Notification Settings**
+  - [ ] Notification Settings Update
+- **OAuth2**
+  - [ ] OAuth2 Token Create
+  - [ ] OAuth2 Token Delete
+  - [ ] OAuth2 Token Revoke
+- **Payments**
+  - [ ] Payment Update
+- **Presence**
+  - [x] Presence Update
+- **Quests**
+  - [ ] Quests User Status Update
+  - [ ] Quests User Completion Update
+- **Relationships**
+  - [x] Relationship Add
+  - [x] Relationship Update
+  - [x] Relationship Remove
+  - [ ] Game Relationship Add
+  - [ ] Game Relationship Remove
+- **Game Invites**
+  - [ ] Game Invite Create
+  - [ ] Game Invite Delete
+  - [ ] Game Invite Delete Many
+- **Lobbies**
+  - [ ] Lobby Create
+  - [ ] Lobby Update
+  - [ ] Lobby Delete
+  - [ ] Lobby Member Add
+  - [ ] Lobby Member Update
+  - [ ] Lobby Member Remove
+  - [ ] Lobby Message Create
+  - [ ] Lobby Message Update
+  - [ ] Lobby Message Delete
+  - [ ] Lobby Voice State Update
+  - [ ] Lobby Voice Server Update
+- **Passive Update**
+  - [ ] Passive Update V1
+  - [x] Passive Update V2
+- **Saved Messages**
+  - [ ] Saved Message Create
+  - [ ] Saved Message Delete
+- **Sessions**
+  - [x] Sessions Replace
+- **Stage Instances**
   - [x] Stage Instance Create
-  - [x] Stage Instance Delete
   - [x] Stage Instance Update
-- **Stream**
+  - [x] Stage Instance Delete
+- **Streams**
   - [ ] Stream Create
-  - [ ] Stream Delete
   - [ ] Stream Server Update
   - [ ] Stream Update
-- **User**
-  - [ ] User Application Remove
+  - [ ] Stream Delete
+  - [ ] Speed Test Create
+  - [ ] Speed Test Server Update
+  - [ ] Speed Test Update
+  - [ ] Speed Test Delete
+- **Typing**
+  - [x] Typing Start
+- **Current User**
+  - [ ] User Update
   - [ ] User Application Update
+  - [ ] User Application Remove
+  - [ ] User Application Identity Update
+  - [ ] User Application Identity Remove
   - [x] User Connections Update
   - [x] User Guild Settings Update
   - [ ] User Merge Operation Completed
+  - [ ] User Non Channel Ack
   - [x] User Note Update
-  - [ ] User Required Action Update
+  - [ ] User Premium Guild Subscription Slot Create
+  - [ ] User Premium Guild Subscription Slot Update
+  - [ ] User Premium Guild Subscription Slot Delete
   - [ ] User Settings Update
-  - **Game Relationship**
-    - [ ] Game Relationship Add
-    - [ ] Game Relationship Remove
-  - **Relationship**
-    - [x] Relationship Add
-    - [x] Relationship Remove
-    - [x] Relationship Update
-    - [ ] Friend Suggestion Create
-    - [ ] Friend Suggestion Delete
+  - [ ] Audio Settings Update
+  - [ ] User Payment Browser Checkout Done
+  - [ ] User Payment Client Add
+  - [ ] User Payment Sources Update
+  - [ ] User Required Action Update
+  - [ ] User Subscriptions Update
+  - [x] User Settings Proto Update
+- **Voice**
+  - [x] Voice State Update
+  - [ ] Voice Server Update
+  - [ ] Voice Channel Effect Send
+  - [ ] Voice Channel Start Time Update
+  - [x] Voice Channel Status Update
+- **Virtual Currency**
+  - [ ] Virtual Currency Balance Update
+- **Webhooks**
+  - [x] Webhooks Update
