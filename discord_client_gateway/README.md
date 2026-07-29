@@ -89,11 +89,11 @@ if let Event::Ready(ready) = event {
 - [x] Update Presence
 - [x] Update Voice State
 - [ ] Ping Voice Server
-- [ ] Create Stream
-- [ ] Watch Stream
-- [ ] Set Stream Paused
-- [ ] Delete Stream
-- [ ] Ping Stream Server
+- [x] Create Stream
+- [x] Watch Stream
+- [x] Set Stream Paused
+- [x] Delete Stream
+- [x] Ping Stream Server
 - [ ] Update Lobby Voice States
 - [ ] Ping Lobby Voice Server
 - [x] Request Guild Members

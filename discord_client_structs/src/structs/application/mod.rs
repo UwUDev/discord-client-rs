@@ -205,3 +205,11 @@ pub enum EventWebhookType {
     QuestUserEnrollment,
     Unknown,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct ApplicationCommandPermission {
+    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    pub id: u64,
+    pub r#type: u8,
+    pub permission: bool,
+}

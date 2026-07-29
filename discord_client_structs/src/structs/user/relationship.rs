@@ -29,6 +29,26 @@ pub struct GameRelationship {
     pub user_id: String,
 }
 
+#[derive(Debug, Deserialize, Clone)]
+pub struct FriendSuggestionReason {
+    pub r#type: u8,
+    pub platform: String,
+    pub name: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct FriendSuggestion {
+    pub suggested_user: User,
+    #[serde(default)]
+    pub reasons: Vec<FriendSuggestionReason>,
+    #[serde(default)]
+    pub from_suggested_user_contacts: Option<bool>,
+    #[serde(default)]
+    pub mutual_friends_count: Option<u32>,
+    #[serde(default)]
+    pub contact_names: Option<Vec<String>>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
 #[repr(u8)]
 pub enum RelationshipType {

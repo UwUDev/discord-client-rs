@@ -87,3 +87,12 @@ pub struct AvatarDecorationData {
     #[serde(serialize_with = "serialize_u64_as_string")]
     pub sku_id: u64,
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Authenticator {
+    pub id: String,
+    pub r#type: String,
+    pub name: String,
+    pub last_used: Option<String>,
+    pub cred_id: Option<String>,
+}

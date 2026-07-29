@@ -1,13 +1,6 @@
 use discord_client_structs::deserializer::deserialize_string_to_u64;
+use discord_client_structs::structs::application::ApplicationCommandPermission;
 use serde::Deserialize;
-
-#[derive(Debug, Deserialize, Clone)]
-pub struct ApplicationCommandPermission {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    pub id: u64,
-    pub r#type: u8,
-    pub permission: bool,
-}
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct ApplicationCommandPermissionsUpdateEvent {

@@ -189,3 +189,39 @@ pub(crate) fn create_op_4(
 
     json!({ "op": 4, "d": d }).to_string()
 }
+
+pub(crate) fn create_op_18(
+    stream_type: &str,
+    guild_id: Option<u64>,
+    channel_id: u64,
+    preferred_region: Option<&str>,
+) -> String {
+    use serde_json::Map;
+
+    let mut d = Map::new();
+    d.insert("type".to_string(), json!(stream_type));
+    d.insert(
+        "guild_id".to_string(),
+        guild_id
+            .map(|g| Value::from(g.to_string()))
+            .unwrap_or(Value::Null),
+    );
+    d.insert(
+        "channel_id".to_string(),
+        Value::from(channel_id.to_string()),
+    );
+    d.insert(
+        "preferred_region".to_string(),
+        preferred_region.map(Value::from).unwrap_or(Value::Null),
+    );
+
+    json!({ "op": 18, "d": d }).to_string()
+}
+
+pub(crate) fn create_stream_key_op(op: u8, stream_key: &str) -> String {
+    json!({ "op": op, "d": { "stream_key": stream_key } }).to_string()
+}
+
+pub(crate) fn create_op_22(stream_key: &str, paused: bool) -> String {
+    json!({ "op": 22, "d": { "stream_key": stream_key, "paused": paused } }).to_string()
+}

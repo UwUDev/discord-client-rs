@@ -1,23 +1,6 @@
-use discord_client_structs::deserializer::{
-    deserialize_option_string_to_u64, deserialize_string_to_vec_u64,
-};
+use discord_client_structs::deserializer::deserialize_option_string_to_u64;
+use discord_client_structs::structs::channel::voice::Stream;
 use serde::Deserialize;
-
-#[derive(Debug, Deserialize, Clone)]
-pub struct Stream {
-    pub stream_key: String,
-    #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    pub rtc_server_id: Option<u64>,
-    #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    pub rtc_channel_id: Option<u64>,
-    pub region: Option<String>,
-    #[serde(default)]
-    #[serde(deserialize_with = "deserialize_string_to_vec_u64")]
-    pub viewer_ids: Vec<u64>,
-    pub paused: Option<bool>,
-}
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct StreamCreateEvent {
