@@ -13,7 +13,8 @@ use serde_json::{Value, json};
 use std::io::Write;
 use std::sync::Arc;
 use std::sync::OnceLock;
-use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
+use std::time::{SystemTime, UNIX_EPOCH};
 use tokio::sync::Mutex;
 use wreq::{Client, Message, WebSocket};
 use wreq_util::{Emulation, EmulationOS, EmulationOption};
@@ -42,8 +43,10 @@ pub struct GatewayClient {
     pub auth_session_id_hash: Option<String>,
     resume_gateway_url: Option<String>,
     capabilities: u32,
+    intents: Option<u64>,
     build_number: u32,
     last_sequence: Arc<AtomicU32>,
+    heartbeat_ack: Arc<AtomicBool>,
     automatic_reconnect: bool,
     heartbeat_handle: Option<tokio::task::JoinHandle<()>>,
     pub status: StatusType,
@@ -58,6 +61,23 @@ impl GatewayClient {
         automatic_reconnect: bool,
         capabilities: u32,
         client_build_number: Option<u32>,
+    ) -> BoxedResult<Self> {
+        Self::connect_with_intents(
+            token,
+            automatic_reconnect,
+            capabilities,
+            client_build_number,
+            None,
+        )
+        .await
+    }
+
+    pub async fn connect_with_intents(
+        token: String,
+        automatic_reconnect: bool,
+        capabilities: u32,
+        client_build_number: Option<u32>,
+        intents: Option<u64>,
     ) -> BoxedResult<Self> {
         let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
 
@@ -86,7 +106,9 @@ impl GatewayClient {
             match message {
                 Message::Binary(bin) => match decompress.decompress(bin) {
                     Ok(vec) => {
-                        let json: Value = serde_json::from_slice(&vec).unwrap();
+                        let json: Value = serde_json::from_slice(&vec).map_err(|e| {
+                            BoxedError::from(format!("Failed to parse hello payload: {}", e))
+                        })?;
                         match json["d"]["heartbeat_interval"].as_u64() {
                             Some(interval) => heartbeat_interval = interval,
                             None => return Err("No heartbeat interval".into()),
@@ -101,27 +123,29 @@ impl GatewayClient {
             }
         }
 
-        let tx_clone = Arc::clone(&tx);
-        let token_var = token.clone();
-        tokio::spawn(async move {
-            let message = format!(
-                r#"{{"op":2,"d":{{"token":"{}","capabilities":{},"properties":{{"os":"Windows","browser":"Chrome","device":"","system_locale":"en-US","browser_user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36","browser_version":"136.0.0.0","os_version":"10","referrer":"","referring_domain":"","referrer_current":"","referring_domain_current":"","release_channel":"stable","client_build_number":{},"client_event_source":null,"design_id":0}},"presence":{{"status":"unknown","since":0,"activities":[],"afk":false}},"compress":false,"client_state":{{"guild_versions":{{}}}}}}}}"#,
-                token_var, capabilities, build_number
-            );
+        let intents_field = match intents {
+            Some(intents) => format!(r#","intents":{}"#, intents),
+            None => String::new(),
+        };
 
-            tx_clone
-                .lock()
-                .await
-                .send(Message::Text(message.into()))
-                .await
-                .unwrap();
-        });
+        let identify = format!(
+            r#"{{"op":2,"d":{{"token":"{}","capabilities":{}{},"properties":{{"os":"Windows","browser":"Chrome","device":"","system_locale":"en-US","browser_user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36","browser_version":"136.0.0.0","os_version":"10","referrer":"","referring_domain":"","referrer_current":"","referring_domain_current":"","release_channel":"stable","client_build_number":{},"client_event_source":null,"design_id":0}},"presence":{{"status":"unknown","since":0,"activities":[],"afk":false}},"compress":false,"client_state":{{"guild_versions":{{}}}}}}}}"#,
+            token, capabilities, intents_field, build_number
+        );
+
+        tx.lock()
+            .await
+            .send(Message::Text(identify.into()))
+            .await
+            .map_err(|e| BoxedError::from(format!("Failed to send identify: {}", e)))?;
 
         let last_sequence = Arc::new(AtomicU32::new(0));
+        let heartbeat_ack = Arc::new(AtomicBool::new(true));
 
         let heartbeat_handle = Self::spawn_heartbeat(
             Arc::clone(&tx),
             Arc::clone(&last_sequence),
+            Arc::clone(&heartbeat_ack),
             heartbeat_interval,
         );
 
@@ -137,8 +161,10 @@ impl GatewayClient {
             auth_session_id_hash: None,
             resume_gateway_url: None,
             capabilities,
+            intents,
             build_number,
             last_sequence,
+            heartbeat_ack,
             automatic_reconnect,
             heartbeat_handle: Some(heartbeat_handle),
             status: Unknown,
@@ -151,14 +177,26 @@ impl GatewayClient {
     fn spawn_heartbeat(
         tx: Arc<Mutex<SplitSink<WebSocket, Message>>>,
         last_sequence: Arc<AtomicU32>,
+        heartbeat_ack: Arc<AtomicBool>,
         heartbeat_interval: u64,
     ) -> tokio::task::JoinHandle<()> {
         tokio::spawn(async move {
+            let jitter = SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .map(|d| d.subsec_nanos() as u64 % 1000)
+                .unwrap_or(0);
+
+            let steady = heartbeat_interval.saturating_sub(2000).max(1000);
+            let mut delay = (heartbeat_interval * jitter / 1000).clamp(1000, steady);
+
             loop {
-                tokio::time::sleep(tokio::time::Duration::from_millis(
-                    heartbeat_interval - 2000,
-                ))
-                .await;
+                tokio::time::sleep(tokio::time::Duration::from_millis(delay)).await;
+                delay = steady;
+
+                if !heartbeat_ack.swap(false, Ordering::AcqRel) {
+                    let _ = tx.lock().await.close().await;
+                    break;
+                }
 
                 let d = last_sequence.load(Ordering::Relaxed);
 
@@ -213,7 +251,9 @@ impl GatewayClient {
             match message {
                 Message::Binary(bin) => match decompress.decompress(bin) {
                     Ok(vec) => {
-                        let json: Value = serde_json::from_slice(&vec).unwrap();
+                        let json: Value = serde_json::from_slice(&vec).map_err(|e| {
+                            BoxedError::from(format!("Failed to parse hello payload: {}", e))
+                        })?;
                         match json["d"]["heartbeat_interval"].as_u64() {
                             Some(interval) => heartbeat_interval = interval,
                             None => return Err("No heartbeat interval".into()),
@@ -234,9 +274,11 @@ impl GatewayClient {
         self.rx = Arc::new(Mutex::new(rx));
         self.zlib_decompressor = Arc::new(Mutex::new(decompress));
         self.heartbeat_interval = heartbeat_interval;
+        self.heartbeat_ack = Arc::new(AtomicBool::new(true));
         self.heartbeat_handle = Some(Self::spawn_heartbeat(
             Arc::clone(&self.tx),
             Arc::clone(&self.last_sequence),
+            Arc::clone(&self.heartbeat_ack),
             heartbeat_interval,
         ));
 
@@ -253,6 +295,16 @@ impl GatewayClient {
         Ok(())
     }
 
+    async fn resume_or_reconnect(&mut self) -> BoxedResult<()> {
+        if self.session_id.is_some()
+            && self.resume_gateway_url.is_some()
+            && self.resume().await.is_ok()
+        {
+            return Ok(());
+        }
+        self.reconnect().await
+    }
+
     pub async fn next_event(&mut self) -> BoxedResult<crate::events::Event> {
         loop {
             let message = {
@@ -264,7 +316,7 @@ impl GatewayClient {
                 Some(msg) => msg,
                 None => {
                     if self.automatic_reconnect {
-                        self.reconnect().await?;
+                        self.resume_or_reconnect().await?;
                         continue;
                     } else {
                         return Err("Connection closed".into());
@@ -276,7 +328,9 @@ impl GatewayClient {
 
             match message {
                 Message::Text(text) => {
-                    let payload: GatewayPayload = serde_json::from_str(&text).unwrap();
+                    let payload: GatewayPayload = serde_json::from_str(&text).map_err(|e| {
+                        BoxedError::from(format!("Failed to deserialize payload: {}", e))
+                    })?;
                     return Ok(crate::events::parse_gateway_payload(payload)?);
                 }
                 Message::Binary(bin) => {
@@ -285,9 +339,18 @@ impl GatewayClient {
                     let vec = match decompress.decompress(bin) {
                         Ok(vec) => vec,
                         Err(ZlibDecompressionError::NeedMoreData) => continue,
-                        Err(_err) => return Err("Broken frame".into()),
+                        Err(_err) => {
+                            *decompress = ZlibStreamDecompressor::new();
+                            drop(decompress);
+                            if self.automatic_reconnect {
+                                self.reconnect().await?;
+                                continue;
+                            }
+                            return Err("Broken frame".into());
+                        }
                     };
-                    let text = String::from_utf8(vec).unwrap();
+                    let text = String::from_utf8(vec)
+                        .map_err(|e| BoxedError::from(format!("Invalid utf8 payload: {}", e)))?;
 
                     #[cfg(feature = "debug_events")]
                     {
@@ -321,39 +384,46 @@ impl GatewayClient {
 
                     let event = crate::events::parse_gateway_payload(payload)?;
 
-                    if let crate::events::Event::Ready(ready) = &event {
-                        self.session_id = Some(ready.session_id.clone());
-                        self.analytics_token = Some(ready.analytics_token.clone());
-                        self.auth_session_id_hash = Some(ready.auth_session_id_hash.clone());
-                        self.resume_gateway_url = Some(ready.resume_gateway_url.clone());
-                    } else if self.automatic_reconnect {
-                        if let crate::events::Event::InvalidSession(ref invalid) = event {
-                            println!("Need to reconnect");
-                            if invalid.resumable {
+                    match &event {
+                        crate::events::Event::Ready(ready) => {
+                            self.session_id = Some(ready.session_id.clone());
+                            self.analytics_token = Some(ready.analytics_token.clone());
+                            self.auth_session_id_hash = Some(ready.auth_session_id_hash.clone());
+                            self.resume_gateway_url = Some(ready.resume_gateway_url.clone());
+                            self.heartbeat_ack.store(true, Ordering::Release);
+                        }
+                        crate::events::Event::HeartbeatAck(_) => {
+                            self.heartbeat_ack.store(true, Ordering::Release);
+                        }
+                        crate::events::Event::AuthSessionChange(session_change) => {
+                            self.auth_session_id_hash =
+                                Some(session_change.auth_session_id_hash.clone());
+                        }
+                        crate::events::Event::InvalidSession(invalid) => {
+                            if self.automatic_reconnect {
+                                let resumable = invalid.resumable;
                                 drop(decompress);
-                                self.resume().await?;
-                            } else {
-                                drop(decompress);
-                                self.reconnect().await?;
+                                if resumable {
+                                    self.resume().await?;
+                                } else {
+                                    self.reconnect().await?;
+                                }
                             }
                         }
-                    } else if let crate::events::Event::GatewayReconnect(_) = event {
-                        if self.automatic_reconnect {
-                            drop(decompress);
-                            self.reconnect().await?;
+                        crate::events::Event::GatewayReconnect(_) => {
+                            if self.automatic_reconnect {
+                                drop(decompress);
+                                self.resume_or_reconnect().await?;
+                            }
                         }
-                    } else if let crate::events::Event::AuthSessionChange(ref session_change) =
-                        event
-                    {
-                        self.auth_session_id_hash =
-                            Some(session_change.auth_session_id_hash.clone());
+                        _ => {}
                     }
 
                     return Ok(event);
                 }
                 Message::Close(frame) => {
                     if self.automatic_reconnect {
-                        self.reconnect().await?;
+                        self.resume_or_reconnect().await?;
                         continue;
                     } else {
                         self.tx.lock().await.close().await?;
@@ -376,11 +446,12 @@ impl GatewayClient {
     }
 
     pub async fn reconnect(&mut self) -> BoxedResult<()> {
-        let mut new_client = Self::connect(
+        let mut new_client = Self::connect_with_intents(
             self.token.clone(),
             self.automatic_reconnect,
             self.capabilities,
             Some(self.build_number),
+            self.intents,
         )
         .await?;
         new_client.status = self.status.clone();
