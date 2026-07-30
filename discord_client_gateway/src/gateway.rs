@@ -564,6 +564,58 @@ impl GatewayClient {
         Ok(())
     }
 
+    pub async fn update_lobby_voice_states(
+        &mut self,
+        lobby_id: u64,
+        self_mute: bool,
+        self_deaf: bool,
+        self_video: Option<bool>,
+        preferred_region: Option<&str>,
+    ) -> BoxedResult<()> {
+        self.send_text(create_op_17(
+            lobby_id,
+            self_mute,
+            self_deaf,
+            self_video,
+            preferred_region,
+        ))
+        .await
+    }
+
+    pub async fn ping_lobby_voice_server(&mut self, lobby_id: u64) -> BoxedResult<()> {
+        self.send_text(create_op_42(lobby_id)).await
+    }
+
+    pub async fn request_forum_unreads(&mut self, payload: serde_json::Value) -> BoxedResult<()> {
+        self.send_text(create_op_28(payload)).await
+    }
+
+    pub async fn get_deleted_entity_ids_not_matching_hash(
+        &mut self,
+        guild_id: u64,
+        channel_ids_hash: Option<&str>,
+        role_ids_hash: Option<&str>,
+        emoji_ids_hash: Option<&str>,
+        sticker_ids_hash: Option<&str>,
+    ) -> BoxedResult<()> {
+        self.send_text(create_op_30(
+            guild_id,
+            channel_ids_hash,
+            role_ids_hash,
+            emoji_ids_hash,
+            sticker_ids_hash,
+        ))
+        .await
+    }
+
+    pub async fn request_channel_info(
+        &mut self,
+        guild_id: u64,
+        fields: Vec<String>,
+    ) -> BoxedResult<()> {
+        self.send_text(create_op_43(guild_id, fields)).await
+    }
+
     pub async fn ping_voice_server(&mut self) -> BoxedResult<()> {
         self.send_text(create_op_5()).await
     }

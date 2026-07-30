@@ -94,14 +94,14 @@ if let Event::Ready(ready) = event {
 - [x] Set Stream Paused
 - [x] Delete Stream
 - [x] Ping Stream Server
-- [ ] Update Lobby Voice States
-- [ ] Ping Lobby Voice Server
+- [x] Update Lobby Voice States
+- [x] Ping Lobby Voice Server
 - [x] Request Guild Members
 - [x] Request Call Connect
 - [x] Update Guild Subscriptions
-- [ ] Request Forum Unreads
+- [x] Request Forum Unreads
 - [x] Remote Command
-- [ ] Get Deleted Entity IDs Not Matching Hash
+- [x] Get Deleted Entity IDs Not Matching Hash
 - [x] Request Soundboard Sounds
 - [x] Create Speed Test
 - [x] Delete Speed Test
@@ -110,7 +110,7 @@ if let Event::Ready(ready) = event {
 - [x] Resync Guild Channels
 - [x] Request Channel Statuses
 - [x] Request Channel Member Count
-- [ ] Request Channel Info
+- [x] Request Channel Info
 - [x] Bulk Guild Subscribe *(client helper for Update Guild Subscriptions)*
 
 ## Supported receive events
