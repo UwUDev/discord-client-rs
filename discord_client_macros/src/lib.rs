@@ -530,3 +530,199 @@ fn generate_flag_conversion_methods(
         }
     }
 }
+
+fn snowflake_accessor_name(field: &str) -> String {
+    let base = if field == "id" {
+        ""
+    } else if let Some(b) = field.strip_suffix("_id") {
+        b
+    } else if let Some(b) = field.strip_prefix("id_") {
+        b
+    } else {
+        field
+    };
+    if base.is_empty() {
+        "created_at".to_string()
+    } else {
+        format!("{}_created_at", base)
+    }
+}
+
+struct SnowflakeOpts {
+    no_created_at: bool,
+    rename: Option<String>,
+}
+
+fn parse_snowflake_opts(attr: &syn::Attribute) -> SnowflakeOpts {
+    let mut opts = SnowflakeOpts {
+        no_created_at: false,
+        rename: None,
+    };
+    if matches!(attr.meta, syn::Meta::Path(_)) {
+        return opts;
+    }
+    let _ = attr.parse_nested_meta(|meta| {
+        if meta.path.is_ident("no_created_at") {
+            opts.no_created_at = true;
+        } else if meta.path.is_ident("rename") {
+            let value = meta.value()?;
+            let lit: syn::LitStr = value.parse()?;
+            opts.rename = Some(lit.value());
+        }
+        Ok(())
+    });
+    opts
+}
+
+#[proc_macro_attribute]
+pub fn discord_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let mut no_builder = false;
+    let mut no_default = false;
+    let mut no_serialize = false;
+    if !attr.is_empty() {
+        let parser = syn::punctuated::Punctuated::<syn::Ident, syn::Token![,]>::parse_terminated;
+        match syn::parse::Parser::parse(parser, attr) {
+            Ok(idents) => {
+                for id in idents {
+                    match id.to_string().as_str() {
+                        "no_builder" => no_builder = true,
+                        "no_default" => no_default = true,
+                        "no_serialize" => no_serialize = true,
+                        other => {
+                            return syn::Error::new_spanned(
+                                id.clone(),
+                                format!("unknown discord_struct option `{}`", other),
+                            )
+                            .to_compile_error()
+                            .into();
+                        }
+                    }
+                }
+            }
+            Err(e) => return e.to_compile_error().into(),
+        }
+    }
+
+    let mut item_struct = parse_macro_input!(item as syn::ItemStruct);
+    let name = item_struct.ident.clone();
+
+    let mut has_flags = false;
+    let mut accessors: Vec<proc_macro2::TokenStream> = Vec::new();
+
+    if let syn::Fields::Named(named) = &mut item_struct.fields {
+        for field in named.named.iter_mut() {
+            if field.attrs.iter().any(|a| a.path().is_ident("flag_enum")) {
+                has_flags = true;
+            }
+
+            let snowflake = field
+                .attrs
+                .iter()
+                .find(|a| a.path().is_ident("snowflake"))
+                .cloned();
+
+            let Some(sf_attr) = snowflake else {
+                continue;
+            };
+
+            let opts = parse_snowflake_opts(&sf_attr);
+            field.attrs.retain(|a| !a.path().is_ident("snowflake"));
+
+            let is_opt = is_option_u64_type(&field.ty);
+            if !is_opt && !is_u64_type(&field.ty) {
+                return syn::Error::new_spanned(
+                    &field.ty,
+                    "#[snowflake] fields must be u64 or Option<u64>",
+                )
+                .to_compile_error()
+                .into();
+            }
+
+            let (de, ser): (&str, &str) = if is_opt {
+                (
+                    "::discord_client_structs::deserializer::deserialize_option_string_to_u64",
+                    "::discord_client_structs::serializer::serialize_option_u64_as_string",
+                )
+            } else {
+                (
+                    "::discord_client_structs::deserializer::deserialize_string_to_u64",
+                    "::discord_client_structs::serializer::serialize_u64_as_string",
+                )
+            };
+            field
+                .attrs
+                .push(syn::parse_quote! { #[serde(deserialize_with = #de)] });
+            field
+                .attrs
+                .push(syn::parse_quote! { #[serde(serialize_with = #ser)] });
+
+            if !opts.no_created_at {
+                let fname = field.ident.clone().unwrap();
+                let acc = opts
+                    .rename
+                    .unwrap_or_else(|| snowflake_accessor_name(&fname.to_string()));
+                let acc_ident = format_ident!("{}", acc);
+                let body = if is_opt {
+                    quote! {
+                        pub fn #acc_ident(&self) -> Option<::chrono::DateTime<::chrono::Utc>> {
+                            self.#fname.and_then(|id| {
+                                let ts = (id >> 22) + 1420070400000;
+                                <::chrono::Utc as ::chrono::TimeZone>::timestamp_millis_opt(&::chrono::Utc, ts as i64).single()
+                            })
+                        }
+                    }
+                } else {
+                    quote! {
+                        pub fn #acc_ident(&self) -> Option<::chrono::DateTime<::chrono::Utc>> {
+                            let ts = (self.#fname >> 22) + 1420070400000;
+                            <::chrono::Utc as ::chrono::TimeZone>::timestamp_millis_opt(&::chrono::Utc, ts as i64).single()
+                        }
+                    }
+                };
+                accessors.push(body);
+            }
+        }
+    } else {
+        return syn::Error::new_spanned(
+            &item_struct,
+            "#[discord_struct] only supports structs with named fields",
+        )
+        .to_compile_error()
+        .into();
+    }
+
+    let mut derives: Vec<proc_macro2::TokenStream> = vec![quote!(Debug), quote!(Clone)];
+    if !no_serialize {
+        derives.push(quote!(::serde::Serialize));
+    }
+    derives.push(quote!(::serde::Deserialize));
+    if !no_default {
+        derives.push(quote!(Default));
+    }
+    if !no_builder {
+        derives.push(quote!(::derive_builder::Builder));
+    }
+    if has_flags {
+        derives.push(quote!(::discord_client_macros::Flags));
+    }
+
+    let builder_attr = if no_builder {
+        quote!()
+    } else {
+        quote!(#[builder(setter(into, strip_option), default)])
+    };
+
+    let impl_block = if accessors.is_empty() {
+        quote!()
+    } else {
+        quote! { impl #name { #(#accessors)* } }
+    };
+
+    quote! {
+        #[derive(#(#derives),*)]
+        #builder_attr
+        #item_struct
+        #impl_block
+    }
+    .into()
+}

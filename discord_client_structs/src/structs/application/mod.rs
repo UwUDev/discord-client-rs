@@ -4,7 +4,7 @@ use crate::structs::application::team::{Company, Team};
 use crate::structs::user::User;
 use crate::structs::user::activity::EmbeddedActivityConfig;
 use derive_builder::Builder;
-use discord_client_macros::{CreatedAt, EnumFromPrimitive, EnumFromString, Flags};
+use discord_client_macros::{CreatedAt, EnumFromPrimitive, EnumFromString, Flags, discord_struct};
 use serde::{Deserialize, Serialize};
 
 pub mod team;
@@ -134,20 +134,16 @@ pub struct ApplicationCommandIndex {
     pub version: u64,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Application {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     pub name: String,
     pub description: Option<String>,
     pub icon: Option<String>,
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub bot_id: Option<u64>,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake(no_created_at)]
     #[flag_enum(
         "EmbeddedReleased=1,ManagedEmoji=2,EmbeddedIap=3,GroupDmCreate=4,AutoModerationRuleCreateBadge=6,GameProfileDisabled=7,PublicOauth2Client=8,ContextlessActivity=9,GatewayPresence=12,GatewayPresenceLimited=13,GatewayGuildMembers=14,GatewayGuildMembersLimited=15,VerificationPendingGuildLimit=16,Embedded=17,GatewayMessageContent=18,GatewayMessageContentLimited=19,EmbeddedFirstParty=20,ApplicationCommandMigrated=21,ApplicationCommandBadge=23,Active=24,ActiveGracePeriod1=25,IframeModal=26,SocialLayerIntegration=27,Promoted=29,Partner=30"
     )]
@@ -212,4 +208,23 @@ pub struct ApplicationCommandPermission {
     pub id: u64,
     pub r#type: u8,
     pub permission: bool,
+}
+
+#[cfg(test)]
+mod discord_struct_tests {
+    use super::Application;
+
+    #[test]
+    fn application_snowflake_roundtrip_and_created_at() {
+        let raw =
+            r#"{"id":"175928847299117063","name":"x","bot_id":"175928847299117064","flags":"0"}"#;
+        let a: Application = serde_json::from_str(raw).unwrap();
+        assert_eq!(a.id, 175928847299117063);
+        assert_eq!(a.bot_id, Some(175928847299117064));
+        assert!(a.created_at().is_some());
+        assert!(a.bot_created_at().is_some());
+        let out = serde_json::to_string(&a).unwrap();
+        assert!(out.contains(r#""id":"175928847299117063""#), "{out}");
+        assert!(out.contains(r#""bot_id":"175928847299117064""#), "{out}");
+    }
 }
