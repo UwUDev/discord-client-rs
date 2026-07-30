@@ -211,3 +211,27 @@ mod discord_struct_tests {
         assert!(out.contains(r#""bot_id":"175928847299117064""#), "{out}");
     }
 }
+
+#[cfg(test)]
+mod snowflake_vec_tests {
+    use discord_client_macros::discord_struct;
+
+    #[discord_struct(no_builder, no_default)]
+    struct VecSnow {
+        #[snowflake]
+        ids: Vec<u64>,
+        #[snowflake]
+        maybe: Option<Vec<u64>>,
+    }
+
+    #[test]
+    fn vec_snowflake_roundtrip() {
+        let raw = r#"{"ids":["1","2","3"],"maybe":["4"]}"#;
+        let v: VecSnow = serde_json::from_str(raw).unwrap();
+        assert_eq!(v.ids, vec![1, 2, 3]);
+        assert_eq!(v.maybe, Some(vec![4]));
+        let out = serde_json::to_string(&v).unwrap();
+        assert!(out.contains(r#""ids":["1","2","3"]"#), "{out}");
+        assert!(out.contains(r#""maybe":["4"]"#), "{out}");
+    }
+}

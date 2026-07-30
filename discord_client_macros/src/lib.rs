@@ -12,21 +12,33 @@ fn is_u64_type(ty: &Type) -> bool {
     false
 }
 
-fn is_option_u64_type(ty: &Type) -> bool {
+fn inner_generic<'a>(ty: &'a Type, wrapper: &str) -> Option<&'a Type> {
     if let Type::Path(type_path) = ty {
         if let Some(segment) = type_path.path.segments.last() {
-            if segment.ident == "Option" {
+            if segment.ident == wrapper {
                 if let PathArguments::AngleBracketed(ref args) = segment.arguments {
                     if args.args.len() == 1 {
                         if let GenericArgument::Type(inner_type) = &args.args[0] {
-                            return is_u64_type(inner_type);
+                            return Some(inner_type);
                         }
                     }
                 }
             }
         }
     }
-    false
+    None
+}
+
+fn is_option_u64_type(ty: &Type) -> bool {
+    inner_generic(ty, "Option").is_some_and(is_u64_type)
+}
+
+fn is_vec_u64_type(ty: &Type) -> bool {
+    inner_generic(ty, "Vec").is_some_and(is_u64_type)
+}
+
+fn is_option_vec_u64_type(ty: &Type) -> bool {
+    inner_generic(ty, "Option").is_some_and(is_vec_u64_type)
 }
 
 #[proc_macro_derive(EnumFromPrimitive, attributes(default))]
@@ -549,26 +561,39 @@ pub fn discord_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
             let opts = parse_snowflake_opts(&sf_attr);
             field.attrs.retain(|a| !a.path().is_ident("snowflake"));
 
-            let is_opt = is_option_u64_type(&field.ty);
-            if !is_opt && !is_u64_type(&field.ty) {
-                return syn::Error::new_spanned(
-                    &field.ty,
-                    "#[snowflake] fields must be u64 or Option<u64>",
-                )
-                .to_compile_error()
-                .into();
-            }
+            let ty = &field.ty;
+            let is_u64 = is_u64_type(ty);
+            let is_opt = is_option_u64_type(ty);
+            let is_vec = is_vec_u64_type(ty);
+            let is_opt_vec = is_option_vec_u64_type(ty);
 
-            let (de, ser): (&str, &str) = if is_opt {
-                (
-                    "::discord_client_structs::deserializer::deserialize_option_string_to_u64",
-                    "::discord_client_structs::serializer::serialize_option_u64_as_string",
-                )
-            } else {
+            let (de, ser): (&str, &str) = if is_u64 {
                 (
                     "::discord_client_structs::deserializer::deserialize_string_to_u64",
                     "::discord_client_structs::serializer::serialize_u64_as_string",
                 )
+            } else if is_opt {
+                (
+                    "::discord_client_structs::deserializer::deserialize_option_string_to_u64",
+                    "::discord_client_structs::serializer::serialize_option_u64_as_string",
+                )
+            } else if is_vec {
+                (
+                    "::discord_client_structs::deserializer::deserialize_string_to_vec_u64",
+                    "::discord_client_structs::serializer::serialize_vec_u64_as_string",
+                )
+            } else if is_opt_vec {
+                (
+                    "::discord_client_structs::deserializer::deserialize_option_string_to_vec_u64",
+                    "::discord_client_structs::serializer::serialize_option_vec_u64_as_string",
+                )
+            } else {
+                return syn::Error::new_spanned(
+                    ty,
+                    "#[snowflake] fields must be u64, Option<u64>, Vec<u64>, or Option<Vec<u64>>",
+                )
+                .to_compile_error()
+                .into();
             };
             if !no_deserialize {
                 field
@@ -581,7 +606,7 @@ pub fn discord_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
                     .push(syn::parse_quote! { #[serde(serialize_with = #ser)] });
             }
 
-            if !opts.no_created_at {
+            if !opts.no_created_at && (is_u64 || is_opt) {
                 let fname = field.ident.clone().unwrap();
                 let acc = opts
                     .rename
