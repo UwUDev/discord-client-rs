@@ -1,14 +1,12 @@
 use crate::deserializer::*;
 use crate::serializer::*;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
+use serde::Deserialize;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct VoiceState {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub user_id: u64,
     pub suppress: bool,
     pub session_id: String,
@@ -21,8 +19,7 @@ pub struct VoiceState {
     pub request_to_speak_timestamp: Option<DateTime<Utc>>,
     pub mute: bool,
     pub deaf: bool,
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub channel_id: Option<u64>, // null on left voice channel event
 }
 

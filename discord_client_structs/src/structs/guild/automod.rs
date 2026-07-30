@@ -1,12 +1,9 @@
 use crate::deserializer::*;
 use crate::serializer::*;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use discord_client_macros::{CreatedAt, EnumFromPrimitive};
-use serde::{Deserialize, Serialize};
+use discord_client_macros::{EnumFromPrimitive, discord_struct};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct AutomodIncidentsData {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
@@ -26,18 +23,14 @@ pub struct AutomodIncidentsData {
     pub dms_disabled_until: Option<DateTime<Utc>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct AutomodRule {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub guild_id: u64,
     pub name: String,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub creator_id: u64,
     pub event_type: AutomodEventType,
     pub trigger_type: AutomodTriggerType,
@@ -48,8 +41,7 @@ pub struct AutomodRule {
     pub exempt_channels: Vec<u64>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct TriggerMetadata {
     #[serde(default)]
     pub keyword_filter: Vec<String>,
@@ -65,18 +57,15 @@ pub struct TriggerMetadata {
     pub mention_raid_protection_enabled: bool,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Action {
     pub action_type: AutomodActionType,
     pub metadata: Option<ActionMetadata>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct ActionMetadata {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub channel_id: u64,
     pub duration_seconds: u32,
     pub custom_message: Option<String>,

@@ -2,13 +2,13 @@ use crate::deserializer::*;
 use crate::structs::application::IntegrationApplication;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
-use discord_client_macros::{CreatedAt, EnumFromPrimitive, EnumFromString};
+use discord_client_macros::{EnumFromPrimitive, EnumFromString, discord_struct};
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(Debug, Deserialize, Clone, CreatedAt)]
+#[discord_struct(no_builder, no_default, no_serialize)]
 pub struct Integration {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[snowflake]
     pub id: u64,
     pub name: String,
     pub r#type: IntegrationType,
@@ -16,7 +16,7 @@ pub struct Integration {
     pub account: IntegrationAccount,
     pub syncing: Option<bool>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[snowflake]
     pub role_id: Option<u64>,
     pub enable_emoticons: Option<bool>,
     pub expire_behavior: Option<u32>,

@@ -17,9 +17,7 @@ use crate::structs::message::sticker::{Sticker, StickerItem};
 use crate::structs::misc::{Emoji, Potion};
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use discord_client_macros::{CreatedAt, EnumFromPrimitive, Flags};
-use serde::{Deserialize, Serialize};
+use discord_client_macros::{EnumFromPrimitive, discord_struct};
 
 pub mod attachment;
 pub mod call;
@@ -33,22 +31,18 @@ pub mod select;
 pub mod soundboard;
 pub mod sticker;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Message {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     #[builder(default)]
     #[serde(skip_serializing)]
     pub id: u64,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     #[builder(default)]
     #[serde(skip_serializing)]
     pub channel_id: u64,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub guild_id: Option<u64>,
     #[builder(default)]
     #[serde(skip_serializing)]
@@ -78,15 +72,13 @@ pub struct Message {
     #[serde(skip_serializing)]
     pub pinned: bool,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub webhook_id: Option<u64>,
     pub r#type: MessageType,
     pub activity: Option<MessageActivity>,
     pub application: Option<IntegrationApplication>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub application_id: Option<u64>,
     #[builder(default)]
     #[serde(skip_serializing)]
@@ -109,8 +101,7 @@ pub struct Message {
     pub stickers: Option<Vec<Sticker>>,
     pub poll: Option<Poll>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub changelog_id: Option<u64>,
     pub soundboard_sounds: Option<Vec<SoundboardSound>>,
     pub potions: Option<Vec<Potion>>,
@@ -160,8 +151,7 @@ pub enum MessageType {
     Unknown(u16),
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct MessageActivity {
     pub r#type: MessageActivityType,
     pub session_id: Option<String>,
@@ -179,39 +169,32 @@ pub enum MessageActivityType {
     Unknown(u16),
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct MessageReference {
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub message_id: Option<u64>, // non-existent when a thread is created (wtf ?)
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub channel_id: u64,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     #[builder(setter(strip_option = "false"))]
     pub guild_id: Option<u64>,
     pub forward_only: Option<MessageForwardOnly>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct MessageForwardOnly {
     pub embed_indices: Option<Vec<u64>>,
     pub attachment_ids: Option<Vec<u64>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct MessageSnapshot {
     pub message: SnapshotMessage,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct SnapshotMessage {
     pub content: Option<String>,
     #[serde(default)]
@@ -241,8 +224,7 @@ pub struct SnapshotMessage {
     pub soundboard_sounds: Option<Vec<SoundboardSound>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct MessageComponent {
     pub r#type: ComponentType,
     pub custom_id: Option<String>,

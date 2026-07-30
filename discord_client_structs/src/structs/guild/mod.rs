@@ -1,5 +1,4 @@
 use crate::deserializer::*;
-use crate::serializer::*;
 use crate::structs::channel::Channel;
 use crate::structs::channel::voice::VoiceState;
 use crate::structs::guild::automod::AutomodIncidentsData;
@@ -11,9 +10,7 @@ use crate::structs::message::sticker::Sticker;
 use crate::structs::misc::Emoji;
 use crate::structs::user::Member;
 use crate::structs::user::presence::Presence;
-use derive_builder::Builder;
-use discord_client_macros::{CreatedAt, Flags};
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
 
 pub mod activity;
 pub mod automod;
@@ -27,11 +24,9 @@ pub mod role;
 pub mod stage;
 pub mod user;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct GatewayGuild {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     #[serde(default)]
     pub name: Option<String>,
@@ -41,14 +36,12 @@ pub struct GatewayGuild {
     #[serde(default)]
     pub region: Option<String>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub afk_channel_id: Option<u64>,
     pub afk_timeout: Option<u32>,
     pub widget_enabled: Option<bool>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub widget_channel_id: Option<u64>,
     pub verification_level: Option<u8>,
     pub default_message_notifications: Option<u8>,
@@ -60,12 +53,10 @@ pub struct GatewayGuild {
     pub features: Option<Vec<String>>,
     pub mfa_level: Option<u8>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub application_id: Option<u64>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub system_channel_id: Option<u64>,
     #[serde(default)]
     #[flag_enum(
@@ -73,8 +64,7 @@ pub struct GatewayGuild {
     )]
     pub system_channel_flags: Option<u64>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub rules_channel_id: Option<u64>,
     pub joined_at: Option<String>,
     pub large: Option<bool>,
@@ -94,17 +84,14 @@ pub struct GatewayGuild {
     pub premium_subscription_count: Option<u32>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct EntityMetadata {
     pub location: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Guild {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     #[serde(default)]
     pub name: Option<String>,
@@ -113,24 +100,20 @@ pub struct Guild {
     pub home_header: Option<String>,
     pub splash: Option<String>,
     pub discovery_splash: Option<String>,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub owner_id: u64,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub application_id: Option<u64>,
     pub description: Option<String>,
     pub region: Option<String>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub afk_channel_id: Option<u64>,
     pub afk_timeout: Option<u32>,
     pub widget_enabled: Option<bool>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub widget_channel_id: Option<u64>,
     pub verification_level: Option<u8>,
     pub default_message_notifications: Option<u8>,
@@ -145,8 +128,7 @@ pub struct Guild {
     pub stickers: Option<Vec<Sticker>>,
     pub mfa_level: Option<u8>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub system_channel_id: Option<u64>,
     #[serde(default)]
     #[flag_enum(
@@ -154,16 +136,13 @@ pub struct Guild {
     )]
     pub system_channel_flags: Option<u64>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub rules_channel_id: Option<u64>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub public_updates_channel_id: Option<u64>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub safety_alerts_channel_id: Option<u64>,
     pub max_members: Option<u32>,
     pub vanity_url_code: Option<String>,
@@ -176,8 +155,7 @@ pub struct Guild {
     pub hub_type: Option<u8>,
     pub premium_progress_bar_enabled: bool,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub latest_onboarding_question_id: Option<u64>,
     pub incidents_data: Option<AutomodIncidentsData>,
     pub approximate_member_count: Option<u32>,
@@ -185,21 +163,17 @@ pub struct Guild {
     pub clan: Option<Clan>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct UnavailableGuild {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     pub unavailable: Option<bool>,
     pub geo_restricted: Option<bool>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct SupplementalGuild {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     #[serde(default)]
     pub voice_states: Option<Vec<VoiceState>>,

@@ -2,9 +2,8 @@ use crate::deserializer::*;
 use crate::serializer::*;
 use crate::structs::guild::clan::ClanBadge;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use discord_client_macros::{CreatedAt, Flags};
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
+use serde::Deserialize;
 
 pub mod activity;
 pub mod connection;
@@ -14,11 +13,9 @@ pub mod relationship;
 pub mod session;
 pub mod status;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct User {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     pub username: String,
     pub discriminator: String,
@@ -47,8 +44,7 @@ pub struct User {
     pub clan: Option<ClanBadge>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Member {
     pub user: Option<User>,
     pub nick: Option<String>,
@@ -79,12 +75,10 @@ pub struct Member {
     pub avatar_decoration_data: Option<AvatarDecorationData>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct AvatarDecorationData {
     pub asset: String,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub sku_id: u64,
 }
 

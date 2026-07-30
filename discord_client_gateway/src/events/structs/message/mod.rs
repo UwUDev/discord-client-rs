@@ -1,4 +1,4 @@
-use discord_client_macros::{CreatedAt, Flags};
+use discord_client_macros::{Flags, discord_struct};
 use discord_client_structs::deserializer::*;
 use discord_client_structs::structs::message::Message;
 use discord_client_structs::structs::user::{Member, User};
@@ -40,14 +40,14 @@ pub struct MessageUpdateEvent {
     pub mentions_with_members: Vec<UserWithMember>,
 }
 
-#[derive(Debug, Deserialize, Clone, CreatedAt)]
+#[discord_struct(no_builder, no_default, no_serialize)]
 pub struct MessageDeleteEvent {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[snowflake]
     pub id: u64,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[snowflake]
     pub channel_id: u64,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[snowflake]
     pub guild_id: Option<u64>,
 }
 

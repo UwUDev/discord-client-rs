@@ -1,13 +1,8 @@
-use crate::deserializer::*;
-use crate::serializer::*;
 use crate::structs::channel::Channel;
 use crate::structs::guild::role::Role;
-use derive_builder::Builder;
-use discord_client_macros::Flags;
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct CreateGuild {
     pub name: String,
     pub description: Option<String>,
@@ -20,13 +15,11 @@ pub struct CreateGuild {
     pub roles: Option<Vec<Role>>,
     pub channels: Option<Vec<Channel>>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub afk_channel_id: Option<u64>,
     pub afk_timeout: Option<u32>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub system_channel_id: Option<u64>,
     #[serde(default)]
     #[flag_enum(

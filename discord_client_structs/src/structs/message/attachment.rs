@@ -3,15 +3,11 @@ use crate::serializer::*;
 use crate::structs::application::IntegrationApplication;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use discord_client_macros::{CreatedAt, Flags};
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Attachment {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     pub filename: String,
     pub title: Option<String>,
@@ -46,8 +42,7 @@ pub struct Attachment {
     pub clip_participant_ids: Option<Vec<u64>>,
     pub clip_participants: Option<Vec<User>>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub application_id: Option<u64>,
     pub application: Option<IntegrationApplication>,
 }

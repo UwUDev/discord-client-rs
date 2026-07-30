@@ -1,22 +1,16 @@
-use crate::structs::channel::*;
 use crate::structs::user::User;
 use crate::structs::user::connection::IntegrationGuild;
-use derive_builder::Builder;
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Webhook {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     pub type_: u8,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub guild_id: Option<u64>,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub channel_id: u64,
     #[serde(default)]
     pub user: Option<User>,
@@ -24,8 +18,7 @@ pub struct Webhook {
     pub avatar: Option<String>,
     #[serde(default)]
     pub token: Option<String>,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub application_id: u64,
     #[serde(default)]
     pub source_guild: Option<IntegrationGuild>,
@@ -35,11 +28,9 @@ pub struct Webhook {
     pub url: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct WebhookChannel {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     pub name: String,
 }

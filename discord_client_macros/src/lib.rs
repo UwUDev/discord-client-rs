@@ -29,87 +29,6 @@ fn is_option_u64_type(ty: &Type) -> bool {
     false
 }
 
-fn generate_created_at_impl(input: DeriveInput, is_option: bool) -> TokenStream {
-    let struct_name = &input.ident;
-
-    let id_field = match &input.data {
-        Data::Struct(data) => match &data.fields {
-            Fields::Named(fields) => fields
-                .named
-                .iter()
-                .find(|f| f.ident.as_ref().map_or(false, |i| i == "id"))
-                .map(|f| &f.ty),
-            _ => None,
-        },
-        _ => None,
-    };
-
-    let output = match id_field {
-        Some(ty) => {
-            let is_valid_type = if is_option {
-                is_option_u64_type(ty)
-            } else {
-                is_u64_type(ty)
-            };
-
-            if !is_valid_type {
-                let expected_type = if is_option { "Option<u64>" } else { "u64" };
-                return syn::Error::new_spanned(
-                    ty,
-                    format!("Field 'id' must be of type {}", expected_type),
-                )
-                .to_compile_error()
-                .into();
-            }
-
-            if is_option {
-                quote! {
-                    impl #struct_name {
-                        pub fn created_at(&self) -> Option<chrono::DateTime<chrono::Utc>> {
-                            self.id.and_then(|id| {
-                                let timestamp = (id >> 22) + 1420070400000;
-                                <chrono::Utc as chrono::TimeZone>::timestamp_millis_opt(&chrono::Utc, timestamp as i64)
-                                    .single()
-                            })
-                        }
-                    }
-                }
-            } else {
-                quote! {
-                    impl #struct_name {
-                        pub fn created_at(&self) -> Option<chrono::DateTime<chrono::Utc>> {
-                            let timestamp = (self.id >> 22) + 1420070400000;
-                            <chrono::Utc as chrono::TimeZone>::timestamp_millis_opt(&chrono::Utc, timestamp as i64).single()
-                        }
-                    }
-                }
-            }
-        }
-        None => syn::Error::new(
-            struct_name.span(),
-            format!(
-                "Struct must have field 'id' of type {}",
-                if is_option { "Option<u64>" } else { "u64" }
-            ),
-        )
-        .to_compile_error(),
-    };
-
-    output.into()
-}
-
-#[proc_macro_derive(CreatedAt)]
-pub fn derive_created_at(input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as DeriveInput);
-    generate_created_at_impl(input, false)
-}
-
-#[proc_macro_derive(OptionCreatedAt)]
-pub fn derive_option_created_at(input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as DeriveInput);
-    generate_created_at_impl(input, true)
-}
-
 #[proc_macro_derive(EnumFromPrimitive, attributes(default))]
 pub fn derive_enum_from_primitive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
@@ -579,6 +498,7 @@ pub fn discord_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
     let mut no_builder = false;
     let mut no_default = false;
     let mut no_serialize = false;
+    let mut no_deserialize = false;
     if !attr.is_empty() {
         let parser = syn::punctuated::Punctuated::<syn::Ident, syn::Token![,]>::parse_terminated;
         match syn::parse::Parser::parse(parser, attr) {
@@ -588,6 +508,7 @@ pub fn discord_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
                         "no_builder" => no_builder = true,
                         "no_default" => no_default = true,
                         "no_serialize" => no_serialize = true,
+                        "no_deserialize" => no_deserialize = true,
                         other => {
                             return syn::Error::new_spanned(
                                 id.clone(),
@@ -649,12 +570,16 @@ pub fn discord_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
                     "::discord_client_structs::serializer::serialize_u64_as_string",
                 )
             };
-            field
-                .attrs
-                .push(syn::parse_quote! { #[serde(deserialize_with = #de)] });
-            field
-                .attrs
-                .push(syn::parse_quote! { #[serde(serialize_with = #ser)] });
+            if !no_deserialize {
+                field
+                    .attrs
+                    .push(syn::parse_quote! { #[serde(deserialize_with = #de)] });
+            }
+            if !no_serialize {
+                field
+                    .attrs
+                    .push(syn::parse_quote! { #[serde(serialize_with = #ser)] });
+            }
 
             if !opts.no_created_at {
                 let fname = field.ident.clone().unwrap();
@@ -695,7 +620,9 @@ pub fn discord_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
     if !no_serialize {
         derives.push(quote!(::serde::Serialize));
     }
-    derives.push(quote!(::serde::Deserialize));
+    if !no_deserialize {
+        derives.push(quote!(::serde::Deserialize));
+    }
     if !no_default {
         derives.push(quote!(Default));
     }
