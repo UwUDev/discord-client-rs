@@ -1,16 +1,15 @@
 use crate::deserializer::*;
 use chrono::{DateTime, Utc};
-use discord_client_macros::CreatedAt;
-use serde::Deserialize;
+use discord_client_macros::discord_struct;
 
-#[derive(Debug, Deserialize, Clone, CreatedAt)]
+#[discord_struct(no_builder, no_default, no_serialize)]
 pub struct ChannelUnreadUpdate {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[snowflake]
     pub id: u64,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
     pub last_pin_timestamp: Option<DateTime<Utc>>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[snowflake]
     pub last_message_id: Option<u64>,
 }

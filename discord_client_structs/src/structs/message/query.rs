@@ -1,11 +1,9 @@
 use crate::structs::message::Message;
-use derive_builder::Builder;
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
 use std::collections::HashMap;
 use strum_macros::Display;
 
-#[derive(Debug, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct(no_serialize, no_deserialize)]
 pub struct MessageQuery {
     pub around: Option<u64>,
     pub before: Option<u64>,
@@ -35,8 +33,7 @@ impl MessageQuery {
     }
 }
 
-#[derive(Debug, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct(no_serialize, no_deserialize)]
 pub struct MessageSearchQuery {
     pub limit: Option<u8>,
     pub offset: Option<u32>,
@@ -243,8 +240,7 @@ impl MessageSearchQuery {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct MessageSearchResult {
     pub analytics_id: String,
     pub doing_deep_historical_index: bool,

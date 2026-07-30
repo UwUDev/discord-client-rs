@@ -4,9 +4,7 @@ use crate::structs::channel::thread::{DefaultReaction, Tag, ThreadMember, Thread
 use crate::structs::permission::Overwrite;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use discord_client_macros::{CreatedAt, Flags};
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
 
 pub mod invite;
 pub mod overrides;
@@ -17,16 +15,13 @@ pub mod unread;
 pub mod voice;
 pub mod webhook;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Channel {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     pub r#type: u8,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub guild_id: Option<u64>,
     pub position: Option<i64>,
     pub permission_overwrites: Option<Vec<Overwrite>>,
@@ -34,8 +29,7 @@ pub struct Channel {
     pub topic: Option<String>,
     pub nsfw: Option<bool>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub last_message_id: Option<u64>,
     pub bitrate: Option<u32>,
     pub user_limit: Option<u16>,
@@ -43,17 +37,14 @@ pub struct Channel {
     pub recipients: Option<Vec<User>>,
     pub icon: Option<String>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub owner_id: Option<u64>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub application_id: Option<u64>,
     pub managed: Option<bool>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub parent_id: Option<u64>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]
@@ -83,31 +74,25 @@ pub struct Channel {
     pub default_forum_layout: Option<u8>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct PartialChannel {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     pub r#type: u8,
     pub name: Option<String>,
     pub recipients: Option<Vec<User>>,
     pub icon: Option<String>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub guild_id: Option<u64>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct UpdatedChannel {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub last_message_id: Option<u64>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]

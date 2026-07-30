@@ -1,8 +1,6 @@
-use derive_builder::Builder;
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct GameActivity {
     pub activity_level: u32,
     pub activity_score: u32,

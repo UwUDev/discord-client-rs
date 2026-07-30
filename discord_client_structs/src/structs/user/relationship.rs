@@ -1,11 +1,10 @@
 use crate::structs::user::User;
-use crate::structs::user::deserialize_string_to_u64;
-use discord_client_macros::{CreatedAt, EnumFromPrimitive};
+use discord_client_macros::{EnumFromPrimitive, discord_struct};
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize, Clone, CreatedAt)]
+#[discord_struct(no_builder, no_default, no_serialize)]
 pub struct Relationship {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[snowflake]
     pub id: u64,
     pub r#type: RelationshipType,
     pub user: Option<User>,
@@ -17,9 +16,9 @@ pub struct Relationship {
     pub since: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone, CreatedAt)]
+#[discord_struct(no_builder, no_default, no_serialize)]
 pub struct GameRelationship {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[snowflake]
     pub id: u64,
     pub application_id: String,
     pub r#type: RelationshipType,

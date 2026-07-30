@@ -2,15 +2,12 @@ use crate::deserializer::*;
 use crate::serializer::*;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use discord_client_macros::OptionCreatedAt;
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
+use serde::Deserialize;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Potion {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake(no_created_at)]
     pub used_by: u64,
     pub r#type: u8,
     pub emoji: Vec<Emoji>,
@@ -19,12 +16,10 @@ pub struct Potion {
     pub created_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, OptionCreatedAt)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Emoji {
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub id: Option<u64>,
     pub name: Option<String>,
     #[serde(default)]
@@ -38,15 +33,13 @@ pub struct Emoji {
     pub available: Option<bool>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct UserSettingsProto {
     pub r#type: u64,
     pub proto: String,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct TutorialIndicators {
     pub indicators_suppressed: bool,
     pub indicators_confirmed: Vec<String>,
@@ -59,8 +52,7 @@ pub struct Versioned<T> {
     pub version: u64,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct MuteConfig {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]

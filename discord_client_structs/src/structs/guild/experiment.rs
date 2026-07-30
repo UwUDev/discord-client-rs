@@ -1,9 +1,8 @@
-use derive_builder::Builder;
+use discord_client_macros::discord_struct;
 use serde::ser::SerializeSeq;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Debug, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct(no_serialize, no_deserialize)]
 pub struct GuildExperiment {
     pub hash: i64,
     pub hash_key: Option<String>,
@@ -126,8 +125,7 @@ impl Serialize for GuildExperiment {
     }
 }
 
-#[derive(Debug, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct(no_serialize, no_deserialize)]
 pub struct ExperimentPopulation {
     pub ranges: Vec<ExperimentPopulationRange>,
     //pub filters: ExperimentPopulationFilters, // todo: understand this
@@ -167,8 +165,7 @@ impl Serialize for ExperimentPopulation {
     }
 }
 
-#[derive(Debug, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct(no_serialize, no_deserialize)]
 pub struct ExperimentPopulationRange {
     pub bucket: i64,
     pub rollout: Vec<ExperimentPopulationRollout>,
@@ -214,15 +211,13 @@ impl Serialize for ExperimentPopulationRange {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)] // no need for custom deserialization
+#[discord_struct]
 pub struct ExperimentPopulationRollout {
     pub s: i64,
     pub e: i64,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)] // no need for custom deserialization
+#[discord_struct]
 pub struct ExperimentBucketOverride {
     pub b: i64,
     pub k: Vec<String>,

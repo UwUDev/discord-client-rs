@@ -1,6 +1,5 @@
-use discord_client_macros::CreatedAt;
+use discord_client_macros::discord_struct;
 use discord_client_structs::deserializer::deserialize_option_string_to_u64;
-use discord_client_structs::deserializer::deserialize_string_to_u64;
 use discord_client_structs::structs::channel::voice::VoiceState;
 use serde::Deserialize;
 
@@ -10,22 +9,22 @@ pub struct VoiceStateUpdateEvent {
     pub voice_state: VoiceState,
 }
 
-#[derive(Debug, Deserialize, Clone, CreatedAt)]
+#[discord_struct(no_builder, no_default, no_serialize)]
 pub struct VoiceChannelStatusUpdateEvent {
     pub status: Option<String>,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[snowflake]
     pub id: u64,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[snowflake]
     pub guild_id: Option<u64>,
 }
 
-#[derive(Debug, Deserialize, Clone, CreatedAt)]
+#[discord_struct(no_builder, no_default, no_serialize)]
 pub struct VoiceChannelStartTimeUpdateEvent {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[snowflake]
     pub id: u64,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[snowflake]
     pub guild_id: Option<u64>,
     pub voice_start_time: Option<i64>,
 }

@@ -2,11 +2,10 @@ use crate::deserializer::*;
 use crate::serializer::*;
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
-use discord_client_macros::{EnumFromString, Flags};
+use discord_client_macros::{EnumFromString, Flags, discord_struct};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Embed {
     pub title: Option<String>,
     pub r#type: EmbedType,
@@ -25,8 +24,7 @@ pub struct Embed {
     pub author: Option<EmbedAuthor>,
     pub fields: Option<Vec<EmbedField>>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub reference_id: Option<u64>,
     #[flag_enum("ContainsExplicitMedia=4,ContentInventoryEntry=5")]
     pub flags: Option<u64>,
@@ -46,8 +44,7 @@ pub enum EmbedType {
     Unknown,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct EmbedFooter {
     pub text: String,
     pub icon_url: Option<String>,
@@ -102,15 +99,13 @@ pub struct EmbedVideo {
     pub placeholder: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct EmbedProvider {
     pub name: Option<String>,
     pub url: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct EmbedAuthor {
     pub name: String,
     pub url: Option<String>,
@@ -118,8 +113,7 @@ pub struct EmbedAuthor {
     pub proxy_icon_url: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct EmbedField {
     pub name: String,
     pub value: String,

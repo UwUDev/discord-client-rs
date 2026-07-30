@@ -2,21 +2,15 @@ use crate::deserializer::*;
 use crate::serializer::*;
 use crate::structs::user::Member;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use discord_client_macros::OptionCreatedAt;
-use discord_client_macros::{CreatedAt, Flags};
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, OptionCreatedAt, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct ThreadMember {
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub id: Option<u64>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub user_id: Option<u64>,
     #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
     #[serde(serialize_with = "serialize_date_to_iso8601_string")]
@@ -26,8 +20,7 @@ pub struct ThreadMember {
     pub member: Option<Member>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct ThreadMetadata {
     pub archived: bool,
     pub auto_archive_duration: u32,
@@ -42,27 +35,22 @@ pub struct ThreadMetadata {
     pub create_timestamp: Option<DateTime<Utc>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Tag {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     pub name: String,
     pub moderated: bool,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub emoji_id: Option<u64>,
     pub emoji_name: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct DefaultReaction {
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub emoji_id: Option<u64>,
     pub emoji_name: Option<String>,
 }

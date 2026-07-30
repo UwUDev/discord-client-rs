@@ -1,7 +1,6 @@
 use crate::deserializer::*;
-use crate::serializer::*;
 use crate::structs::guild::integration::*;
-use discord_client_macros::{CreatedAt, EnumFromString};
+use discord_client_macros::{EnumFromString, discord_struct};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Clone)]
@@ -29,10 +28,9 @@ pub struct ConnectionIntegration {
     pub guild: IntegrationGuild,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, CreatedAt)]
+#[discord_struct(no_builder, no_default)]
 pub struct PartialIntegration {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     pub name: String,
     pub r#type: IntegrationType,
@@ -48,10 +46,9 @@ pub struct Account {
     pub name: String,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, CreatedAt)]
+#[discord_struct(no_builder, no_default)]
 pub struct IntegrationGuild {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     pub name: String,
     pub icon: Option<String>,

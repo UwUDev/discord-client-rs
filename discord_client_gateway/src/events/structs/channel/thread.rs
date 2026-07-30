@@ -1,7 +1,6 @@
-use discord_client_macros::CreatedAt;
+use discord_client_macros::discord_struct;
 use discord_client_structs::deserializer::{
-    deserialize_option_string_to_u64, deserialize_option_string_to_vec_u64,
-    deserialize_string_to_u64,
+    deserialize_option_string_to_vec_u64, deserialize_string_to_u64,
 };
 use discord_client_structs::structs::channel::Channel;
 use discord_client_structs::structs::channel::thread::ThreadMember;
@@ -21,13 +20,13 @@ pub struct ThreadUpdateEvent {
     pub channel: Channel,
 }
 
-#[derive(Debug, Deserialize, Clone, CreatedAt)]
+#[discord_struct(no_builder, no_default, no_serialize)]
 pub struct ThreadDeleteEvent {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[snowflake]
     pub id: u64,
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[snowflake]
     pub guild_id: Option<u64>,
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[snowflake]
     pub parent_id: Option<u64>,
     pub r#type: u8,
 }
@@ -52,7 +51,7 @@ pub struct ThreadMemberUpdateEvent {
     pub guild_id: u64,
 }
 
-#[derive(Debug, Deserialize, Clone, CreatedAt)]
+#[discord_struct(no_builder, no_default, no_serialize)]
 pub struct ThreadMembersUpdateEvent {
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
@@ -61,10 +60,10 @@ pub struct ThreadMembersUpdateEvent {
     #[serde(deserialize_with = "deserialize_option_string_to_vec_u64")]
     pub removed_member_ids: Option<Vec<u64>>,
     pub member_count: u32,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[snowflake]
     pub id: u64,
     #[serde(default)]
     pub added_members: Option<Vec<ThreadMember>>,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
+    #[snowflake]
     pub guild_id: u64,
 }

@@ -1,8 +1,7 @@
-use derive_builder::Builder;
+use discord_client_macros::discord_struct;
 use std::collections::HashMap;
 
-#[derive(Debug, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct(no_serialize, no_deserialize)]
 pub struct AuditLogQuery {
     pub before: Option<u64>,
     pub after: Option<u64>,

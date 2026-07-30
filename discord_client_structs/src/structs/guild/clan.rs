@@ -3,16 +3,12 @@ use crate::serializer::*;
 use crate::structs::guild::activity::GameActivity;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use discord_client_macros::CreatedAt;
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Clan {
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub id: Option<u64>,
     #[serde(default)]
     pub name: Option<String>,
@@ -36,21 +32,17 @@ pub struct Clan {
     pub discovery_profile_features: Option<Vec<String>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct GuildJoinRequest {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub join_request_id: u64,
     #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
     #[serde(serialize_with = "serialize_date_to_iso8601_string")]
     pub created_at: DateTime<Utc>,
     pub application_status: String,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub guild_id: u64,
     #[serde(default)]
     pub form_responses: Option<Vec<MemberVerificationFormField>>,
@@ -59,26 +51,22 @@ pub struct GuildJoinRequest {
     #[serde(serialize_with = "serialize_option_date_to_iso8601_string")]
     pub last_seen: Option<DateTime<Utc>>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake(no_created_at)]
     pub actioned_at: Option<u64>,
     #[serde(default)]
     pub actioned_by_user: Option<User>,
     #[serde(default)]
     pub rejection_reason: Option<String>,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub user_id: u64,
     #[serde(default)]
     pub user: Option<User>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub interview_channel_id: Option<u64>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct MemberVerificationFormField {
     pub field_type: String,
     pub label: String,
@@ -97,12 +85,10 @@ pub struct MemberVerificationFormField {
     pub placeholder: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct ClanBadge {
     pub tag: Option<String>,
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub identity_guild_id: Option<u64>,
     pub identity_enabled: Option<bool>,
     pub badge: Option<String>,

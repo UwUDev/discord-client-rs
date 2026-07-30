@@ -3,24 +3,19 @@ use crate::serializer::*;
 use crate::structs::guild::EntityMetadata;
 use crate::structs::user::User;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use discord_client_macros::CreatedAt;
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct GuildScheduledEvent {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub guild_id: u64,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[snowflake]
     pub channel_id: Option<u64>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[snowflake]
     pub creator_id: Option<u64>,
     pub creator: Option<User>,
     pub name: String,
@@ -36,7 +31,7 @@ pub struct GuildScheduledEvent {
     pub status: u8,
     pub entity_type: u8,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
+    #[snowflake]
     pub entity_id: Option<u64>,
     pub entity_metadata: Option<EntityMetadata>,
     pub user_count: Option<u32>,
@@ -45,8 +40,7 @@ pub struct GuildScheduledEvent {
     pub guild_scheduled_event_exceptions: Vec<GuildScheduledEventException>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct RecurrenceRule {
     #[serde(deserialize_with = "deserialize_iso8601_string_to_date")]
     #[serde(serialize_with = "serialize_date_to_iso8601_string")]
@@ -64,21 +58,17 @@ pub struct RecurrenceRule {
     pub count: Option<u32>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct RecurrenceRuleNWeekday {
     pub n: u8,
     pub day: u8,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct GuildScheduledEventException {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub event_id: u64,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub event_exception_id: u64,
     pub is_canceled: bool,
     #[serde(deserialize_with = "deserialize_option_iso8601_string_to_date")]

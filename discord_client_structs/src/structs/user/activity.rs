@@ -2,12 +2,9 @@ use crate::deserializer::*;
 use crate::serializer::*;
 use crate::structs::misc::Emoji;
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use discord_client_macros::Flags;
-use serde::{Deserialize, Serialize};
+use discord_client_macros::discord_struct;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Activity {
     pub name: String,
     pub r#type: u8,
@@ -15,8 +12,7 @@ pub struct Activity {
     pub created_at: u64,
     pub timestamps: Option<ActivityTimestamp>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub application_id: Option<u64>,
     pub details: Option<String>,
     pub state: Option<String>,
@@ -33,8 +29,7 @@ pub struct Activity {
     pub buttons: Option<Vec<String>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct ActivityTimestamp {
     #[serde(
         default,
@@ -51,15 +46,13 @@ pub struct ActivityTimestamp {
     pub end: Option<DateTime<Utc>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Party {
     pub id: Option<String>,
     pub size: Option<Vec<u64>>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct ActivityAsset {
     pub large_image: Option<String>,
     pub large_text: Option<String>,
@@ -67,8 +60,7 @@ pub struct ActivityAsset {
     pub small_text: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct ActivitySecrets {
     pub join: Option<String>,
     pub spectate: Option<String>,
@@ -76,14 +68,11 @@ pub struct ActivitySecrets {
     pub instanced_match: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct EmbeddedActivityConfig {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub application_id: u64,
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub activity_preview_video_asset_id: u64,
     pub supported_platforms: Vec<String>,
     pub default_orientation_lock_state: u64,
@@ -104,8 +93,7 @@ pub struct EmbeddedActivityConfig {
     pub displays_advertisements: bool,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct EmbeddedActivityPlatformConfig {
     pub label_type: u64,
     #[serde(default)]

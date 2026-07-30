@@ -4,12 +4,9 @@ use crate::structs::channel::*;
 use crate::structs::guild::event::GuildScheduledEvent;
 use crate::structs::user::{Member, User};
 use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use discord_client_macros::{EnumFromPrimitive, Flags};
-use serde::{Deserialize, Serialize};
+use discord_client_macros::{EnumFromPrimitive, discord_struct};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct Invite {
     pub code: String,
     pub r#type: u8,
@@ -17,8 +14,7 @@ pub struct Invite {
     pub metadata: Option<InviteMetadata>,
     pub channel: Option<Channel>,
     #[serde(default)]
-    #[serde(deserialize_with = "deserialize_option_string_to_u64")]
-    #[serde(serialize_with = "serialize_option_u64_as_string")]
+    #[snowflake]
     pub guild_id: Option<u64>,
     pub guild: Option<InviteGuild>,
     pub inviter: Option<User>,
@@ -39,8 +35,7 @@ pub struct Invite {
     pub is_nickname_changeable: Option<bool>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct InviteStageInstance {
     pub members: Vec<Member>,
     pub participant_count: u32,
@@ -48,11 +43,9 @@ pub struct InviteStageInstance {
     pub topic: String,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, CreatedAt)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct InviteGuild {
-    #[serde(deserialize_with = "deserialize_string_to_u64")]
-    #[serde(serialize_with = "serialize_u64_as_string")]
+    #[snowflake]
     pub id: u64,
     pub name: String,
     pub icon: Option<String>,
@@ -67,8 +60,7 @@ pub struct InviteGuild {
     pub nsfw_level: u8,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default, Flags)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct CreateChannelInvite {
     #[flag_enum("IsGuestInvite=0,IsViewed=1,IsEnhanced=2,IsApplicationBypass=3")]
     pub flags: Option<u64>,
@@ -82,8 +74,7 @@ pub struct CreateChannelInvite {
     pub target_application_id: Option<u64>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
+#[discord_struct]
 pub struct InviteMetadata {
     pub uses: Option<u64>,
     pub max_uses: Option<u64>,
