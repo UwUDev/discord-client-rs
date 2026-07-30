@@ -295,3 +295,67 @@ pub(crate) fn create_op_40(
     })
     .to_string()
 }
+
+pub(crate) fn create_op_17(
+    lobby_id: u64,
+    self_mute: bool,
+    self_deaf: bool,
+    self_video: Option<bool>,
+    preferred_region: Option<&str>,
+) -> String {
+    use serde_json::Map;
+
+    let mut d = Map::new();
+    d.insert("lobby_id".to_string(), Value::from(lobby_id.to_string()));
+    d.insert("self_mute".to_string(), json!(self_mute));
+    d.insert("self_deaf".to_string(), json!(self_deaf));
+    if let Some(v) = self_video {
+        d.insert("self_video".to_string(), json!(v));
+    }
+    if let Some(r) = preferred_region {
+        d.insert("preferred_region".to_string(), json!(r));
+    }
+
+    json!({ "op": 17, "d": d }).to_string()
+}
+
+pub(crate) fn create_op_42(lobby_id: u64) -> String {
+    json!({ "op": 42, "d": { "lobby_id": lobby_id.to_string() } }).to_string()
+}
+
+pub(crate) fn create_op_28(payload: Value) -> String {
+    json!({ "op": 28, "d": payload }).to_string()
+}
+
+pub(crate) fn create_op_30(
+    guild_id: u64,
+    channel_ids_hash: Option<&str>,
+    role_ids_hash: Option<&str>,
+    emoji_ids_hash: Option<&str>,
+    sticker_ids_hash: Option<&str>,
+) -> String {
+    use serde_json::Map;
+
+    let mut d = Map::new();
+    d.insert("guild_id".to_string(), Value::from(guild_id.to_string()));
+    for (k, v) in [
+        ("channel_ids_hash", channel_ids_hash),
+        ("role_ids_hash", role_ids_hash),
+        ("emoji_ids_hash", emoji_ids_hash),
+        ("sticker_ids_hash", sticker_ids_hash),
+    ] {
+        if let Some(h) = v {
+            d.insert(k.to_string(), json!(h));
+        }
+    }
+
+    json!({ "op": 30, "d": d }).to_string()
+}
+
+pub(crate) fn create_op_43(guild_id: u64, fields: Vec<String>) -> String {
+    json!({
+        "op": 43,
+        "d": { "guild_id": guild_id.to_string(), "fields": fields }
+    })
+    .to_string()
+}

@@ -37,7 +37,7 @@ async fn main() {
 
     loop {
         let event = client.next_event().await.unwrap();
-        if let Event::ChannelStatues(statues_event) = event.clone() {
+        if let Event::ChannelStatuses(statues_event) = event.clone() {
             println!(
                 "Got {} channel statuses for guild {}",
                 statues_event.channels.len(),
