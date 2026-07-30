@@ -3,6 +3,7 @@ use serde_json::Value;
 pub mod application;
 pub mod call;
 pub mod channel;
+pub mod extra;
 pub mod gateway;
 pub mod guild;
 pub mod message;
