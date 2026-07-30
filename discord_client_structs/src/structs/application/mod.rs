@@ -147,10 +147,14 @@ pub struct ApplicationCommand {
     #[snowflake(no_created_at)]
     pub version: u64,
     pub name: String,
-    pub dm_permission: bool,
-    pub contexts: Vec<u8>,
-    pub integration_types: Vec<u8>,
-    pub handler: u8,
+    #[serde(default)]
+    pub dm_permission: Option<bool>,
+    #[serde(default)]
+    pub contexts: Option<Vec<u8>>,
+    #[serde(default)]
+    pub integration_types: Option<Vec<u8>>,
+    #[serde(default)]
+    pub handler: Option<u8>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, EnumFromPrimitive)]
