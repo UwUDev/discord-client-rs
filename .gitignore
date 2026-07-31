@@ -1,7 +1,8 @@
 /target/
-token.txt
+token*.txt
 .idea/
 /event.json
 /icon.png
 failed_events/
 unknown_events/
+/Cargo.lock

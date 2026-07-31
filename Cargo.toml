@@ -12,6 +12,9 @@ members = [
     "examples/react_bot",
     "examples/backward_react_bot",
     "examples/event_logger",
+    "examples/token_checker",
+    "examples/guild_export",
+    "examples/dedupe_guilds",
 ]
 
 resolver = "3"

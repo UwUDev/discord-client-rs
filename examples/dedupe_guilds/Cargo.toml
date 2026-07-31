@@ -1,0 +1,12 @@
+[package]
+name = "dedupe_guilds"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+discord_client_rest = { path = "../../discord_client_rest" }
+discord_client_structs = { path = "../../discord_client_structs" }
+discord_client_utils = { path = "../../discord_client_utils" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["rt", "macros", "rt-multi-thread", "fs"] }

@@ -63,6 +63,24 @@ impl<'a> GuildRest<'a> {
         self.client.delete(&path, None::<&()>, Some(props)).await
     }
 
+    pub async fn leave(&self) -> BoxedResult<()> {
+        if self.guild_id.is_none() {
+            return Err("Guild ID is required".into());
+        }
+
+        let path = format!("users/@me/guilds/{}", self.guild_id.unwrap());
+
+        let referer = GuildReferer {
+            guild_id: self.guild_id.unwrap(),
+        };
+
+        let props = RequestPropertiesBuilder::default()
+            .referer::<Referer>(referer.into())
+            .build()?;
+
+        self.client.delete(&path, None::<&()>, Some(props)).await
+    }
+
     pub async fn search_guild_messages(
         &self,
         query: MessageSearchQuery,

@@ -1,0 +1,9 @@
+[package]
+name = "token_checker"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+discord_client_gateway = { path = "../../discord_client_gateway" }
+discord_client_utils = { path = "../../discord_client_utils" }
+tokio = { workspace = true, features = ["rt", "macros", "rt-multi-thread", "fs", "sync", "time", "io-util"] }
