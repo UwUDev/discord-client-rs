@@ -354,6 +354,7 @@ if let Event::Ready(ready) = event {
   - [x] User Settings Proto Update
 - **Voice**
   - [x] Voice State Update
+  - [x] Voice State Update Batch
   - [x] Voice Server Update
   - [x] Voice Channel Effect Send
   - [x] Voice Channel Start Time Update

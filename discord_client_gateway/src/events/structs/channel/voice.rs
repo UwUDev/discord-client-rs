@@ -9,6 +9,12 @@ pub struct VoiceStateUpdateEvent {
     pub voice_state: VoiceState,
 }
 
+#[derive(Debug, Deserialize, Clone)]
+pub struct VoiceStateUpdateBatchEvent {
+    #[serde(default)]
+    pub voice_states: Vec<VoiceState>,
+}
+
 #[discord_struct(no_builder, no_default, no_serialize)]
 pub struct VoiceChannelStatusUpdateEvent {
     pub status: Option<String>,
@@ -43,7 +49,18 @@ pub struct VoiceServerUpdateEvent {
 
 #[cfg(test)]
 mod tests {
-    use super::{VoiceChannelStartTimeUpdateEvent, VoiceServerUpdateEvent};
+    use super::{
+        VoiceChannelStartTimeUpdateEvent, VoiceServerUpdateEvent, VoiceStateUpdateBatchEvent,
+    };
+
+    #[test]
+    fn voice_state_update_batch() {
+        let raw = r#"{"voice_states":[{"user_id":"1","suppress":false,"session_id":"abc","self_video":false,"self_mute":false,"self_deaf":false,"mute":false,"deaf":false,"channel_id":"2"}]}"#;
+        let e: VoiceStateUpdateBatchEvent = serde_json::from_str(raw).unwrap();
+        assert_eq!(e.voice_states.len(), 1);
+        assert_eq!(e.voice_states[0].user_id, 1);
+        assert_eq!(e.voice_states[0].channel_id, Some(2));
+    }
 
     #[test]
     fn start_time_update_ended() {
