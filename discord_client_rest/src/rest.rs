@@ -1,10 +1,21 @@
 use crate::api::auth::AuthRest;
+use crate::api::automod::AutomodRest;
 use crate::api::dm::DmRest;
+use crate::api::emoji::EmojiRest;
 use crate::api::group::GroupRest;
 use crate::api::guild::GuildRest;
+use crate::api::integration::IntegrationRest;
 use crate::api::invite::InviteRest;
 use crate::api::message::MessageRest;
+use crate::api::relationship::RelationshipRest;
+use crate::api::scheduled_event::ScheduledEventRest;
 use crate::api::self_user::SelfUserRest;
+use crate::api::soundboard::SoundboardRest;
+use crate::api::stage::StageRest;
+use crate::api::sticker::StickerRest;
+use crate::api::user::UserRest;
+use crate::api::voice::VoiceRest;
+use crate::api::webhook::WebhookRest;
 use crate::bootstrap::bootstrap_client;
 use crate::captcha::{CaptchaRequiredError, SolvedCaptcha};
 use crate::mfa::{MfaRequiredError, MfaVerificationRequest};
@@ -174,6 +185,59 @@ impl RestClient {
 
     pub fn invite(&self) -> InviteRest<'_> {
         InviteRest { client: self }
+    }
+
+    pub fn user(&self) -> UserRest<'_> {
+        UserRest { client: self }
+    }
+
+    pub fn relationship(&self) -> RelationshipRest<'_> {
+        RelationshipRest { client: self }
+    }
+
+    pub fn emoji(&self, guild_id: u64) -> EmojiRest<'_> {
+        EmojiRest {
+            guild_id,
+            client: self,
+        }
+    }
+
+    pub fn sticker(&self) -> StickerRest<'_> {
+        StickerRest { client: self }
+    }
+
+    pub fn voice(&self) -> VoiceRest<'_> {
+        VoiceRest { client: self }
+    }
+
+    pub fn automod(&self, guild_id: u64) -> AutomodRest<'_> {
+        AutomodRest {
+            guild_id,
+            client: self,
+        }
+    }
+
+    pub fn scheduled_event(&self, guild_id: u64) -> ScheduledEventRest<'_> {
+        ScheduledEventRest {
+            guild_id,
+            client: self,
+        }
+    }
+
+    pub fn stage(&self) -> StageRest<'_> {
+        StageRest { client: self }
+    }
+
+    pub fn soundboard(&self) -> SoundboardRest<'_> {
+        SoundboardRest { client: self }
+    }
+
+    pub fn webhook(&self) -> WebhookRest<'_> {
+        WebhookRest { client: self }
+    }
+
+    pub fn integration(&self) -> IntegrationRest<'_> {
+        IntegrationRest { client: self }
     }
 
     pub async fn get<T: DeserializeOwned + Default + Send>(

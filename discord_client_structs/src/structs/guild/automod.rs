@@ -59,15 +59,16 @@ pub struct TriggerMetadata {
 
 #[discord_struct]
 pub struct Action {
-    pub action_type: AutomodActionType,
+    pub r#type: AutomodActionType,
     pub metadata: Option<ActionMetadata>,
 }
 
 #[discord_struct]
 pub struct ActionMetadata {
+    #[serde(default)]
     #[snowflake]
-    pub channel_id: u64,
-    pub duration_seconds: u32,
+    pub channel_id: Option<u64>,
+    pub duration_seconds: Option<u32>,
     pub custom_message: Option<String>,
 }
 
