@@ -259,6 +259,7 @@ define_events! {
         VoiceChannelStatusUpdate { t: "VOICE_CHANNEL_STATUS_UPDATE", type: VoiceChannelStatusUpdateEvent },
         VoiceChannelStartTimeUpdate { t: "VOICE_CHANNEL_START_TIME_UPDATE", type: VoiceChannelStartTimeUpdateEvent },
         VoiceStateUpdate { t: "VOICE_STATE_UPDATE", type: VoiceStateUpdateEvent },
+        VoiceStateUpdateBatch { t: "VOICE_STATE_UPDATE_BATCH", type: VoiceStateUpdateBatchEvent },
         WebhookUpdate { t: "WEBHOOKS_UPDATE", type: WebhooksUpdateEvent },
         ApplicationCommandPermissionsUpdate { t: "APPLICATION_COMMAND_PERMISSIONS_UPDATE", type: ApplicationCommandPermissionsUpdateEvent },
         VoiceServerUpdate { t: "VOICE_SERVER_UPDATE", type: VoiceServerUpdateEvent },
