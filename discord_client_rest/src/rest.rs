@@ -109,33 +109,26 @@ impl RestClient {
             }
         };
 
-        let re = Regex::new(r#"r:'([a-f0-9]+)'"#).unwrap();
-        let r: String = re
+        let r: Option<String> = Regex::new(r#"r:'([a-f0-9]+)'"#)
+            .unwrap()
             .captures(&body)
-            .ok_or("Failed to find r")?
-            .get(1)
-            .ok_or("Failed to find r")?
-            .as_str()
-            .to_string();
+            .and_then(|c| c.get(1))
+            .map(|m| m.as_str().to_string());
 
-        /*let re = Regex::new(r#"t:'([a-zA-Z0-9_\-=]+)'"#).unwrap();
-        let t: String = re
-            .captures(&body)
-            .ok_or("Failed to find t")?
-            .get(1)
-            .ok_or("Failed to find t")?
-            .as_str()
-            .to_string();*/
-
-        let (key, s) = get_invisible(&client).await?;
-
-        /*match get_clearance_cookie(&client, r, key, s).await {
-            Ok(_) => {}
-            Err(e) => {
-                warn!("{}", e);
-                return Err(e);
+        match (get_invisible(&client).await, r) {
+            (Ok(invisible), Some(r)) => {
+                if let Err(e) = get_clearance_cookie(&client, invisible, r).await {
+                    warn!("cloudflare clearance failed (continuing without it): {}", e);
+                }
             }
-        }*/
+            (Ok(_), None) => warn!("cloudflare clearance skipped: challenge token r not found"),
+            (Err(e), _) => {
+                warn!(
+                    "cloudflare clearance setup failed (continuing without it): {}",
+                    e
+                )
+            }
+        }
 
         // get experiments cookies
         // todo: parse assignments
