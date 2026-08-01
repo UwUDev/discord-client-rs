@@ -1,6 +1,5 @@
 use crate::BoxedResult;
-use crate::rest::{RequestProperties, RequestPropertiesBuilder, RestClient};
-use crate::structs::referer::{GuildReferer, HomePageReferer, Referer};
+use crate::rest::{RequestProperties, RestClient};
 use discord_client_structs::structs::guild::stage::StageInstance;
 use serde_json::Value;
 
@@ -9,23 +8,11 @@ pub struct StageRest<'a> {
 }
 
 impl<'a> StageRest<'a> {
-    fn home_props(&self) -> BoxedResult<RequestProperties> {
-        Ok(RequestPropertiesBuilder::default()
-            .referer::<Referer>(HomePageReferer {}.into())
-            .build()?)
-    }
-
-    fn guild_props(&self, guild_id: u64) -> BoxedResult<RequestProperties> {
-        Ok(RequestPropertiesBuilder::default()
-            .referer::<Referer>(GuildReferer { guild_id }.into())
-            .build()?)
-    }
-
     pub async fn create(&self, stage: Value) -> BoxedResult<StageInstance> {
         let path = "stage-instances";
 
         self.client
-            .post::<StageInstance, Value>(&path, Some(stage), Some(self.home_props()?))
+            .post::<StageInstance, Value>(&path, Some(stage), Some(RequestProperties::home()))
             .await
     }
 
@@ -33,7 +20,7 @@ impl<'a> StageRest<'a> {
         let path = format!("stage-instances/{}", channel_id);
 
         self.client
-            .get::<StageInstance>(&path, None, Some(self.home_props()?))
+            .get::<StageInstance>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -46,7 +33,11 @@ impl<'a> StageRest<'a> {
         let path = format!("stage-instances/{}", channel_id);
 
         self.client
-            .patch::<StageInstance, Value>(&path, Some(stage), Some(self.guild_props(guild_id)?))
+            .patch::<StageInstance, Value>(
+                &path,
+                Some(stage),
+                Some(RequestProperties::guild(guild_id)),
+            )
             .await
     }
 
@@ -54,7 +45,7 @@ impl<'a> StageRest<'a> {
         let path = format!("stage-instances/{}", channel_id);
 
         self.client
-            .delete::<(), ()>(&path, None::<()>, Some(self.guild_props(guild_id)?))
+            .delete::<(), ()>(&path, None::<()>, Some(RequestProperties::guild(guild_id)))
             .await
     }
 }

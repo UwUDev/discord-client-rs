@@ -1,6 +1,5 @@
 use crate::api::channel::ChannelRest;
-use crate::rest::{RequestProperties, RequestPropertiesBuilder, RestClient};
-use crate::structs::referer::{GuildReferer, HomePageReferer, Referer};
+use crate::rest::{RequestProperties, RestClient};
 use crate::{BoxedResult, MAX_ICON_SIZE};
 use discord_client_structs::structs::guild::Guild;
 use discord_client_structs::structs::guild::create::CreateGuild;
@@ -33,12 +32,6 @@ impl<'a> GuildRest<'a> {
         self.guild_id.ok_or_else(|| "Guild ID is required".into())
     }
 
-    fn props(&self, guild_id: u64) -> BoxedResult<RequestProperties> {
-        Ok(RequestPropertiesBuilder::default()
-            .referer::<Referer>(GuildReferer { guild_id }.into())
-            .build()?)
-    }
-
     pub async fn create(&self, create_guild: CreateGuild) -> BoxedResult<Guild> {
         if let Some(icon) = &create_guild.icon {
             if icon.as_bytes().len() > MAX_ICON_SIZE {
@@ -48,9 +41,7 @@ impl<'a> GuildRest<'a> {
 
         let path = "guilds";
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(HomePageReferer {}.into())
-            .build()?;
+        let props = RequestProperties::home();
 
         self.client
             .post::<Guild, CreateGuild>(&path, Some(create_guild), Some(props))
@@ -62,7 +53,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}", guild_id);
 
         self.client
-            .delete(&path, None::<&()>, Some(self.props(guild_id)?))
+            .delete(&path, None::<&()>, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -74,7 +65,7 @@ impl<'a> GuildRest<'a> {
         query.insert("with_counts".to_string(), with_counts.to_string());
 
         self.client
-            .get(&path, Some(query), Some(self.props(guild_id)?))
+            .get(&path, Some(query), Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -83,7 +74,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/basic", guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -92,7 +83,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/preview", guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -101,7 +92,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}", guild_id);
 
         self.client
-            .patch::<Guild, Value>(&path, Some(guild), Some(self.props(guild_id)?))
+            .patch::<Guild, Value>(&path, Some(guild), Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -110,7 +101,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/members/{}", guild_id, user_id);
 
         self.client
-            .get::<Member>(&path, None, Some(self.props(guild_id)?))
+            .get::<Member>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -119,7 +110,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("users/@me/guilds/{}/member", guild_id);
 
         self.client
-            .get::<Member>(&path, None, Some(self.props(guild_id)?))
+            .get::<Member>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -128,7 +119,11 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/members/{}", guild_id, user_id);
 
         self.client
-            .patch::<Member, Value>(&path, Some(member), Some(self.props(guild_id)?))
+            .patch::<Member, Value>(
+                &path,
+                Some(member),
+                Some(RequestProperties::guild(guild_id)),
+            )
             .await
     }
 
@@ -137,7 +132,11 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/members/@me", guild_id);
 
         self.client
-            .patch::<Member, Value>(&path, Some(member), Some(self.props(guild_id)?))
+            .patch::<Member, Value>(
+                &path,
+                Some(member),
+                Some(RequestProperties::guild(guild_id)),
+            )
             .await
     }
 
@@ -148,7 +147,7 @@ impl<'a> GuildRest<'a> {
         let body = json!({ "nick": nick });
 
         self.client
-            .patch::<Member, Value>(&path, Some(body), Some(self.props(guild_id)?))
+            .patch::<Member, Value>(&path, Some(body), Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -157,7 +156,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/members/{}/roles/{}", guild_id, user_id, role_id);
 
         self.client
-            .put::<(), ()>(&path, None::<()>, Some(self.props(guild_id)?))
+            .put::<(), ()>(&path, None::<()>, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -166,7 +165,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/members/{}/roles/{}", guild_id, user_id, role_id);
 
         self.client
-            .delete::<(), ()>(&path, None::<()>, Some(self.props(guild_id)?))
+            .delete::<(), ()>(&path, None::<()>, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -175,7 +174,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/members/{}", guild_id, user_id);
 
         self.client
-            .delete::<(), ()>(&path, None::<()>, Some(self.props(guild_id)?))
+            .delete::<(), ()>(&path, None::<()>, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -198,7 +197,7 @@ impl<'a> GuildRest<'a> {
         }
 
         self.client
-            .get(&path, Some(query), Some(self.props(guild_id)?))
+            .get(&path, Some(query), Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -207,7 +206,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/bans/{}", guild_id, user_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -220,7 +219,7 @@ impl<'a> GuildRest<'a> {
         map.insert("limit".to_string(), limit.to_string());
 
         self.client
-            .get(&path, Some(map), Some(self.props(guild_id)?))
+            .get(&path, Some(map), Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -231,7 +230,7 @@ impl<'a> GuildRest<'a> {
         let body = json!({ "delete_message_seconds": delete_message_seconds });
 
         self.client
-            .put::<(), Value>(&path, Some(body), Some(self.props(guild_id)?))
+            .put::<(), Value>(&path, Some(body), Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -240,7 +239,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/bans/{}", guild_id, user_id);
 
         self.client
-            .delete::<(), ()>(&path, None::<()>, Some(self.props(guild_id)?))
+            .delete::<(), ()>(&path, None::<()>, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -258,7 +257,7 @@ impl<'a> GuildRest<'a> {
         });
 
         self.client
-            .post::<Value, Value>(&path, Some(body), Some(self.props(guild_id)?))
+            .post::<Value, Value>(&path, Some(body), Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -267,7 +266,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/roles", guild_id);
 
         self.client
-            .get::<Vec<Role>>(&path, None, Some(self.props(guild_id)?))
+            .get::<Vec<Role>>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -276,7 +275,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/roles/{}", guild_id, role_id);
 
         self.client
-            .get::<Role>(&path, None, Some(self.props(guild_id)?))
+            .get::<Role>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -285,7 +284,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/roles/member-counts", guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -294,7 +293,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/roles/{}/member-ids", guild_id, role_id);
 
         self.client
-            .get::<Vec<String>>(&path, None, Some(self.props(guild_id)?))
+            .get::<Vec<String>>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -303,7 +302,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/roles", guild_id);
 
         self.client
-            .post::<Role, Value>(&path, Some(role), Some(self.props(guild_id)?))
+            .post::<Role, Value>(&path, Some(role), Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -312,7 +311,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/roles/{}", guild_id, role_id);
 
         self.client
-            .patch::<Role, Value>(&path, Some(role), Some(self.props(guild_id)?))
+            .patch::<Role, Value>(&path, Some(role), Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -321,7 +320,11 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/roles", guild_id);
 
         self.client
-            .patch::<Vec<Role>, Value>(&path, Some(positions), Some(self.props(guild_id)?))
+            .patch::<Vec<Role>, Value>(
+                &path,
+                Some(positions),
+                Some(RequestProperties::guild(guild_id)),
+            )
             .await
     }
 
@@ -334,7 +337,7 @@ impl<'a> GuildRest<'a> {
         });
 
         self.client
-            .patch::<Value, Value>(&path, Some(body), Some(self.props(guild_id)?))
+            .patch::<Value, Value>(&path, Some(body), Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -343,7 +346,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/roles/{}", guild_id, role_id);
 
         self.client
-            .delete::<(), ()>(&path, None::<()>, Some(self.props(guild_id)?))
+            .delete::<(), ()>(&path, None::<()>, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -355,7 +358,7 @@ impl<'a> GuildRest<'a> {
         query.insert("days".to_string(), days.to_string());
 
         self.client
-            .get(&path, Some(query), Some(self.props(guild_id)?))
+            .get(&path, Some(query), Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -369,7 +372,7 @@ impl<'a> GuildRest<'a> {
         });
 
         self.client
-            .post::<Value, Value>(&path, Some(body), Some(self.props(guild_id)?))
+            .post::<Value, Value>(&path, Some(body), Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -378,7 +381,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/vanity-url", guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -387,7 +390,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/widget", guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -396,7 +399,11 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/widget", guild_id);
 
         self.client
-            .patch::<Value, Value>(&path, Some(widget), Some(self.props(guild_id)?))
+            .patch::<Value, Value>(
+                &path,
+                Some(widget),
+                Some(RequestProperties::guild(guild_id)),
+            )
             .await
     }
 
@@ -405,7 +412,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/widget.json", guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -414,7 +421,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/welcome-screen", guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -423,7 +430,11 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/welcome-screen", guild_id);
 
         self.client
-            .patch::<Value, Value>(&path, Some(welcome_screen), Some(self.props(guild_id)?))
+            .patch::<Value, Value>(
+                &path,
+                Some(welcome_screen),
+                Some(RequestProperties::guild(guild_id)),
+            )
             .await
     }
 
@@ -432,7 +443,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/onboarding", guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -441,16 +452,14 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/new-member-welcome", guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
     pub async fn get_user_guilds(client: &RestClient) -> BoxedResult<Value> {
         let path = "users/@me/guilds";
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(HomePageReferer {}.into())
-            .build()?;
+        let props = RequestProperties::home();
 
         client.get::<Value>(&path, None, Some(props)).await
     }
@@ -458,9 +467,7 @@ impl<'a> GuildRest<'a> {
     pub async fn get_join_request_guilds(client: &RestClient) -> BoxedResult<Value> {
         let path = "users/@me/join-request-guilds";
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(HomePageReferer {}.into())
-            .build()?;
+        let props = RequestProperties::home();
 
         client.get::<Value>(&path, None, Some(props)).await
     }
@@ -470,7 +477,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/member-verification", guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -481,7 +488,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/channels", guild_id);
 
         self.client
-            .get(&path, None, Some(self.props(guild_id)?))
+            .get(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -490,7 +497,7 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/threads/active", guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -499,7 +506,11 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/channels", guild_id);
 
         self.client
-            .patch::<(), Value>(&path, Some(positions), Some(self.props(guild_id)?))
+            .patch::<(), Value>(
+                &path,
+                Some(positions),
+                Some(RequestProperties::guild(guild_id)),
+            )
             .await
     }
 
@@ -510,13 +521,7 @@ impl<'a> GuildRest<'a> {
 
         let path = format!("users/@me/guilds/{}", self.guild_id.unwrap());
 
-        let referer = GuildReferer {
-            guild_id: self.guild_id.unwrap(),
-        };
-
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::guild(self.guild_id.unwrap());
 
         self.client.delete(&path, None::<&()>, Some(props)).await
     }
@@ -529,7 +534,11 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/messages/search", guild_id);
 
         self.client
-            .get::<MessageSearchResult>(&path, Some(query.to_map()), Some(self.props(guild_id)?))
+            .get::<MessageSearchResult>(
+                &path,
+                Some(query.to_map()),
+                Some(RequestProperties::guild(guild_id)),
+            )
             .await
     }
 
@@ -538,7 +547,11 @@ impl<'a> GuildRest<'a> {
         let path = format!("guilds/{}/audit-logs", guild_id);
 
         self.client
-            .get::<AuditLog>(&path, Some(query.to_map()), Some(self.props(guild_id)?))
+            .get::<AuditLog>(
+                &path,
+                Some(query.to_map()),
+                Some(RequestProperties::guild(guild_id)),
+            )
             .await
     }
 }

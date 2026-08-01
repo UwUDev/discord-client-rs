@@ -22,7 +22,9 @@ use crate::mfa::{MfaRequiredError, MfaVerificationRequest};
 use crate::rate_limit::{RateLimitError, RateLimiter};
 use crate::response::{parse_error_body, rate_limit_from_body};
 use crate::structs::context::{Context, ContextHeader};
-use crate::structs::referer::{Referer, RefererHeader};
+use crate::structs::referer::{
+    DmChannelReferer, GuildChannelReferer, GuildReferer, HomePageReferer, Referer, RefererHeader,
+};
 use crate::super_prop::build_super_props;
 use crate::{BoxedError, BoxedResult};
 use current_locale::current_locale;
@@ -555,4 +557,45 @@ pub struct RequestProperties {
     pub referer: Option<Referer>,
     pub context: Option<Context>,
     pub solved_captcha: Option<SolvedCaptcha>,
+}
+
+impl RequestProperties {
+    pub fn from_referer(referer: Referer) -> Self {
+        Self {
+            referer: Some(referer),
+            ..Default::default()
+        }
+    }
+
+    pub fn home() -> Self {
+        Self::from_referer(HomePageReferer.into())
+    }
+
+    pub fn guild(guild_id: u64) -> Self {
+        Self::from_referer(GuildReferer { guild_id }.into())
+    }
+
+    pub fn guild_channel(guild_id: u64, channel_id: u64) -> Self {
+        Self::from_referer(
+            GuildChannelReferer {
+                guild_id,
+                channel_id,
+            }
+            .into(),
+        )
+    }
+
+    pub fn dm_channel(channel_id: u64) -> Self {
+        Self::from_referer(DmChannelReferer { channel_id }.into())
+    }
+
+    pub fn with_context(mut self, context: Context) -> Self {
+        self.context = Some(context);
+        self
+    }
+
+    pub fn with_solved_captcha(mut self, solved_captcha: SolvedCaptcha) -> Self {
+        self.solved_captcha = Some(solved_captcha);
+        self
+    }
 }

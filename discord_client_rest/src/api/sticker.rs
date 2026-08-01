@@ -1,6 +1,5 @@
 use crate::BoxedResult;
-use crate::rest::{RequestProperties, RequestPropertiesBuilder, RestClient};
-use crate::structs::referer::{GuildReferer, HomePageReferer, Referer};
+use crate::rest::{RequestProperties, RestClient};
 use serde_json::Value;
 
 pub struct StickerRest<'a> {
@@ -8,23 +7,11 @@ pub struct StickerRest<'a> {
 }
 
 impl<'a> StickerRest<'a> {
-    fn home_props(&self) -> BoxedResult<RequestProperties> {
-        Ok(RequestPropertiesBuilder::default()
-            .referer::<Referer>(HomePageReferer {}.into())
-            .build()?)
-    }
-
-    fn guild_props(&self, guild_id: u64) -> BoxedResult<RequestProperties> {
-        Ok(RequestPropertiesBuilder::default()
-            .referer::<Referer>(GuildReferer { guild_id }.into())
-            .build()?)
-    }
-
     pub async fn get_packs(&self) -> BoxedResult<Value> {
         let path = "sticker-packs";
 
         self.client
-            .get::<Value>(&path, None, Some(self.home_props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -32,7 +19,7 @@ impl<'a> StickerRest<'a> {
         let path = format!("sticker-packs/{}", pack_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.home_props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -40,7 +27,7 @@ impl<'a> StickerRest<'a> {
         let path = format!("stickers/{}", sticker_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.home_props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -48,7 +35,7 @@ impl<'a> StickerRest<'a> {
         let path = format!("stickers/{}/guild", sticker_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.home_props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -56,7 +43,7 @@ impl<'a> StickerRest<'a> {
         let path = format!("guilds/{}/stickers", guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.guild_props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -64,7 +51,7 @@ impl<'a> StickerRest<'a> {
         let path = format!("guilds/{}/stickers/{}", guild_id, sticker_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.guild_props(guild_id)?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(guild_id)))
             .await
     }
 
@@ -77,7 +64,11 @@ impl<'a> StickerRest<'a> {
         let path = format!("guilds/{}/stickers/{}", guild_id, sticker_id);
 
         self.client
-            .patch::<Value, Value>(&path, Some(sticker), Some(self.guild_props(guild_id)?))
+            .patch::<Value, Value>(
+                &path,
+                Some(sticker),
+                Some(RequestProperties::guild(guild_id)),
+            )
             .await
     }
 
@@ -85,7 +76,7 @@ impl<'a> StickerRest<'a> {
         let path = format!("guilds/{}/stickers/{}", guild_id, sticker_id);
 
         self.client
-            .delete::<(), ()>(&path, None::<()>, Some(self.guild_props(guild_id)?))
+            .delete::<(), ()>(&path, None::<()>, Some(RequestProperties::guild(guild_id)))
             .await
     }
 }

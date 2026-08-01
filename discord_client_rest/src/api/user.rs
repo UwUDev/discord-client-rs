@@ -1,6 +1,5 @@
 use crate::BoxedResult;
-use crate::rest::{RequestProperties, RequestPropertiesBuilder, RestClient};
-use crate::structs::referer::{HomePageReferer, Referer};
+use crate::rest::{RequestProperties, RestClient};
 use discord_client_structs::structs::user::connection::Connection;
 use serde_json::{Value, json};
 use std::collections::HashMap;
@@ -10,12 +9,6 @@ pub struct UserRest<'a> {
 }
 
 impl<'a> UserRest<'a> {
-    fn props(&self) -> BoxedResult<RequestProperties> {
-        Ok(RequestPropertiesBuilder::default()
-            .referer::<Referer>(HomePageReferer {}.into())
-            .build()?)
-    }
-
     pub async fn get_profile(&self, user_id: u64, guild_id: Option<u64>) -> BoxedResult<Value> {
         let path = format!("users/{}/profile", user_id);
 
@@ -26,7 +19,7 @@ impl<'a> UserRest<'a> {
         }
 
         self.client
-            .get(&path, Some(query), Some(self.props()?))
+            .get(&path, Some(query), Some(RequestProperties::home()))
             .await
     }
 
@@ -34,7 +27,7 @@ impl<'a> UserRest<'a> {
         let path = format!("users/{}/relationships", user_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -42,7 +35,7 @@ impl<'a> UserRest<'a> {
         let path = "users/@me/notes";
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -50,7 +43,7 @@ impl<'a> UserRest<'a> {
         let path = format!("users/@me/notes/{}", user_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -60,7 +53,7 @@ impl<'a> UserRest<'a> {
         let body = json!({ "note": note });
 
         self.client
-            .put::<(), Value>(&path, Some(body), Some(self.props()?))
+            .put::<(), Value>(&path, Some(body), Some(RequestProperties::home()))
             .await
     }
 
@@ -71,7 +64,7 @@ impl<'a> UserRest<'a> {
         query.insert("limit".to_string(), limit.to_string());
 
         self.client
-            .get(&path, Some(query), Some(self.props()?))
+            .get(&path, Some(query), Some(RequestProperties::home()))
             .await
     }
 
@@ -79,7 +72,7 @@ impl<'a> UserRest<'a> {
         let path = format!("users/@me/mentions/{}", message_id);
 
         self.client
-            .delete::<(), ()>(&path, None::<()>, Some(self.props()?))
+            .delete::<(), ()>(&path, None::<()>, Some(RequestProperties::home()))
             .await
     }
 
@@ -87,7 +80,7 @@ impl<'a> UserRest<'a> {
         let path = "users/@me/connections";
 
         self.client
-            .get::<Vec<Connection>>(&path, None, Some(self.props()?))
+            .get::<Vec<Connection>>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -95,7 +88,7 @@ impl<'a> UserRest<'a> {
         let path = "users/@me/affinities/users";
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -103,7 +96,7 @@ impl<'a> UserRest<'a> {
         let path = "users/@me/affinities/guilds";
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -111,7 +104,7 @@ impl<'a> UserRest<'a> {
         let path = "users/@me/affinities/channels";
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -119,7 +112,7 @@ impl<'a> UserRest<'a> {
         let path = "tutorial";
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -127,7 +120,7 @@ impl<'a> UserRest<'a> {
         let path = "users/@me/premium-usage";
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -135,7 +128,7 @@ impl<'a> UserRest<'a> {
         let path = "users/@me/saved-messages";
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -143,7 +136,7 @@ impl<'a> UserRest<'a> {
         let path = "users/@me/pomelo-suggestions";
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -151,7 +144,7 @@ impl<'a> UserRest<'a> {
         let path = "users/@me/survey";
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 }

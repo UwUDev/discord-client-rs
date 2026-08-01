@@ -1,7 +1,6 @@
 use crate::BoxedResult;
 use crate::mfa::MfaType;
-use crate::rest::{RequestPropertiesBuilder, RestClient};
-use crate::structs::referer::{HomePageReferer, Referer};
+use crate::rest::{RequestProperties, RestClient};
 use serde_json::{Value, json};
 
 pub struct AuthRest<'a> {
@@ -23,11 +22,7 @@ impl<'a> AuthRest<'a> {
             "ticket": ticket,
         });
 
-        let referer = HomePageReferer {};
-
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::home();
 
         self.client
             .post::<Value, Value>(&path, Some(payload), Some(props))

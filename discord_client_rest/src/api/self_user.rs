@@ -1,8 +1,7 @@
 use crate::BoxedResult;
 use crate::image::ImageType;
 use crate::image::base64::encode_image;
-use crate::rest::{RequestPropertiesBuilder, RestClient};
-use crate::structs::referer::{HomePageReferer, Referer};
+use crate::rest::{RequestProperties, RestClient};
 use chrono::{DateTime, Utc};
 use discord_client_structs::structs::user::User;
 use serde_json::{Value, json};
@@ -15,11 +14,7 @@ impl<'a> SelfUserRest<'a> {
     pub async fn get(&self) -> BoxedResult<User> {
         let path = String::from("users/@me");
 
-        let referer = HomePageReferer {};
-
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::home();
 
         self.client.get::<User>(&path, None, Some(props)).await
     }
@@ -27,11 +22,7 @@ impl<'a> SelfUserRest<'a> {
     async fn patch(&self, body: Value) -> BoxedResult<User> {
         let path = String::from("users/@me");
 
-        let referer = HomePageReferer {};
-
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::home();
 
         self.client
             .patch::<User, Value>(&path, Some(body), Some(props))

@@ -1,6 +1,5 @@
 use crate::BoxedResult;
-use crate::rest::{RequestProperties, RequestPropertiesBuilder, RestClient};
-use crate::structs::referer::{GuildReferer, Referer};
+use crate::rest::{RequestProperties, RestClient};
 use discord_client_structs::structs::misc::Emoji;
 use serde_json::Value;
 
@@ -10,22 +9,11 @@ pub struct EmojiRest<'a> {
 }
 
 impl<'a> EmojiRest<'a> {
-    fn props(&self) -> BoxedResult<RequestProperties> {
-        Ok(RequestPropertiesBuilder::default()
-            .referer::<Referer>(
-                GuildReferer {
-                    guild_id: self.guild_id,
-                }
-                .into(),
-            )
-            .build()?)
-    }
-
     pub async fn get_all(&self) -> BoxedResult<Vec<Emoji>> {
         let path = format!("guilds/{}/emojis", self.guild_id);
 
         self.client
-            .get::<Vec<Emoji>>(&path, None, Some(self.props()?))
+            .get::<Vec<Emoji>>(&path, None, Some(RequestProperties::guild(self.guild_id)))
             .await
     }
 
@@ -33,7 +21,7 @@ impl<'a> EmojiRest<'a> {
         let path = format!("guilds/{}/emojis/{}", self.guild_id, emoji_id);
 
         self.client
-            .get::<Emoji>(&path, None, Some(self.props()?))
+            .get::<Emoji>(&path, None, Some(RequestProperties::guild(self.guild_id)))
             .await
     }
 
@@ -41,7 +29,7 @@ impl<'a> EmojiRest<'a> {
         let path = format!("guilds/{}/top-emojis", self.guild_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(self.guild_id)))
             .await
     }
 
@@ -49,7 +37,11 @@ impl<'a> EmojiRest<'a> {
         let path = format!("guilds/{}/emojis", self.guild_id);
 
         self.client
-            .post::<Emoji, Value>(&path, Some(emoji), Some(self.props()?))
+            .post::<Emoji, Value>(
+                &path,
+                Some(emoji),
+                Some(RequestProperties::guild(self.guild_id)),
+            )
             .await
     }
 
@@ -57,7 +49,11 @@ impl<'a> EmojiRest<'a> {
         let path = format!("guilds/{}/emojis/{}", self.guild_id, emoji_id);
 
         self.client
-            .patch::<Emoji, Value>(&path, Some(emoji), Some(self.props()?))
+            .patch::<Emoji, Value>(
+                &path,
+                Some(emoji),
+                Some(RequestProperties::guild(self.guild_id)),
+            )
             .await
     }
 
@@ -65,7 +61,11 @@ impl<'a> EmojiRest<'a> {
         let path = format!("guilds/{}/emojis/{}", self.guild_id, emoji_id);
 
         self.client
-            .delete::<(), ()>(&path, None::<()>, Some(self.props()?))
+            .delete::<(), ()>(
+                &path,
+                None::<()>,
+                Some(RequestProperties::guild(self.guild_id)),
+            )
             .await
     }
 
@@ -73,7 +73,7 @@ impl<'a> EmojiRest<'a> {
         let path = format!("emojis/{}/guild", emoji_id);
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(self.guild_id)))
             .await
     }
 }

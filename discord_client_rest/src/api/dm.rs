@@ -1,8 +1,8 @@
 use crate::BoxedResult;
 use crate::captcha::SolvedCaptcha;
-use crate::rest::{RequestPropertiesBuilder, RestClient};
+use crate::rest::{RequestProperties, RestClient};
 use crate::structs::context::Context::NoContext;
-use crate::structs::referer::{HomePageReferer, Referer};
+use crate::structs::referer::Referer;
 use discord_client_structs::structs::channel::Channel;
 use serde_json::{Value, json};
 
@@ -25,16 +25,11 @@ impl<'a> DmRest<'a> {
           ]
         });
 
-        let context = NoContext;
-
-        let mut builder = RequestPropertiesBuilder::default();
-        let mut props = builder.referer::<Referer>(referer.into()).context(context);
+        let mut props = RequestProperties::from_referer(referer).with_context(NoContext);
 
         if let Some(captcha) = solved_captcha {
-            props = props.solved_captcha(captcha);
+            props = props.with_solved_captcha(captcha);
         }
-
-        let props = props.build()?;
 
         self.client
             .post::<Channel, Value>(&path, Some(payload), Some(props))
@@ -44,11 +39,7 @@ impl<'a> DmRest<'a> {
     pub async fn get_dm_channels(&self) -> BoxedResult<Vec<Channel>> {
         let path = String::from("users/@me/channels");
 
-        let referer = HomePageReferer;
-
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::home();
 
         self.client
             .get::<Vec<Channel>>(&path, None, Some(props))

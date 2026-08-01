@@ -1,5 +1,5 @@
 use crate::BoxedResult;
-use crate::rest::{RequestPropertiesBuilder, RestClient};
+use crate::rest::{RequestProperties, RestClient};
 use crate::structs::referer::{DmChannelReferer, GuildChannelReferer, Referer};
 use discord_client_structs::structs::message::Message;
 use discord_client_structs::structs::message::query::{
@@ -29,9 +29,7 @@ impl<'a> MessageRest<'a> {
             .into(),
         };
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::from_referer(referer);
 
         self.client
             .post::<Message, Message>(&path, Some(message), Some(props))
@@ -58,9 +56,7 @@ impl<'a> MessageRest<'a> {
             .into(),
         };
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::from_referer(referer);
 
         self.client
             .patch::<Message, Message>(&path, Some(message), Some(props))
@@ -79,9 +75,7 @@ impl<'a> MessageRest<'a> {
             None => DmChannelReferer { channel_id }.into(),
         };
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::from_referer(referer);
 
         self.client
             .delete::<_, ()>(&path, None::<()>, Some(props))
@@ -107,9 +101,7 @@ impl<'a> MessageRest<'a> {
             .into(),
         };
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::from_referer(referer);
 
         self.client
             .get::<Vec<Message>>(&path, Some(query.to_map()), Some(props))
@@ -122,13 +114,7 @@ impl<'a> MessageRest<'a> {
     ) -> BoxedResult<MessageSearchResult> {
         let path = format!("channels/{}/messages/search", self.channel_id);
 
-        let referer = DmChannelReferer {
-            channel_id: self.channel_id,
-        };
-
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::dm_channel(self.channel_id);
 
         self.client
             .get::<MessageSearchResult>(&path, Some(query.to_map()), Some(props))
@@ -150,9 +136,7 @@ impl<'a> MessageRest<'a> {
             .into(),
         };
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::from_referer(referer);
 
         self.client
             .put::<_, ()>(&path, None::<()>, Some(props))
@@ -174,9 +158,7 @@ impl<'a> MessageRest<'a> {
             .into(),
         };
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::from_referer(referer);
 
         self.client
             .delete::<_, ()>(&path, None::<()>, Some(props))
@@ -198,9 +180,7 @@ impl<'a> MessageRest<'a> {
             .into(),
         };
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::from_referer(referer);
 
         self.client
             .get::<Vec<Message>>(&path, None, Some(props))
@@ -234,9 +214,7 @@ impl<'a> MessageRest<'a> {
             .into(),
         };
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::from_referer(referer);
 
         self.client
             .put::<_, ()>(&path, None::<()>, Some(props))
@@ -281,9 +259,7 @@ impl<'a> MessageRest<'a> {
             query.insert("after".to_string(), after.to_string());
         }
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(self.referer(guild_id))
-            .build()?;
+        let props = RequestProperties::from_referer(self.referer(guild_id));
 
         self.client.get(&path, Some(query), Some(props)).await
     }
@@ -298,9 +274,7 @@ impl<'a> MessageRest<'a> {
             self.channel_id, message_id
         );
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(self.referer(guild_id))
-            .build()?;
+        let props = RequestProperties::from_referer(self.referer(guild_id));
 
         self.client
             .delete::<(), ()>(&path, None::<()>, Some(props))
@@ -318,9 +292,7 @@ impl<'a> MessageRest<'a> {
             self.channel_id, message_id, emoji
         );
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(self.referer(guild_id))
-            .build()?;
+        let props = RequestProperties::from_referer(self.referer(guild_id));
 
         self.client
             .delete::<(), ()>(&path, None::<()>, Some(props))
@@ -333,9 +305,7 @@ impl<'a> MessageRest<'a> {
             self.channel_id, message_id
         );
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(self.referer(Some(guild_id)))
-            .build()?;
+        let props = RequestProperties::from_referer(self.referer(Some(guild_id)));
 
         self.client
             .post::<Message, ()>(&path, None::<()>, Some(props))
@@ -349,9 +319,7 @@ impl<'a> MessageRest<'a> {
             "messages": message_ids.iter().map(|id| id.to_string()).collect::<Vec<_>>(),
         });
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(self.referer(Some(guild_id)))
-            .build()?;
+        let props = RequestProperties::from_referer(self.referer(Some(guild_id)));
 
         self.client
             .post::<(), Value>(&path, Some(body), Some(props))
@@ -363,9 +331,7 @@ impl<'a> MessageRest<'a> {
 
         let body = json!({ "token": Value::Null });
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(self.referer(guild_id))
-            .build()?;
+        let props = RequestProperties::from_referer(self.referer(guild_id));
 
         self.client
             .post::<Value, Value>(&path, Some(body), Some(props))
@@ -403,9 +369,7 @@ impl<'a> MessageRest<'a> {
             .into(),
         };
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::from_referer(referer);
 
         self.client
             .delete::<_, ()>(&path, None::<()>, Some(props))

@@ -1,6 +1,5 @@
 use crate::BoxedResult;
-use crate::rest::{RequestProperties, RequestPropertiesBuilder, RestClient};
-use crate::structs::referer::{GuildReferer, HomePageReferer, Referer};
+use crate::rest::{RequestProperties, RestClient};
 use serde_json::Value;
 use std::collections::HashMap;
 
@@ -9,18 +8,10 @@ pub struct IntegrationRest<'a> {
 }
 
 impl<'a> IntegrationRest<'a> {
-    fn home_props(&self) -> BoxedResult<RequestProperties> {
-        Ok(RequestPropertiesBuilder::default()
-            .referer::<Referer>(HomePageReferer {}.into())
-            .build()?)
-    }
-
     pub async fn get_guild_integrations(&self, guild_id: u64) -> BoxedResult<Value> {
         let path = format!("guilds/{}/integrations", guild_id);
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(GuildReferer { guild_id }.into())
-            .build()?;
+        let props = RequestProperties::guild(guild_id);
 
         self.client.get::<Value>(&path, None, Some(props)).await
     }
@@ -29,7 +20,7 @@ impl<'a> IntegrationRest<'a> {
         let path = "users/@me/guilds/integration-application-ids";
 
         self.client
-            .get::<Value>(&path, None, Some(self.home_props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
 
@@ -41,7 +32,7 @@ impl<'a> IntegrationRest<'a> {
         query.insert("provider".to_string(), "tenor".to_string());
 
         self.client
-            .get(&path, Some(query), Some(self.home_props()?))
+            .get(&path, Some(query), Some(RequestProperties::home()))
             .await
     }
 
@@ -54,7 +45,7 @@ impl<'a> IntegrationRest<'a> {
         query.insert("provider".to_string(), "tenor".to_string());
 
         self.client
-            .get(&path, Some(query), Some(self.home_props()?))
+            .get(&path, Some(query), Some(RequestProperties::home()))
             .await
     }
 }

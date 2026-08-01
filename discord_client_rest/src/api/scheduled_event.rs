@@ -1,6 +1,5 @@
 use crate::BoxedResult;
-use crate::rest::{RequestProperties, RequestPropertiesBuilder, RestClient};
-use crate::structs::referer::{GuildReferer, HomePageReferer, Referer};
+use crate::rest::{RequestProperties, RestClient};
 use discord_client_structs::structs::guild::event::GuildScheduledEvent;
 use serde_json::Value;
 use std::collections::HashMap;
@@ -11,17 +10,6 @@ pub struct ScheduledEventRest<'a> {
 }
 
 impl<'a> ScheduledEventRest<'a> {
-    fn props(&self) -> BoxedResult<RequestProperties> {
-        Ok(RequestPropertiesBuilder::default()
-            .referer::<Referer>(
-                GuildReferer {
-                    guild_id: self.guild_id,
-                }
-                .into(),
-            )
-            .build()?)
-    }
-
     pub async fn get_all(&self, with_user_count: bool) -> BoxedResult<Vec<GuildScheduledEvent>> {
         let path = format!("guilds/{}/scheduled-events", self.guild_id);
 
@@ -29,7 +17,11 @@ impl<'a> ScheduledEventRest<'a> {
         query.insert("with_user_count".to_string(), with_user_count.to_string());
 
         self.client
-            .get(&path, Some(query), Some(self.props()?))
+            .get(
+                &path,
+                Some(query),
+                Some(RequestProperties::guild(self.guild_id)),
+            )
             .await
     }
 
@@ -44,7 +36,11 @@ impl<'a> ScheduledEventRest<'a> {
         query.insert("with_user_count".to_string(), with_user_count.to_string());
 
         self.client
-            .get(&path, Some(query), Some(self.props()?))
+            .get(
+                &path,
+                Some(query),
+                Some(RequestProperties::guild(self.guild_id)),
+            )
             .await
     }
 
@@ -52,7 +48,11 @@ impl<'a> ScheduledEventRest<'a> {
         let path = format!("guilds/{}/scheduled-events", self.guild_id);
 
         self.client
-            .post::<GuildScheduledEvent, Value>(&path, Some(event), Some(self.props()?))
+            .post::<GuildScheduledEvent, Value>(
+                &path,
+                Some(event),
+                Some(RequestProperties::guild(self.guild_id)),
+            )
             .await
     }
 
@@ -60,7 +60,11 @@ impl<'a> ScheduledEventRest<'a> {
         let path = format!("guilds/{}/scheduled-events/{}", self.guild_id, event_id);
 
         self.client
-            .patch::<GuildScheduledEvent, Value>(&path, Some(event), Some(self.props()?))
+            .patch::<GuildScheduledEvent, Value>(
+                &path,
+                Some(event),
+                Some(RequestProperties::guild(self.guild_id)),
+            )
             .await
     }
 
@@ -68,7 +72,11 @@ impl<'a> ScheduledEventRest<'a> {
         let path = format!("guilds/{}/scheduled-events/{}", self.guild_id, event_id);
 
         self.client
-            .delete::<(), ()>(&path, None::<()>, Some(self.props()?))
+            .delete::<(), ()>(
+                &path,
+                None::<()>,
+                Some(RequestProperties::guild(self.guild_id)),
+            )
             .await
     }
 
@@ -79,7 +87,7 @@ impl<'a> ScheduledEventRest<'a> {
         );
 
         self.client
-            .get::<Value>(&path, None, Some(self.props()?))
+            .get::<Value>(&path, None, Some(RequestProperties::guild(self.guild_id)))
             .await
     }
 
@@ -93,7 +101,11 @@ impl<'a> ScheduledEventRest<'a> {
         query.insert("limit".to_string(), limit.to_string());
 
         self.client
-            .get(&path, Some(query), Some(self.props()?))
+            .get(
+                &path,
+                Some(query),
+                Some(RequestProperties::guild(self.guild_id)),
+            )
             .await
     }
 
@@ -104,7 +116,11 @@ impl<'a> ScheduledEventRest<'a> {
         );
 
         self.client
-            .put::<Value, ()>(&path, None::<()>, Some(self.props()?))
+            .put::<Value, ()>(
+                &path,
+                None::<()>,
+                Some(RequestProperties::guild(self.guild_id)),
+            )
             .await
     }
 
@@ -115,7 +131,11 @@ impl<'a> ScheduledEventRest<'a> {
         );
 
         self.client
-            .delete::<(), ()>(&path, None::<()>, Some(self.props()?))
+            .delete::<(), ()>(
+                &path,
+                None::<()>,
+                Some(RequestProperties::guild(self.guild_id)),
+            )
             .await
     }
 
@@ -124,9 +144,7 @@ impl<'a> ScheduledEventRest<'a> {
     ) -> BoxedResult<Vec<GuildScheduledEvent>> {
         let path = "users/@me/scheduled-events";
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(HomePageReferer {}.into())
-            .build()?;
+        let props = RequestProperties::home();
 
         client.get(&path, None, Some(props)).await
     }
