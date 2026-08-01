@@ -27,7 +27,14 @@ fn shared_client() -> &'static Client {
             .profile(Profile::Chrome149)
             .platform(Platform::Windows)
             .build();
-        Client::builder().emulation(emu).build().unwrap()
+        Client::builder()
+            .emulation(emu)
+            .gzip(true)
+            .deflate(true)
+            .brotli(true)
+            .zstd(true)
+            .build()
+            .unwrap()
     })
 }
 
