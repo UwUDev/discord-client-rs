@@ -1,20 +1,32 @@
+use crate::api::application::ApplicationRest;
 use crate::api::auth::AuthRest;
 use crate::api::automod::AutomodRest;
+use crate::api::billing::BillingRest;
+use crate::api::collectibles::CollectiblesRest;
 use crate::api::discovery::DiscoveryRest;
 use crate::api::dm::DmRest;
 use crate::api::emoji::EmojiRest;
+use crate::api::entitlement::EntitlementRest;
+use crate::api::family_center::FamilyCenterRest;
 use crate::api::group::GroupRest;
 use crate::api::guild::GuildRest;
 use crate::api::guild_template::GuildTemplateRest;
 use crate::api::integration::IntegrationRest;
 use crate::api::invite::InviteRest;
 use crate::api::message::MessageRest;
+use crate::api::notification_center::NotificationCenterRest;
+use crate::api::premium_referral::PremiumReferralRest;
+use crate::api::presence::PresenceRest;
+use crate::api::promotion::PromotionRest;
+use crate::api::quests::QuestsRest;
 use crate::api::relationship::RelationshipRest;
+use crate::api::safety_hub::SafetyHubRest;
 use crate::api::scheduled_event::ScheduledEventRest;
 use crate::api::self_user::SelfUserRest;
 use crate::api::soundboard::SoundboardRest;
 use crate::api::stage::StageRest;
 use crate::api::sticker::StickerRest;
+use crate::api::store::StoreRest;
 use crate::api::user::UserRest;
 use crate::api::voice::VoiceRest;
 use crate::api::webhook::WebhookRest;
@@ -250,6 +262,54 @@ impl RestClient {
 
     pub fn discovery(&self) -> DiscoveryRest<'_> {
         DiscoveryRest { client: self }
+    }
+
+    pub fn application(&self) -> ApplicationRest<'_> {
+        ApplicationRest { client: self }
+    }
+
+    pub fn billing(&self) -> BillingRest<'_> {
+        BillingRest { client: self }
+    }
+
+    pub fn entitlement(&self) -> EntitlementRest<'_> {
+        EntitlementRest { client: self }
+    }
+
+    pub fn store(&self) -> StoreRest<'_> {
+        StoreRest { client: self }
+    }
+
+    pub fn quests(&self) -> QuestsRest<'_> {
+        QuestsRest { client: self }
+    }
+
+    pub fn collectibles(&self) -> CollectiblesRest<'_> {
+        CollectiblesRest { client: self }
+    }
+
+    pub fn promotion(&self) -> PromotionRest<'_> {
+        PromotionRest { client: self }
+    }
+
+    pub fn notification_center(&self) -> NotificationCenterRest<'_> {
+        NotificationCenterRest { client: self }
+    }
+
+    pub fn family_center(&self) -> FamilyCenterRest<'_> {
+        FamilyCenterRest { client: self }
+    }
+
+    pub fn premium_referral(&self) -> PremiumReferralRest<'_> {
+        PremiumReferralRest { client: self }
+    }
+
+    pub fn safety_hub(&self) -> SafetyHubRest<'_> {
+        SafetyHubRest { client: self }
+    }
+
+    pub fn presence(&self) -> PresenceRest<'_> {
+        PresenceRest { client: self }
     }
 
     pub async fn get<T: DeserializeOwned + Default + Send>(

@@ -128,10 +128,10 @@ self.client
   - [ ] Get Application Discoverability State
   - [ ] Get Application Embedded Activity Config
   - [ ] Get Application Proxy Config
-  - [ ] Get Applications
+  - [x] Get Applications
   - [ ] Get Applications with Assets
   - [ ] Get Current Application
-  - [ ] Get Detectable Applications
+  - [x] Get Detectable Applications
   - [ ] Get Embedded Activities
   - [ ] Get Guild Applications
   - [ ] Get Partial Application
@@ -165,7 +165,7 @@ self.client
   - [ ] Upload Application Asset
   - [ ] Update Application Asset
   - [ ] Get RPC Application
-  - [ ] List User Application Role Connections
+  - [x] List User Application Role Connections
   - [ ] List Application Managed Links
   - [ ] Create Application Managed Link
   - [ ] Get Application Managed Link
@@ -288,9 +288,9 @@ self.client
   - [x] Modify Guild Emoji
 - **Family center**
   - [ ] Create Linked User Request
-  - [ ] Get Family Center Overview
+  - [x] Get Family Center Overview
   - [ ] Get Link Code
-  - [ ] Get Linked Users
+  - [x] Get Linked Users
   - [ ] Modify Linked User
   - [ ] Remove Linked User
 - **Guild scheduled events**
@@ -544,7 +544,7 @@ self.client
   - [ ] Get Premium Referral Eligibility
   - [ ] Get Premium Referral Eligible Users
   - [ ] Preview Premium Referral
-  - [ ] Get Premium Referral Incentive Eligibility
+  - [x] Get Premium Referral Incentive Eligibility
 - **Presence**
   - [ ] Create Headless Session
   - [ ] Delete Headless Session
@@ -555,7 +555,7 @@ self.client
   - [ ] List Presences for Xbox
   - [ ] List Global Activity Statistics
   - [ ] List Application Activity Statistics
-  - [ ] List User Application Activity Statistics
+  - [x] List User Application Activity Statistics
   - [ ] Update Activity Session
   - [ ] Update Activity Subscriptions
 - **Quest**
@@ -568,8 +568,8 @@ self.client
   - [ ] Reset Quest
   - [ ] Reset Quest Dismissibility
   - [ ] Send Quest Heartbeat
-  - [ ] List Current User Quests
-  - [ ] List Claimed Quests
+  - [x] List Current User Quests
+  - [x] List Claimed Quests
   - [ ] Get Quest Config
   - [ ] Get Quest Preview
   - [ ] Get Quest Placement
@@ -713,7 +713,7 @@ self.client
   - [ ] Get User Connection Access Token
   - [ ] Get User Connection Subreddits
   - [x] Get User Connections
-  - [ ] Get User Harvest
+  - [x] Get User Harvest
   - [x] Get User Note
   - [x] Get User Notes
   - [x] Get User Premium Usage
@@ -737,7 +737,7 @@ self.client
   - [ ] Verify User Captcha
   - [ ] Verify User Email Change
   - [ ] Report Meaningfully Online
-  - [ ] List Recent Avatars
+  - [x] List Recent Avatars
   - [ ] Delete Recent Avatar
   - [ ] Disable User Account
   - [ ] Delete User Account
@@ -799,9 +799,9 @@ self.client
   - [ ] List Application Directory Similar Applications
   - [ ] Search Applications Directory
 - **Billing**
-  - [ ] Get Billing Country Code
-  - [ ] Get Billing Location Info
-  - [ ] List Payment Sources
+  - [x] Get Billing Country Code
+  - [x] Get Billing Location Info
+  - [x] List Payment Sources
   - [ ] Get Payment Source
   - [ ] Get Payment Source Creation Context
   - [ ] Create Payment Source
@@ -814,24 +814,24 @@ self.client
   - [ ] Create Billing Popup Bridge
   - [ ] Create Billing Popup Bridge Redirect
   - [ ] Create Billing Popup Bridge Callback
-  - [ ] Get Localized Pricing Promo
+  - [x] Get Localized Pricing Promo
   - [ ] Get User Offer
   - [ ] Acknowledge User Offer
   - [ ] Create Churn User Offer
   - [ ] Get Churn User Offer
-  - [ ] Get User Trial Offer _(deprecated)_
+  - [x] Get User Trial Offer _(deprecated)_
   - [ ] Acknowledge User Trial Offer _(deprecated)_
   - [ ] Redeem User Offer
-  - [ ] Get Checkout Recovery
-  - [ ] List Premium User Affinities
+  - [x] Get Checkout Recovery
+  - [x] List Premium User Affinities
   - [ ] List Eligible Application Subscription Guilds
 - **Collectibles**
-  - [ ] List Collectibles Categories _(deprecated)_
-  - [ ] List Collectibles Categories V2
-  - [ ] Get Collectibles Shop
+  - [x] List Collectibles Categories _(deprecated)_
+  - [x] List Collectibles Categories V2
+  - [x] Get Collectibles Shop
   - [ ] Search Collectibles
   - [ ] Get Collectibles Product
-  - [ ] List User Purchased Collectibles
+  - [x] List User Purchased Collectibles
   - [ ] Get Valid Collectibles Gift Recipient
   - [ ] Get Valid Collectibles Gift Recipients Batch
   - [ ] Claim Premium Collectibles Product
@@ -868,8 +868,8 @@ self.client
   - [ ] Delete Directory Entry
   - [ ] Get Directory Broadcast Info
 - **Entitlements**
-  - [ ] List User Entitlements
-  - [ ] List User Giftable Entitlements
+  - [x] List User Entitlements
+  - [x] List User Giftable Entitlements
   - [ ] List Guild Entitlements
   - [ ] List Application Entitlements
   - [ ] List User Application Entitlements
@@ -935,25 +935,25 @@ self.client
   - [ ] List Lobby Messages
   - [ ] Create Lobby Message
 - **Notification Center**
-  - [ ] List Notification Center Items
+  - [x] List Notification Center Items
   - [ ] Delete Notification Center Item
   - [ ] Acknowledge Notification Center Item
   - [ ] Bulk Acknowledge Notification Center Items
 - **Payment**
   - [ ] Verify Purchase Request
   - [ ] Resend Payment Verification Email
-  - [ ] List Payments
+  - [x] List Payments
   - [ ] Get Payment
   - [ ] Void Payment
   - [ ] Get Payment Invoice Breakdown
 - **Promotion**
-  - [ ] List Outbound Promotions _(deprecated)_
-  - [ ] List Promotions
-  - [ ] List BOGO Promotions
-  - [ ] List Claimed Promotions
+  - [x] List Outbound Promotions _(deprecated)_
+  - [x] List Promotions
+  - [x] List BOGO Promotions
+  - [x] List Claimed Promotions
   - [ ] Claim Promotion
 - **Safety Hub**
-  - [ ] Get User Safety Hub
+  - [x] Get User Safety Hub
   - [ ] Get Suspended User Safety Hub
   - [ ] Request Classification Review
   - [ ] Request Classification Review for Suspended User
@@ -982,7 +982,7 @@ self.client
   - [ ] List Application Store Assets
   - [ ] Create Application Store Asset
   - [ ] Delete Application Store Asset
-  - [ ] List Store Price Tiers
+  - [x] List Store Price Tiers
   - [ ] Get Store Price Tier
   - [ ] Get EULA
   - [ ] Get Application Store Layout
@@ -992,7 +992,7 @@ self.client
   - [ ] Apply HD Streaming Consumable
   - [ ] Get Confetti Consumable
   - [ ] Apply Confetti Consumable
-  - [ ] Get Virtual Currency Balance
+  - [x] Get Virtual Currency Balance
   - [ ] Redeem Virtual Currency
   - [ ] Get Application Storefront for Premium Button
   - [ ] Get Storefront Collection
@@ -1014,7 +1014,7 @@ self.client
   - [ ] Get Social Layer Storefront Config
   - [ ] Get Social Layer Storefront Eligibilities
 - **Subscription**
-  - [ ] List Subscriptions
+  - [x] List Subscriptions
   - [ ] Get Subscription
   - [ ] Create Subscription
   - [ ] Modify Subscription
@@ -1026,8 +1026,8 @@ self.client
   - [ ] Pay Subscription Invoice
   - [ ] Claim Subscription Promotion Reward
   - [ ] Get Premium Guild Subscription Cooldown
-  - [ ] List Applied Premium Guild Subscriptions
-  - [ ] List Premium Guild Subscription Slots
+  - [x] List Applied Premium Guild Subscriptions
+  - [x] List Premium Guild Subscription Slots
   - [ ] Cancel Premium Guild Subscription Slot
   - [ ] Uncancel Premium Guild Subscription Slot
 - **Checkpoint**

@@ -147,4 +147,20 @@ impl<'a> UserRest<'a> {
             .get::<Value>(&path, None, Some(RequestProperties::home()))
             .await
     }
+
+    pub async fn get_harvest(&self) -> BoxedResult<Value> {
+        let path = "users/@me/harvest";
+
+        self.client
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
+            .await
+    }
+
+    pub async fn get_recent_avatars(&self) -> BoxedResult<Value> {
+        let path = "users/@me/avatars";
+
+        self.client
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
+            .await
+    }
 }
