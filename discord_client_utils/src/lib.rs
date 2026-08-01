@@ -1,15 +1,15 @@
 use discord_client_structs::structs::client::BuildNumbers;
 use std::error::Error;
 use wreq::{Client, redirect};
-use wreq_util::{Emulation, EmulationOS, EmulationOption};
+use wreq_util::{Emulation, Platform, Profile};
 
 type BoxedError = Box<dyn Error + Send + Sync>;
 type BoxedResult<T> = Result<T, BoxedError>;
 
 pub async fn find_build_numbers() -> BoxedResult<BuildNumbers> {
-    let emu = EmulationOption::builder()
-        .emulation(Emulation::Chrome136)
-        .emulation_os(EmulationOS::Windows)
+    let emu = Emulation::builder()
+        .profile(Profile::Chrome149)
+        .platform(Platform::Windows)
         .build();
 
     let client = Client::builder()

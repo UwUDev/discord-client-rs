@@ -3,10 +3,10 @@ mod compressor;
 use crate::BoxedResult;
 use wreq::Client;
 
-/// Must stay in sync with the wreq emulation used by the client (Chrome136 on Windows):
+/// Must stay in sync with the wreq emulation used by the client (Chrome149 on Windows):
 /// the challenge compares what the payload claims with what the request headers said.
-const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36";
-const APP_VERSION: &str = "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36";
+const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36";
+const APP_VERSION: &str = "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36";
 const PLATFORM: &str = "Win32";
 const LANGUAGE: &str = "en-US";
 const LANGUAGES: &str = "en-US,en";
@@ -24,7 +24,7 @@ pub(crate) async fn get_invisible(client: &Client) -> BoxedResult<Invisible> {
         .send()
         .await?;
 
-    let final_url = response.url().to_string();
+    let final_url = response.uri().to_string();
     let path_re = regex::Regex::new(r"/h/([^/]+)/scripts/jsd/([^/]+)/main\.js")?;
     let (zone, hash) = path_re
         .captures(&final_url)
