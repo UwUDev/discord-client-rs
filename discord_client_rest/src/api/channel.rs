@@ -3,6 +3,7 @@ use crate::rest::{RequestProperties, RestClient};
 use discord_client_structs::structs::channel::Channel;
 use discord_client_structs::structs::channel::invite::{CreateChannelInvite, Invite};
 use serde_json::{Value, json};
+use std::collections::HashMap;
 
 pub struct ChannelRest<'a> {
     pub channel_id: Option<u64>,
@@ -143,6 +144,170 @@ impl<'a> ChannelRest<'a> {
 
         self.client
             .delete::<(), ()>(
+                &path,
+                None::<()>,
+                Some(RequestProperties::guild_channel(self.guild_id, channel_id)),
+            )
+            .await
+    }
+
+    pub async fn create_thread(&self, thread: Value) -> BoxedResult<Channel> {
+        let channel_id = self.cid()?;
+        let path = format!("channels/{}/threads", channel_id);
+
+        self.client
+            .post::<Channel, Value>(
+                &path,
+                Some(thread),
+                Some(RequestProperties::guild_channel(self.guild_id, channel_id)),
+            )
+            .await
+    }
+
+    pub async fn create_thread_from_message(
+        &self,
+        message_id: u64,
+        thread: Value,
+    ) -> BoxedResult<Channel> {
+        let channel_id = self.cid()?;
+        let path = format!("channels/{}/messages/{}/threads", channel_id, message_id);
+
+        self.client
+            .post::<Channel, Value>(
+                &path,
+                Some(thread),
+                Some(RequestProperties::guild_channel(self.guild_id, channel_id)),
+            )
+            .await
+    }
+
+    pub async fn get_public_archived_threads(
+        &self,
+        before: Option<String>,
+        limit: u16,
+    ) -> BoxedResult<Value> {
+        let channel_id = self.cid()?;
+        let path = format!("channels/{}/threads/archived/public", channel_id);
+
+        let mut query = HashMap::new();
+        query.insert("limit".to_string(), limit.to_string());
+        if let Some(before) = before {
+            query.insert("before".to_string(), before);
+        }
+
+        self.client
+            .get(
+                &path,
+                Some(query),
+                Some(RequestProperties::guild_channel(self.guild_id, channel_id)),
+            )
+            .await
+    }
+
+    pub async fn get_private_archived_threads(
+        &self,
+        before: Option<String>,
+        limit: u16,
+    ) -> BoxedResult<Value> {
+        let channel_id = self.cid()?;
+        let path = format!("channels/{}/threads/archived/private", channel_id);
+
+        let mut query = HashMap::new();
+        query.insert("limit".to_string(), limit.to_string());
+        if let Some(before) = before {
+            query.insert("before".to_string(), before);
+        }
+
+        self.client
+            .get(
+                &path,
+                Some(query),
+                Some(RequestProperties::guild_channel(self.guild_id, channel_id)),
+            )
+            .await
+    }
+
+    pub async fn get_joined_private_archived_threads(
+        &self,
+        before: Option<u64>,
+        limit: u16,
+    ) -> BoxedResult<Value> {
+        let channel_id = self.cid()?;
+        let path = format!("channels/{}/users/@me/threads/archived/private", channel_id);
+
+        let mut query = HashMap::new();
+        query.insert("limit".to_string(), limit.to_string());
+        if let Some(before) = before {
+            query.insert("before".to_string(), before.to_string());
+        }
+
+        self.client
+            .get(
+                &path,
+                Some(query),
+                Some(RequestProperties::guild_channel(self.guild_id, channel_id)),
+            )
+            .await
+    }
+
+    pub async fn add_thread_member(&self, user_id: u64) -> BoxedResult<()> {
+        let channel_id = self.cid()?;
+        let path = format!("channels/{}/thread-members/{}", channel_id, user_id);
+
+        self.client
+            .put::<(), ()>(
+                &path,
+                None::<()>,
+                Some(RequestProperties::guild_channel(self.guild_id, channel_id)),
+            )
+            .await
+    }
+
+    pub async fn remove_thread_member(&self, user_id: u64) -> BoxedResult<()> {
+        let channel_id = self.cid()?;
+        let path = format!("channels/{}/thread-members/{}", channel_id, user_id);
+
+        self.client
+            .delete::<(), ()>(
+                &path,
+                None::<()>,
+                Some(RequestProperties::guild_channel(self.guild_id, channel_id)),
+            )
+            .await
+    }
+
+    pub async fn create_tag(&self, tag: Value) -> BoxedResult<Channel> {
+        let channel_id = self.cid()?;
+        let path = format!("channels/{}/tags", channel_id);
+
+        self.client
+            .post::<Channel, Value>(
+                &path,
+                Some(tag),
+                Some(RequestProperties::guild_channel(self.guild_id, channel_id)),
+            )
+            .await
+    }
+
+    pub async fn modify_tag(&self, tag_id: u64, tag: Value) -> BoxedResult<Channel> {
+        let channel_id = self.cid()?;
+        let path = format!("channels/{}/tags/{}", channel_id, tag_id);
+
+        self.client
+            .put::<Channel, Value>(
+                &path,
+                Some(tag),
+                Some(RequestProperties::guild_channel(self.guild_id, channel_id)),
+            )
+            .await
+    }
+
+    pub async fn delete_tag(&self, tag_id: u64) -> BoxedResult<Channel> {
+        let channel_id = self.cid()?;
+        let path = format!("channels/{}/tags/{}", channel_id, tag_id);
+
+        self.client
+            .delete::<Channel, ()>(
                 &path,
                 None::<()>,
                 Some(RequestProperties::guild_channel(self.guild_id, channel_id)),

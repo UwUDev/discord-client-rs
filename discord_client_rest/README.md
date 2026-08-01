@@ -202,16 +202,16 @@ self.client
   - [ ] Acknowledge Safety Warnings
   - [x] Add Channel Recipient
   - [ ] Add Safety Warning
-  - [ ] Add Thread Member
+  - [x] Add Thread Member
   - [ ] Batch Reject Message Requests
-  - [ ] Create Channel Tag
+  - [x] Create Channel Tag
   - [x] Create Guild Channel
   - [x] Create Private Channel
-  - [ ] Create Thread
-  - [ ] Create Thread from Message
+  - [x] Create Thread
+  - [x] Create Thread from Message
   - [x] Delete Channel
   - [x] Delete Channel Permission
-  - [ ] Delete Channel Tag
+  - [x] Delete Channel Tag
   - [ ] Delete Read State
   - [ ] Delete Safety Warnings
   - [x] Follow Channel
@@ -223,10 +223,10 @@ self.client
   - [x] Get Guild Active Threads
   - [x] Get Guild Channels
   - [ ] Get Guild Top Read Channels
-  - [ ] Get Joined Private Archived Threads
-  - [ ] Get Private Archived Threads
+  - [x] Get Joined Private Archived Threads
+  - [x] Get Private Archived Threads
   - [x] Get Private Channels
-  - [ ] Get Public Archived Threads
+  - [x] Get Public Archived Threads
   - [ ] Get Supplemental Message Request Data
   - [ ] Get Thread Member
   - [x] Get Thread Members
@@ -236,12 +236,12 @@ self.client
   - [x] Modify Channel
   - [x] Modify Channel Permissions
   - [x] Modify Channel Status
-  - [ ] Modify Channel Tag
+  - [x] Modify Channel Tag
   - [x] Modify Guild Channel Positions
   - [ ] Modify Thread Settings
   - [ ] Reject Message Request
   - [x] Remove Channel Recipient
-  - [ ] Remove Thread Member
+  - [x] Remove Thread Member
   - [ ] Report Safety Warning False Positive
   - [ ] Ring Channel Recipients
   - [ ] Search Threads
@@ -261,15 +261,15 @@ self.client
 - **Discovery**
   - [ ] Add Guild Discovery Subcategory
   - [ ] Get Discoverable Guilds
-  - [ ] Get Discovery Categories
+  - [x] Get Discovery Categories
   - [ ] Get Discovery Slug
-  - [ ] Get Guild Discovery Metadata
-  - [ ] Get Guild Discovery Requirements
+  - [x] Get Guild Discovery Metadata
+  - [x] Get Guild Discovery Requirements
   - [ ] Modify Guild Discovery Metadata
   - [ ] Remove Guild Discovery Subcategory
   - [ ] Search Discoverable Guilds
   - [ ] Search Published Guilds
-  - [ ] Validate Discovery Search Term
+  - [x] Validate Discovery Search Term
   - [ ] Get Guild Profile
   - [ ] Modify Guild Profile
 - **Emoji**
@@ -311,13 +311,13 @@ self.client
   - [x] Modify Guild Scheduled Event
   - [ ] Modify Guild Scheduled Event Exception
 - **Guild template**
-  - [ ] Create Guild Template
-  - [ ] Delete Guild Template
-  - [ ] Get Guild Template
-  - [ ] Get Guild Templates
-  - [ ] Modify Guild Template
-  - [ ] Sync Guild Template
-  - [ ] Use Guild Template
+  - [x] Create Guild Template
+  - [x] Delete Guild Template
+  - [x] Get Guild Template
+  - [x] Get Guild Templates
+  - [x] Modify Guild Template
+  - [x] Sync Guild Template
+  - [x] Use Guild Template
 - **Guild**
   - [ ] Acknowledge DM Settings Upsell Modal
   - [ ] Action Guild Join Request
@@ -494,7 +494,7 @@ self.client
   - [x] Create DM Message
   - [ ] Create Greet Message
   - [x] Create Message
-  - [ ] Create Poll Vote
+  - [x] Create Poll Vote
   - [x] Create Reaction
   - [x] Crosspost Message
   - [x] Delete All Reactions
@@ -507,8 +507,8 @@ self.client
   - [x] Delete Reaction Emoji
   - [x] Edit DM Message
   - [x] Edit Message
-  - [ ] End Poll
-  - [ ] Get Answer Voters
+  - [x] End Poll
+  - [x] Get Answer Voters
   - [ ] Get Channel Media Preview
   - [ ] Get Conversation Summaries
   - [x] Get Message
@@ -536,7 +536,7 @@ self.client
   - [ ] Unhide Message from Guild Feed
   - [ ] Get Message Interaction Data
   - [ ] List Message Pins
-  - [ ] List Poll Answer Voters
+  - [x] List Poll Answer Voters
   - [ ] List User Message Summaries
 - **Premium referrals**
   - [ ] Create Premium Referral
@@ -661,11 +661,11 @@ self.client
   - [ ] Bulk Modify User Guild Settings
   - [ ] Create Notification Settings Snapshot
   - [ ] Delete Notification Settings Snapshot
-  - [ ] Get Email Settings
+  - [x] Get Email Settings
   - [ ] Get Notification Settings Snapshots
-  - [ ] Get User Consents
-  - [ ] Get User Settings
-  - [ ] Get User Settings Proto
+  - [x] Get User Consents
+  - [x] Get User Settings
+  - [x] Get User Settings Proto
   - [ ] Modify Notification Settings
   - [ ] Modify User Consents
   - [ ] Modify User Guild Settings

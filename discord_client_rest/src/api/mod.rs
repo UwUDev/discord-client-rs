@@ -1,10 +1,12 @@
 pub mod auth;
 pub mod automod;
 pub mod channel;
+pub mod discovery;
 pub mod dm;
 pub mod emoji;
 pub mod group;
 pub mod guild;
+pub mod guild_template;
 pub mod integration;
 pub mod invite;
 pub mod message;

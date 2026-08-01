@@ -1,9 +1,11 @@
 use crate::api::auth::AuthRest;
 use crate::api::automod::AutomodRest;
+use crate::api::discovery::DiscoveryRest;
 use crate::api::dm::DmRest;
 use crate::api::emoji::EmojiRest;
 use crate::api::group::GroupRest;
 use crate::api::guild::GuildRest;
+use crate::api::guild_template::GuildTemplateRest;
 use crate::api::integration::IntegrationRest;
 use crate::api::invite::InviteRest;
 use crate::api::message::MessageRest;
@@ -240,6 +242,14 @@ impl RestClient {
 
     pub fn integration(&self) -> IntegrationRest<'_> {
         IntegrationRest { client: self }
+    }
+
+    pub fn guild_template(&self) -> GuildTemplateRest<'_> {
+        GuildTemplateRest { client: self }
+    }
+
+    pub fn discovery(&self) -> DiscoveryRest<'_> {
+        DiscoveryRest { client: self }
     }
 
     pub async fn get<T: DeserializeOwned + Default + Send>(

@@ -375,4 +375,58 @@ impl<'a> MessageRest<'a> {
             .delete::<_, ()>(&path, None::<()>, Some(props))
             .await
     }
+
+    pub async fn end_poll(&self, message_id: u64, guild_id: Option<u64>) -> BoxedResult<Message> {
+        let path = format!("channels/{}/polls/{}/expire", self.channel_id, message_id);
+
+        let props = RequestProperties::from_referer(self.referer(guild_id));
+
+        self.client
+            .post::<Message, ()>(&path, None::<()>, Some(props))
+            .await
+    }
+
+    pub async fn get_answer_voters(
+        &self,
+        message_id: u64,
+        answer_id: u64,
+        limit: u16,
+        after: Option<u64>,
+        guild_id: Option<u64>,
+    ) -> BoxedResult<Value> {
+        let path = format!(
+            "channels/{}/polls/{}/answers/{}",
+            self.channel_id, message_id, answer_id
+        );
+
+        let mut query = HashMap::new();
+        query.insert("limit".to_string(), limit.to_string());
+        if let Some(after) = after {
+            query.insert("after".to_string(), after.to_string());
+        }
+
+        let props = RequestProperties::from_referer(self.referer(guild_id));
+
+        self.client.get(&path, Some(query), Some(props)).await
+    }
+
+    pub async fn add_poll_vote(
+        &self,
+        message_id: u64,
+        answer_ids: Vec<u64>,
+        guild_id: Option<u64>,
+    ) -> BoxedResult<()> {
+        let path = format!(
+            "channels/{}/polls/{}/answers/@me",
+            self.channel_id, message_id
+        );
+
+        let body = json!({ "answer_ids": answer_ids });
+
+        let props = RequestProperties::from_referer(self.referer(guild_id));
+
+        self.client
+            .put::<(), Value>(&path, Some(body), Some(props))
+            .await
+    }
 }

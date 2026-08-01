@@ -117,5 +117,37 @@ impl<'a> SelfUserRest<'a> {
         self.patch(body).await
     }
 
+    pub async fn get_settings(&self) -> BoxedResult<Value> {
+        let path = String::from("users/@me/settings");
+
+        self.client
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
+            .await
+    }
+
+    pub async fn get_consents(&self) -> BoxedResult<Value> {
+        let path = String::from("users/@me/consent");
+
+        self.client
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
+            .await
+    }
+
+    pub async fn get_email_settings(&self) -> BoxedResult<Value> {
+        let path = String::from("users/@me/email-settings");
+
+        self.client
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
+            .await
+    }
+
+    pub async fn get_settings_proto(&self, proto_type: u8) -> BoxedResult<Value> {
+        let path = format!("users/@me/settings-proto/{}", proto_type);
+
+        self.client
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
+            .await
+    }
+
     // todo: decoration & flags
 }
