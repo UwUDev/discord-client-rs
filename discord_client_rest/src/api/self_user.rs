@@ -1,8 +1,7 @@
 use crate::BoxedResult;
 use crate::image::ImageType;
 use crate::image::base64::encode_image;
-use crate::rest::{RequestPropertiesBuilder, RestClient};
-use crate::structs::referer::{HomePageReferer, Referer};
+use crate::rest::{RequestProperties, RestClient};
 use chrono::{DateTime, Utc};
 use discord_client_structs::structs::user::User;
 use serde_json::{Value, json};
@@ -15,11 +14,7 @@ impl<'a> SelfUserRest<'a> {
     pub async fn get(&self) -> BoxedResult<User> {
         let path = String::from("users/@me");
 
-        let referer = HomePageReferer {};
-
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::home();
 
         self.client.get::<User>(&path, None, Some(props)).await
     }
@@ -27,11 +22,7 @@ impl<'a> SelfUserRest<'a> {
     async fn patch(&self, body: Value) -> BoxedResult<User> {
         let path = String::from("users/@me");
 
-        let referer = HomePageReferer {};
-
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::home();
 
         self.client
             .patch::<User, Value>(&path, Some(body), Some(props))
@@ -124,6 +115,38 @@ impl<'a> SelfUserRest<'a> {
         });
 
         self.patch(body).await
+    }
+
+    pub async fn get_settings(&self) -> BoxedResult<Value> {
+        let path = String::from("users/@me/settings");
+
+        self.client
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
+            .await
+    }
+
+    pub async fn get_consents(&self) -> BoxedResult<Value> {
+        let path = String::from("users/@me/consent");
+
+        self.client
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
+            .await
+    }
+
+    pub async fn get_email_settings(&self) -> BoxedResult<Value> {
+        let path = String::from("users/@me/email-settings");
+
+        self.client
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
+            .await
+    }
+
+    pub async fn get_settings_proto(&self, proto_type: u8) -> BoxedResult<Value> {
+        let path = format!("users/@me/settings-proto/{}", proto_type);
+
+        self.client
+            .get::<Value>(&path, None, Some(RequestProperties::home()))
+            .await
     }
 
     // todo: decoration & flags

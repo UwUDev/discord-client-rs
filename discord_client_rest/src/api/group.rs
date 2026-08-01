@@ -1,7 +1,6 @@
 use crate::BoxedResult;
-use crate::rest::{RequestPropertiesBuilder, RestClient};
+use crate::rest::{RequestProperties, RestClient};
 use crate::structs::context::Context::NewGroupDmContext;
-use crate::structs::referer::{DmChannelReferer, HomePageReferer, Referer};
 use discord_client_structs::structs::channel::Channel;
 use serde_json::{Value, json};
 
@@ -17,14 +16,7 @@ impl<'a> GroupRest<'a> {
           "recipients": user_ids.iter().map(|id| id.to_string()).collect::<Vec<String>>(),
         });
 
-        let context = NewGroupDmContext;
-
-        let referer = HomePageReferer;
-
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .context(context)
-            .build()?;
+        let props = RequestProperties::home().with_context(NewGroupDmContext);
 
         self.client
             .post::<Channel, Value>(&path, Some(payload), Some(props))
@@ -34,11 +26,7 @@ impl<'a> GroupRest<'a> {
     pub async fn add_user_to_group(&self, channel_id: u64, user_id: u64) -> BoxedResult<()> {
         let path = format!("users/@me/channels/{}/recipients/{}", channel_id, user_id);
 
-        let referer = DmChannelReferer { channel_id };
-
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::dm_channel(channel_id);
 
         self.client
             .put::<_, _>(&path, None::<&()>, Some(props))
@@ -48,11 +36,7 @@ impl<'a> GroupRest<'a> {
     pub async fn kick_user_from_group(&self, channel_id: u64, user_id: u64) -> BoxedResult<()> {
         let path = format!("channels/{}/recipients/{}", channel_id, user_id);
 
-        let referer = DmChannelReferer { channel_id };
-
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::dm_channel(channel_id);
 
         self.client
             .delete::<_, _>(&path, None::<&()>, Some(props))
@@ -66,15 +50,11 @@ impl<'a> GroupRest<'a> {
     ) -> BoxedResult<Channel> {
         let path = format!("channels/{}", channel_id);
 
-        let referer = DmChannelReferer { channel_id };
-
         let payload = json!({
           "owner": user_id.to_string(),
         });
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::dm_channel(channel_id);
 
         self.client
             .put::<Channel, _>(&path, Some(payload), Some(props))
@@ -84,15 +64,11 @@ impl<'a> GroupRest<'a> {
     pub async fn rename_group(&self, channel_id: u64, name: &str) -> BoxedResult<Channel> {
         let path = format!("channels/{}", channel_id);
 
-        let referer = DmChannelReferer { channel_id };
-
         let payload = json!({
           "name": name,
         });
 
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::dm_channel(channel_id);
 
         self.client
             .patch::<Channel, _>(&path, Some(payload), Some(props))
@@ -104,11 +80,7 @@ impl<'a> GroupRest<'a> {
     pub async fn leave_group(&self, channel_id: u64, silent: bool) -> BoxedResult<Channel> {
         let path = format!("channels/{}?silent={}", channel_id, silent);
 
-        let referer = DmChannelReferer { channel_id };
-
-        let props = RequestPropertiesBuilder::default()
-            .referer::<Referer>(referer.into())
-            .build()?;
+        let props = RequestProperties::dm_channel(channel_id);
 
         self.client
             .delete::<Channel, _>(&path, None::<&()>, Some(props))
