@@ -4,7 +4,7 @@ use log::warn;
 use regex::Regex;
 use std::time::Duration;
 use wreq::{Client, Proxy, redirect};
-use wreq_util::{Emulation, EmulationOS, EmulationOption};
+use wreq_util::{Emulation, Platform, Profile};
 
 pub(crate) const DEFAULT_API_VERSION: u8 = 9;
 const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
@@ -16,9 +16,9 @@ pub(crate) struct Bootstrap {
 }
 
 pub(crate) fn build_emulated_client(proxy: Option<&str>) -> BoxedResult<Client> {
-    let emu = EmulationOption::builder()
-        .emulation(Emulation::Chrome136)
-        .emulation_os(EmulationOS::Windows)
+    let emu = Emulation::builder()
+        .profile(Profile::Chrome149)
+        .platform(Platform::Windows)
         .build();
 
     let mut builder = Client::builder()
