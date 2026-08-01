@@ -11,7 +11,7 @@ async fn main() {
 
     let client_session = ClientSession::new();
 
-    let rest_client = RestClient::connect(token.clone(), None, None, Some(client_session))
+    let rest_client = RestClient::connect(token.clone(), None, None, Some(client_session), None)
         .await
         .unwrap();
 

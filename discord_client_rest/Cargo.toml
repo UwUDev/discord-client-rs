@@ -32,12 +32,20 @@ path = "examples/guild.rs"
 name = "reverse"
 path = "examples/reverse.rs"
 
+[[example]]
+name = "sessionless"
+path = "examples/sessionless.rs"
+
+[[example]]
+name = "invite_checker"
+path = "examples/invite_checker.rs"
+
 [dependencies]
 discord_client_structs = { path = "../discord_client_structs" }
 discord_client_utils = { path = "../discord_client_utils" }
-wreq = { workspace = true, features = ["gzip", "deflate", "zstd", "brotli", "json", "cookies"] }
+wreq = { workspace = true, features = ["gzip", "deflate", "zstd", "brotli", "json", "cookies", "socks"] }
 wreq-util = { workspace = true }
-tokio = { workspace = true, features = ["rt", "macros", "rt-multi-thread"] }
+tokio = { workspace = true, features = ["rt", "macros", "rt-multi-thread", "signal", "time"] }
 regex = "1.11.1"
 iana-time-zone = "0.1.63"
 current_locale = "0.1.1"
@@ -48,3 +56,4 @@ log = "0.4.27"
 pretty_env_logger = "0.5.0"
 derive_builder = "0.20.2"
 chrono.workspace = true
+rand = "0.9.4"

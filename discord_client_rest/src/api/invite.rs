@@ -13,16 +13,15 @@ pub struct InviteRest<'a> {
 
 impl<'a> InviteRest<'a> {
     pub async fn get_invite(&self, code: String) -> BoxedResult<Invite> {
-        // https://discord.com/api/v9/invites/allah?inputValue=allah&with_counts=true&with_expiration=true&with_permissions=false
         let path = format!("invites/{}", code);
 
         let referer = HomePageReferer {};
 
         let mut params = HashMap::new();
-        params.insert("inputValue".to_string(), code);
         params.insert("with_counts".to_string(), "true".to_string());
         params.insert("with_expiration".to_string(), "true".to_string());
-        params.insert("with_permissions".to_string(), "false".to_string());
+        params.insert("with_permissions".to_string(), "true".to_string());
+        params.insert("with_games".to_string(), "true".to_string());
 
         let props = RequestPropertiesBuilder::default()
             .referer::<Referer>(referer.into())

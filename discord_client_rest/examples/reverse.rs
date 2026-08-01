@@ -11,7 +11,9 @@ async fn main() {
         .init();
 
     let token = std::fs::read_to_string("token.txt").unwrap();
-    let client = RestClient::connect(token, None, None, None).await.unwrap();
+    let client = RestClient::connect(token, None, None, None, None)
+        .await
+        .unwrap();
 
     info!("API Version: {}", client.api_version);
     info!("Build Number: {:?}", client.build_numbers);

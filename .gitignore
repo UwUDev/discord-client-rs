@@ -6,3 +6,13 @@ token*.txt
 failed_events/
 unknown_events/
 /Cargo.lock
+/invites.txt
+/guilds.json
+/invite_data.json
+/proxies.txt
+/valid.txt
+/dead.txt
+/captcha_locked.txt
+/mail_locked.txt
+/phone_locked.txt
+/checked_codes.json

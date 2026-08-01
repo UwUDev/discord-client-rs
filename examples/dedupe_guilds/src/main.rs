@@ -50,8 +50,14 @@ async fn get_client<'a>(
     build_numbers: &BuildNumbers,
 ) -> BoxedResult<&'a RestClient> {
     if !cache.contains_key(token) {
-        let client =
-            RestClient::connect(token.to_string(), None, Some(build_numbers.clone()), None).await?;
+        let client = RestClient::connect(
+            token.to_string(),
+            None,
+            Some(build_numbers.clone()),
+            None,
+            None,
+        )
+        .await?;
         cache.insert(token.to_string(), client);
     }
     Ok(cache.get(token).unwrap())

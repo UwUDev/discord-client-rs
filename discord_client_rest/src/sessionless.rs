@@ -1,23 +1,15 @@
-use crate::api::auth::AuthRest;
-use crate::api::dm::DmRest;
-use crate::api::group::GroupRest;
-use crate::api::guild::GuildRest;
-use crate::api::invite::InviteRest;
-use crate::api::message::MessageRest;
-use crate::api::self_user::SelfUserRest;
-use crate::bootstrap::bootstrap_client;
-use crate::captcha::{CaptchaRequiredError, SolvedCaptcha};
-use crate::mfa::{MfaRequiredError, MfaVerificationRequest};
+use crate::api::sessionless::experiments::SessionlessExperimentsRest;
+use crate::api::sessionless::invite::SessionlessInviteRest;
+use crate::bootstrap::{DEFAULT_API_VERSION, build_emulated_client, solve_cloudflare_clearance};
+use crate::captcha::CaptchaRequiredError;
 use crate::rate_limit::{RateLimitError, RateLimiter};
 use crate::response::{parse_error_body, rate_limit_from_body};
-use crate::structs::context::{Context, ContextHeader};
-use crate::structs::referer::{Referer, RefererHeader};
+use crate::rest::RequestProperties;
+use crate::structs::context::ContextHeader;
+use crate::structs::referer::RefererHeader;
 use crate::super_prop::build_super_props;
 use crate::{BoxedError, BoxedResult};
 use current_locale::current_locale;
-use derive_builder::Builder;
-use discord_client_structs::parser::parse_id_from_token;
-use discord_client_structs::structs::application::ApplicationCommandIndex;
 use discord_client_structs::structs::client::{BuildNumbers, ClientSession};
 use discord_client_utils::find_build_numbers;
 use iana_time_zone::get_timezone;
@@ -32,148 +24,80 @@ use wreq::{Client, Method, Response};
 
 const API_BASE: &str = "https://discord.com/api/";
 
-pub struct RestClient {
-    token: String,
-    pub user_id: u64,
+pub struct SessionlessClient {
     client: Client,
     pub api_version: u8,
-    pub application_command_index: Option<ApplicationCommandIndex>,
     locale: String,
     timezone: String,
     pub build_numbers: BuildNumbers,
     global_rate_limiter: RateLimiter,
     route_rate_limiters: Arc<Mutex<HashMap<String, RateLimiter>>>,
     client_session: ClientSession,
+    fingerprint: Mutex<Option<String>>,
 }
 
-impl RestClient {
+impl SessionlessClient {
     pub async fn connect(
-        token: String,
         custom_api_version: Option<u8>,
         custom_build_numbers: Option<BuildNumbers>,
         client_session: Option<ClientSession>,
+        fingerprint: Option<String>,
         proxy: Option<String>,
+        auto_fingerprint: bool,
     ) -> BoxedResult<Self> {
-        let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
-
         let build_numbers = match custom_build_numbers {
             None => find_build_numbers().await?,
             Some(build_num) => build_num,
         };
 
-        let bootstrap = bootstrap_client(custom_api_version, proxy.as_deref()).await?;
-        let client = bootstrap.client;
-        let api_version = bootstrap.api_version;
-
-        // get experiments cookies
-        // todo: parse assignments
-        let resp = client
-            .get(format!(
-                "{}v{}/experiments?with_guild_experiments=true",
-                API_BASE, api_version
-            ))
-            .header("Authorization", token.clone())
-            .send()
-            .await?;
-        let code = resp.status().as_u16();
-        if code == 401 {
-            return Err(Box::from("Invalid token"));
-        }
-        if code != 200 {
-            return Err(Box::from(format!(
-                "Failed to fetch experiments, response code: {}",
-                code
-            )));
-        }
-        let _ = resp.text().await?; // ignore the response
+        let http_client = build_emulated_client(proxy.as_deref())?;
 
         let timezone = get_timezone().unwrap_or("America/New_York".to_string());
         let locale = current_locale().unwrap_or("en-US".to_string());
-        let client_session = client_session.unwrap_or_else(|| ClientSession::new());
+        let client_session = client_session.unwrap_or_else(ClientSession::new);
 
-        // get application command index
-        let resp = client
-            .get(format!(
-                "{}v{}/users/@me/application-command-index",
-                API_BASE, api_version
-            ))
-            .header("Authorization", token.clone())
-            .header("x-debug-options", "bugReporterEnabled")
-            .header("x-discord-locale", locale.clone())
-            .header("x-discord-timezone", timezone.clone())
-            .header(
-                "x-super-properties",
-                build_super_props(build_numbers.clone(), client_session.clone()),
-            )
-            .send()
-            .await?;
-
-        let code = resp.status().as_u16();
-        if code == 401 {
-            return Err(Box::from("Invalid token"));
-        }
-        if code != 200 {
-            return Err(Box::from(format!(
-                "Failed to fetch application command index, response code: {}",
-                code
-            )));
-        }
-
-        let application_command_index = match resp.json::<ApplicationCommandIndex>().await {
-            Ok(index) => Some(index),
-            Err(e) => {
-                error!("Failed to parse application command index: {}", e);
-                None
-            }
-        };
-
-        Ok(Self {
-            token,
-            user_id,
-            client,
-            api_version,
-            application_command_index,
+        let client = Self {
+            client: http_client,
+            api_version: custom_api_version.unwrap_or(DEFAULT_API_VERSION),
             locale,
             timezone,
             build_numbers,
             global_rate_limiter: RateLimiter::new(),
             route_rate_limiters: Arc::new(Mutex::new(HashMap::new())),
             client_session,
-        })
-    }
+            fingerprint: Mutex::new(fingerprint),
+        };
 
-    pub fn message(&self, channel_id: u64) -> MessageRest<'_> {
-        MessageRest {
-            channel_id,
-            client: self,
+        if auto_fingerprint && client.fingerprint().await.is_none() {
+            if let Err(e) = client.experiments().get_assignments(false).await {
+                warn!(
+                    "failed to obtain a fingerprint (continuing without one): {}",
+                    e
+                );
+            }
         }
+
+        Ok(client)
     }
 
-    pub fn guild(&self, guild_id: Option<u64>) -> GuildRest<'_> {
-        GuildRest {
-            guild_id,
-            client: self,
-        }
+    pub fn experiments(&self) -> SessionlessExperimentsRest<'_> {
+        SessionlessExperimentsRest { client: self }
     }
 
-    pub fn dm(&self) -> DmRest<'_> {
-        DmRest { client: self }
+    pub fn invite(&self) -> SessionlessInviteRest<'_> {
+        SessionlessInviteRest { client: self }
     }
 
-    pub fn group(&self) -> GroupRest<'_> {
-        GroupRest { client: self }
+    pub async fn solve_clearance(&self) -> BoxedResult<()> {
+        solve_cloudflare_clearance(&self.client).await
     }
 
-    pub fn self_user(&self) -> SelfUserRest<'_> {
-        SelfUserRest { client: self }
+    pub async fn fingerprint(&self) -> Option<String> {
+        self.fingerprint.lock().await.clone()
     }
 
-    pub fn auth(&self) -> AuthRest<'_> {
-        AuthRest { client: self }
-    }
-
-    pub fn invite(&self) -> InviteRest<'_> {
-        InviteRest { client: self }
+    pub async fn set_fingerprint(&self, fingerprint: Option<String>) {
+        *self.fingerprint.lock().await = fingerprint;
     }
 
     pub async fn get<T: DeserializeOwned + Default + Send>(
@@ -197,48 +121,6 @@ impl RestClient {
         B: Serialize + Send + Sync,
     {
         self.request(Method::POST, path, None, body, req_properties)
-            .await
-    }
-
-    pub async fn put<T, B: Clone>(
-        &self,
-        path: &str,
-        body: Option<B>,
-        req_properties: Option<RequestProperties>,
-    ) -> BoxedResult<T>
-    where
-        T: DeserializeOwned + Default + Send,
-        B: Serialize + Send + Sync,
-    {
-        self.request(Method::PUT, path, None, body, req_properties)
-            .await
-    }
-
-    pub async fn patch<T, B: Clone>(
-        &self,
-        path: &str,
-        body: Option<B>,
-        req_properties: Option<RequestProperties>,
-    ) -> BoxedResult<T>
-    where
-        T: DeserializeOwned + Default + Send,
-        B: Serialize + Send + Sync,
-    {
-        self.request(Method::PATCH, path, None, body, req_properties)
-            .await
-    }
-
-    pub async fn delete<T, B: Clone>(
-        &self,
-        path: &str,
-        body: Option<B>,
-        req_properties: Option<RequestProperties>,
-    ) -> BoxedResult<T>
-    where
-        T: DeserializeOwned + Default + Send,
-        B: Serialize + Send + Sync,
-    {
-        self.request(Method::DELETE, path, None, body, req_properties)
             .await
     }
 
@@ -338,7 +220,7 @@ impl RestClient {
         let mut request = self
             .client
             .request(method, &full_url)
-            .headers(self.build_headers(req_properties)?);
+            .headers(self.build_headers(req_properties).await?);
 
         if let Some(body_data) = body {
             request = request
@@ -361,28 +243,6 @@ impl RestClient {
     ) -> BoxedResult<T> {
         let status = resp.status();
         match status.as_u16() {
-            401 => {
-                let bytes = resp.bytes().await?;
-                let json = parse_error_body(&bytes, 401, url)?;
-
-                if json["code"].is_i64() {
-                    let code = json["code"].as_i64().unwrap();
-                    if code == 60003 {
-                        let mfa_value = json.get("mfa").unwrap();
-                        let mfa_request =
-                            serde_json::from_value::<MfaVerificationRequest>(mfa_value.clone())
-                                .map_err(|e| Box::new(e) as BoxedError)?;
-
-                        let mfa_error = MfaRequiredError {
-                            verification_request: mfa_request,
-                        };
-
-                        return Err(Box::new(mfa_error));
-                    }
-                }
-
-                return Err("Invalid token".into());
-            }
             204 => return Ok(T::default()),
             200..=299 => (),
             429 => {
@@ -391,7 +251,7 @@ impl RestClient {
             }
             400 => {
                 let bytes = resp.bytes().await?;
-                let resp_json = parse_error_body(&bytes, 400, url)?;
+                let resp_json = parse_error_body(&bytes, status.as_u16(), url)?;
 
                 if resp_json["captcha_sitekey"].is_string() {
                     let captcha = serde_json::from_value::<CaptchaRequiredError>(resp_json)
@@ -417,13 +277,11 @@ impl RestClient {
         }
     }
 
-    fn build_headers(&self, req_properties: Option<RequestProperties>) -> BoxedResult<HeaderMap> {
+    async fn build_headers(
+        &self,
+        req_properties: Option<RequestProperties>,
+    ) -> BoxedResult<HeaderMap> {
         let mut headers = HeaderMap::new();
-
-        headers.insert(
-            "Authorization",
-            self.token.parse().map_err(|e| Box::new(e) as BoxedError)?,
-        );
 
         headers.insert(
             "X-Debug-Options",
@@ -450,6 +308,13 @@ impl RestClient {
                 .parse()
                 .map_err(|e| Box::new(e) as BoxedError)?,
         );
+
+        if let Some(fingerprint) = self.fingerprint().await {
+            headers.insert(
+                "X-Fingerprint",
+                fingerprint.parse().map_err(|e| Box::new(e) as BoxedError)?,
+            );
+        }
 
         if let Some(req_properties) = req_properties {
             if let Some(referer) = req_properties.referer {
@@ -483,12 +348,4 @@ impl RestClient {
     pub fn get_http_client(&self) -> &Client {
         &self.client
     }
-}
-
-#[derive(Debug, Clone, Builder, Default)]
-#[builder(setter(into, strip_option), default)]
-pub struct RequestProperties {
-    pub referer: Option<Referer>,
-    pub context: Option<Context>,
-    pub solved_captcha: Option<SolvedCaptcha>,
 }

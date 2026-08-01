@@ -6,3 +6,4 @@ pub mod guild;
 pub mod invite;
 pub mod message;
 pub mod self_user;
+pub mod sessionless;
