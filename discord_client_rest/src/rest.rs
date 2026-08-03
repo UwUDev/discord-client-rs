@@ -30,7 +30,7 @@ use crate::api::store::StoreRest;
 use crate::api::user::UserRest;
 use crate::api::voice::VoiceRest;
 use crate::api::webhook::WebhookRest;
-use crate::bootstrap::bootstrap_client;
+use crate::bootstrap::{DEFAULT_API_VERSION, bootstrap_client, build_bot_client};
 use crate::captcha::{CaptchaRequiredError, SolvedCaptcha};
 use crate::mfa::{MfaRequiredError, MfaVerificationRequest};
 use crate::rate_limit::{RateLimitError, RateLimiter};
@@ -53,14 +53,72 @@ use serde::Serialize;
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
 use std::sync::Arc;
+use std::time::Duration;
 use tokio::sync::Mutex;
 use wreq::header::HeaderMap;
 use wreq::{Client, Method, Response};
 
 const API_BASE: &str = "https://discord.com/api/";
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum Authentication {
+    User,
+    Bot,
+}
+
+impl Authentication {
+    fn normalize_token(self, token: String) -> BoxedResult<String> {
+        match self {
+            Self::User => Ok(token),
+            Self::Bot => {
+                let token = token.trim();
+                let token = token.strip_prefix("Bot ").unwrap_or(token).trim();
+                if token.is_empty() {
+                    return Err("Invalid token".into());
+                }
+                Ok(token.to_string())
+            }
+        }
+    }
+
+    fn authorization(self, token: &str) -> String {
+        match self {
+            Self::User => token.to_string(),
+            Self::Bot => format!("Bot {}", token),
+        }
+    }
+}
+
+#[derive(Debug)]
+struct SearchIndexingError {
+    retry_after: Duration,
+}
+
+impl std::fmt::Display for SearchIndexingError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Messages are still being indexed")
+    }
+}
+
+impl std::error::Error for SearchIndexingError {}
+
+fn should_retry_search_indexing(authentication: Authentication, status: u16, path: &str) -> bool {
+    authentication == Authentication::Bot && status == 202 && path.ends_with("/messages/search")
+}
+
+fn search_indexing_retry_after(bytes: &[u8]) -> Duration {
+    let retry_after = serde_json::from_slice::<serde_json::Value>(bytes)
+        .ok()
+        .and_then(|body| body["retry_after"].as_f64())
+        .filter(|retry_after| retry_after.is_finite() && *retry_after > 0.0)
+        .unwrap_or(1.0);
+
+    Duration::from_secs_f64(retry_after)
+}
+
 pub struct RestClient {
-    token: String,
+    authorization: String,
+    authentication: Authentication,
     pub user_id: u64,
     client: Client,
     pub api_version: u8,
@@ -81,81 +139,153 @@ impl RestClient {
         client_session: Option<ClientSession>,
         proxy: Option<String>,
     ) -> BoxedResult<Self> {
-        let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
+        Self::connect_with_authentication(
+            token,
+            custom_api_version,
+            custom_build_numbers,
+            client_session,
+            proxy,
+            Authentication::User,
+        )
+        .await
+    }
 
-        let build_numbers = match custom_build_numbers {
-            None => find_build_numbers().await?,
-            Some(build_num) => build_num,
+    pub async fn connect_bot(
+        token: String,
+        custom_api_version: Option<u8>,
+        custom_build_numbers: Option<BuildNumbers>,
+        client_session: Option<ClientSession>,
+        proxy: Option<String>,
+    ) -> BoxedResult<Self> {
+        Self::connect_with_authentication(
+            token,
+            custom_api_version,
+            custom_build_numbers,
+            client_session,
+            proxy,
+            Authentication::Bot,
+        )
+        .await
+    }
+
+    async fn connect_with_authentication(
+        token: String,
+        custom_api_version: Option<u8>,
+        custom_build_numbers: Option<BuildNumbers>,
+        client_session: Option<ClientSession>,
+        proxy: Option<String>,
+        authentication: Authentication,
+    ) -> BoxedResult<Self> {
+        let token = authentication.normalize_token(token)?;
+        let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
+        let authorization = authentication.authorization(&token);
+
+        let build_numbers = match (authentication, custom_build_numbers) {
+            (_, Some(build_num)) => build_num,
+            (Authentication::User, None) => find_build_numbers().await?,
+            (Authentication::Bot, None) => BuildNumbers::new(0, None),
         };
 
-        let bootstrap = bootstrap_client(custom_api_version, proxy.as_deref()).await?;
-        let client = bootstrap.client;
-        let api_version = bootstrap.api_version;
+        let (client, api_version) = match authentication {
+            Authentication::User => {
+                let bootstrap = bootstrap_client(custom_api_version, proxy.as_deref()).await?;
+                (bootstrap.client, bootstrap.api_version)
+            }
+            Authentication::Bot => (
+                build_bot_client(proxy.as_deref())?,
+                custom_api_version.unwrap_or(DEFAULT_API_VERSION),
+            ),
+        };
 
-        // get experiments cookies
-        // todo: parse assignments
-        let resp = client
-            .get(format!(
-                "{}v{}/experiments?with_guild_experiments=true",
-                API_BASE, api_version
-            ))
-            .header("Authorization", token.clone())
-            .send()
-            .await?;
-        let code = resp.status().as_u16();
-        if code == 401 {
-            return Err(Box::from("Invalid token"));
+        if authentication == Authentication::User {
+            // get experiments cookies
+            // todo: parse assignments
+            let resp = client
+                .get(format!(
+                    "{}v{}/experiments?with_guild_experiments=true",
+                    API_BASE, api_version
+                ))
+                .header("Authorization", authorization.clone())
+                .send()
+                .await?;
+            let code = resp.status().as_u16();
+            if code == 401 {
+                return Err(Box::from("Invalid token"));
+            }
+            if code != 200 {
+                return Err(Box::from(format!(
+                    "Failed to fetch experiments, response code: {}",
+                    code
+                )));
+            }
+            let _ = resp.text().await?; // ignore the response
+        } else {
+            let resp = client
+                .get(format!("{}v{}/users/@me", API_BASE, api_version))
+                .header("Authorization", authorization.clone())
+                .send()
+                .await?;
+            let code = resp.status().as_u16();
+            if code == 401 {
+                return Err(Box::from("Invalid token"));
+            }
+            if code != 200 {
+                return Err(Box::from(format!(
+                    "Failed to fetch current bot, response code: {}",
+                    code
+                )));
+            }
+            let _ = resp.text().await?;
         }
-        if code != 200 {
-            return Err(Box::from(format!(
-                "Failed to fetch experiments, response code: {}",
-                code
-            )));
-        }
-        let _ = resp.text().await?; // ignore the response
 
         let timezone = get_timezone().unwrap_or("America/New_York".to_string());
         let locale = current_locale().unwrap_or("en-US".to_string());
         let client_session = client_session.unwrap_or_else(|| ClientSession::new());
 
-        // get application command index
-        let resp = client
-            .get(format!(
-                "{}v{}/users/@me/application-command-index",
-                API_BASE, api_version
-            ))
-            .header("Authorization", token.clone())
-            .header("x-debug-options", "bugReporterEnabled")
-            .header("x-discord-locale", locale.clone())
-            .header("x-discord-timezone", timezone.clone())
-            .header(
-                "x-super-properties",
-                build_super_props(build_numbers.clone(), client_session.clone()),
-            )
-            .send()
-            .await?;
+        let application_command_index = match authentication {
+            Authentication::User => {
+                // get application command index
+                let resp = client
+                    .get(format!(
+                        "{}v{}/users/@me/application-command-index",
+                        API_BASE, api_version
+                    ))
+                    .header("Authorization", authorization.clone())
+                    .header("x-debug-options", "bugReporterEnabled")
+                    .header("x-discord-locale", locale.clone())
+                    .header("x-discord-timezone", timezone.clone())
+                    .header(
+                        "x-super-properties",
+                        build_super_props(build_numbers.clone(), client_session.clone()),
+                    )
+                    .send()
+                    .await?;
 
-        let code = resp.status().as_u16();
-        if code == 401 {
-            return Err(Box::from("Invalid token"));
-        }
-        if code != 200 {
-            return Err(Box::from(format!(
-                "Failed to fetch application command index, response code: {}",
-                code
-            )));
-        }
+                let code = resp.status().as_u16();
+                if code == 401 {
+                    return Err(Box::from("Invalid token"));
+                }
+                if code != 200 {
+                    return Err(Box::from(format!(
+                        "Failed to fetch application command index, response code: {}",
+                        code
+                    )));
+                }
 
-        let application_command_index = match resp.json::<ApplicationCommandIndex>().await {
-            Ok(index) => Some(index),
-            Err(e) => {
-                error!("Failed to parse application command index: {}", e);
-                None
+                match resp.json::<ApplicationCommandIndex>().await {
+                    Ok(index) => Some(index),
+                    Err(e) => {
+                        error!("Failed to parse application command index: {}", e);
+                        None
+                    }
+                }
             }
+            Authentication::Bot => None,
         };
 
         Ok(Self {
-            token,
+            authorization,
+            authentication,
             user_id,
             client,
             api_version,
@@ -431,6 +561,14 @@ impl RestClient {
                             rate_limit_error.retry_after.as_secs_f64()
                         );
                         continue;
+                    } else if let Some(indexing_error) = e.downcast_ref::<SearchIndexingError>() {
+                        warn!(
+                            "Messages are still being indexed [{}]! Retrying after {:.2} seconds",
+                            path,
+                            indexing_error.retry_after.as_secs_f64()
+                        );
+                        tokio::time::sleep(indexing_error.retry_after).await;
+                        continue;
                     } else {
                         return Err(e);
                     }
@@ -487,13 +625,14 @@ impl RestClient {
             .await
             .map_err(|e| Box::new(e) as BoxedError)?;
 
-        self.handle_response(resp, &full_url).await
+        self.handle_response(resp, &full_url, path).await
     }
 
     async fn handle_response<T: DeserializeOwned + Default>(
         &self,
         resp: Response,
         url: &str,
+        path: &str,
     ) -> BoxedResult<T> {
         let status = resp.status();
         match status.as_u16() {
@@ -520,6 +659,12 @@ impl RestClient {
                 return Err("Invalid token".into());
             }
             204 => return Ok(T::default()),
+            202 if should_retry_search_indexing(self.authentication, status.as_u16(), path) => {
+                let bytes = resp.bytes().await?;
+                return Err(Box::new(SearchIndexingError {
+                    retry_after: search_indexing_retry_after(&bytes),
+                }));
+            }
             200..=299 => (),
             429 => {
                 let bytes = resp.bytes().await?;
@@ -558,8 +703,14 @@ impl RestClient {
 
         headers.insert(
             "Authorization",
-            self.token.parse().map_err(|e| Box::new(e) as BoxedError)?,
+            self.authorization
+                .parse()
+                .map_err(|e| Box::new(e) as BoxedError)?,
         );
+
+        if self.authentication == Authentication::Bot {
+            return Ok(headers);
+        }
 
         headers.insert(
             "X-Debug-Options",

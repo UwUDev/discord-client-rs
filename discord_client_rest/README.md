@@ -31,9 +31,26 @@ discord_client_rest = "0.1.0"
 let token = ...
 
 let custom_api_version = None;
-let custom_build_number = None;
+let custom_build_numbers = None;
+let client_session = None;
+let proxy = None;
 
-let mut client = RestClient::connect(token, custom_api_version, custom_build_number)
+let client = RestClient::connect(
+    token,
+    custom_api_version,
+    custom_build_numbers,
+    client_session,
+    proxy,
+)
+.await
+.unwrap();
+```
+
+Bot tokens use the same REST APIs through `connect_bot`. The token may be passed with or without
+the `Bot ` authorization prefix:
+
+```rust
+let client = RestClient::connect_bot(token, None, None, None, None)
     .await
     .unwrap();
 ```
@@ -44,7 +61,7 @@ let mut client = RestClient::connect(token, custom_api_version, custom_build_num
 println!("API Version: {}", client.api_version);
 
 // Useful for the gateway client
-println!("Build Number: {}", client.build_number);
+println!("Build Number: {}", client.build_numbers.client_build_number);
 ```
 
 ### Examples

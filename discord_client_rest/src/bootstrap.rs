@@ -39,6 +39,25 @@ pub(crate) fn build_emulated_client(proxy: Option<&str>) -> BoxedResult<Client> 
     Ok(builder.build()?)
 }
 
+pub(crate) fn build_bot_client(proxy: Option<&str>) -> BoxedResult<Client> {
+    let mut builder = Client::builder()
+        .user_agent(concat!(
+            "DiscordBot (",
+            env!("CARGO_PKG_REPOSITORY"),
+            ", ",
+            env!("CARGO_PKG_VERSION"),
+            ")"
+        ))
+        .connect_timeout(CONNECT_TIMEOUT)
+        .timeout(REQUEST_TIMEOUT);
+
+    if let Some(proxy) = proxy {
+        builder = builder.proxy(Proxy::all(proxy)?);
+    }
+
+    Ok(builder.build()?)
+}
+
 async fn fetch_app_shell(client: &Client) -> BoxedResult<String> {
     let resp = client
         .get("https://discord.com/channels/@me")

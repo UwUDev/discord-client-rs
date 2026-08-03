@@ -105,6 +105,25 @@ impl<'a> GuildRest<'a> {
             .await
     }
 
+    pub async fn list_members(
+        &self,
+        limit: u16,
+        after: Option<u64>,
+    ) -> BoxedResult<Vec<Member>> {
+        let guild_id = self.gid()?;
+        let path = format!("guilds/{}/members", guild_id);
+
+        let mut query = HashMap::new();
+        query.insert("limit".to_string(), limit.to_string());
+        if let Some(after) = after {
+            query.insert("after".to_string(), after.to_string());
+        }
+
+        self.client
+            .get::<Vec<Member>>(&path, Some(query), Some(RequestProperties::guild(guild_id)))
+            .await
+    }
+
     pub async fn get_current_member(&self) -> BoxedResult<Member> {
         let guild_id = self.gid()?;
         let path = format!("users/@me/guilds/{}/member", guild_id);
