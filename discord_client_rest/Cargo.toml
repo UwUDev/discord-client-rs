@@ -43,7 +43,7 @@ path = "examples/invite_checker.rs"
 [dependencies]
 discord_client_structs = { path = "../discord_client_structs" }
 discord_client_utils = { path = "../discord_client_utils" }
-wreq = { workspace = true, features = ["gzip", "deflate", "zstd", "brotli", "json", "cookies", "socks"] }
+wreq = { workspace = true, features = ["gzip", "deflate", "zstd", "brotli", "json", "query", "cookies", "socks"] }
 wreq-util = { workspace = true }
 tokio = { workspace = true, features = ["rt", "macros", "rt-multi-thread", "signal", "time"] }
 regex = "1.11.1"

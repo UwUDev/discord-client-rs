@@ -2,7 +2,9 @@ use crate::BoxedResult;
 use crate::clearance::{get_clearance_cookie, get_invisible};
 use log::warn;
 use regex::Regex;
+use std::sync::Arc;
 use std::time::Duration;
+use wreq::cookie::Jar;
 use wreq::{Client, Proxy, redirect};
 use wreq_util::{Emulation, Platform, Profile};
 
@@ -12,14 +14,21 @@ const REQUEST_TIMEOUT: Duration = Duration::from_secs(20);
 
 pub(crate) struct Bootstrap {
     pub client: Client,
+    pub cookie_store: Arc<Jar>,
     pub api_version: u8,
 }
 
-pub(crate) fn build_emulated_client(proxy: Option<&str>) -> BoxedResult<Client> {
+pub(crate) struct EmulatedClient {
+    pub client: Client,
+    pub cookie_store: Arc<Jar>,
+}
+
+pub(crate) fn build_emulated_client(proxy: Option<&str>) -> BoxedResult<EmulatedClient> {
     let emu = Emulation::builder()
         .profile(Profile::Chrome149)
         .platform(Platform::Windows)
         .build();
+    let cookie_store = Arc::new(Jar::default());
 
     let mut builder = Client::builder()
         .emulation(emu)
@@ -27,7 +36,7 @@ pub(crate) fn build_emulated_client(proxy: Option<&str>) -> BoxedResult<Client> 
         .deflate(true)
         .brotli(true)
         .zstd(true)
-        .cookie_store(true)
+        .cookie_provider(cookie_store.clone())
         .redirect(redirect::Policy::default())
         .connect_timeout(CONNECT_TIMEOUT)
         .timeout(REQUEST_TIMEOUT);
@@ -36,7 +45,10 @@ pub(crate) fn build_emulated_client(proxy: Option<&str>) -> BoxedResult<Client> 
         builder = builder.proxy(Proxy::all(proxy)?);
     }
 
-    Ok(builder.build()?)
+    Ok(EmulatedClient {
+        client: builder.build()?,
+        cookie_store,
+    })
 }
 
 pub(crate) fn build_bot_client(proxy: Option<&str>) -> BoxedResult<Client> {
@@ -116,7 +128,8 @@ pub(crate) async fn bootstrap_client(
     custom_api_version: Option<u8>,
     proxy: Option<&str>,
 ) -> BoxedResult<Bootstrap> {
-    let client = build_emulated_client(proxy)?;
+    let emulated_client = build_emulated_client(proxy)?;
+    let client = emulated_client.client;
     let body = fetch_app_shell(&client).await?;
 
     let api_version = match custom_api_version {
@@ -128,6 +141,7 @@ pub(crate) async fn bootstrap_client(
 
     Ok(Bootstrap {
         client,
+        cookie_store: emulated_client.cookie_store,
         api_version,
     })
 }

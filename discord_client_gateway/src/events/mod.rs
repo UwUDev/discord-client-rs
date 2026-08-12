@@ -197,6 +197,7 @@ define_events! {
         GuildJoinRequestDelete { t: "GUILD_JOIN_REQUEST_DELETE", type: GuildJoinRequestDeleteEvent },
         GuildJoinRequestUpdate { t: "GUILD_JOIN_REQUEST_UPDATE", type: GuildJoinRequestUpdateEvent },
         GuildMemberAdd { t: "GUILD_MEMBER_ADD", type: GuildMemberAddEvent },
+        GuildMemberListUpdate { t: "GUILD_MEMBER_LIST_UPDATE", type: GuildMemberListUpdateEvent },
         GuildMemberRemove { t: "GUILD_MEMBER_REMOVE", type: GuildMemberRemoveEvent },
         GuildMembersChunk { t: "GUILD_MEMBERS_CHUNK", type: GuildMembersChunkEvent },
         GuildMemberUpdate { t: "GUILD_MEMBER_UPDATE", type: GuildMemberUpdateEvent },

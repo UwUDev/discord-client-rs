@@ -9,16 +9,59 @@ use discord_client_utils::find_build_numbers;
 use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt, TryStreamExt};
 use serde_json::{Value, json};
+use std::collections::HashMap;
 use std::sync::Arc;
 use std::sync::OnceLock;
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
 use tokio::sync::Mutex;
+use tokio::time::{Duration, Instant};
 use wreq::Client;
 use wreq::ws::WebSocket;
 use wreq::ws::message::Message;
 use wreq_util::{Emulation, Platform, Profile};
 use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
+
+// Discord rejects member commands sent less than 500 ms apart; allow 150 ms of headroom.
+const MEMBER_LIST_COMMAND_INTERVAL: Duration = Duration::from_millis(650);
+
+pub type GuildMemberListRange = [u64; 2];
+pub type GuildChannelRanges = HashMap<u64, Vec<GuildMemberListRange>>;
+pub type GuildSubscriptions = HashMap<u64, GuildSubscription>;
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize)]
+pub struct GuildSubscription {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub typing: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub threads: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub activities: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub member_updates: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub channels: Option<GuildChannelRanges>,
+}
+
+impl GuildSubscription {
+    pub fn all_events() -> Self {
+        Self {
+            typing: Some(true),
+            threads: Some(true),
+            activities: Some(true),
+            member_updates: Some(true),
+            channels: None,
+        }
+    }
+
+    pub fn member_lists(channels: GuildChannelRanges) -> Self {
+        Self {
+            typing: Some(true),
+            channels: Some(channels),
+            ..Self::default()
+        }
+    }
+}
 
 fn shared_client() -> &'static Client {
     static CLIENT: OnceLock<Client> = OnceLock::new();
@@ -56,6 +99,7 @@ pub struct GatewayClient {
     heartbeat_ack: Arc<AtomicBool>,
     automatic_reconnect: bool,
     heartbeat_handle: Option<tokio::task::JoinHandle<()>>,
+    member_list_command_at: Option<Instant>,
     pub status: StatusType,
     pub activities: Vec<Activity>,
     pub idling_millis: u64,
@@ -174,6 +218,7 @@ impl GatewayClient {
             heartbeat_ack,
             automatic_reconnect,
             heartbeat_handle: Some(heartbeat_handle),
+            member_list_command_at: None,
             status: Unknown,
             activities: Vec::new(),
             idling_millis: 0,
@@ -475,14 +520,20 @@ impl GatewayClient {
     }
 
     pub async fn bulk_guild_subscribe(&mut self, guild_ids: Vec<u64>) -> BoxedResult<()> {
-        let payload = create_op_37(guild_ids);
+        let subscriptions = guild_ids
+            .into_iter()
+            .map(|guild_id| (guild_id, GuildSubscription::all_events()))
+            .collect();
 
-        self.tx
-            .lock()
-            .await
-            .send(Message::Text(payload.into()))
-            .await?;
-        Ok(())
+        self.update_guild_subscriptions(subscriptions).await
+    }
+
+    pub async fn update_guild_subscriptions(
+        &mut self,
+        subscriptions: GuildSubscriptions,
+    ) -> BoxedResult<()> {
+        let payload = create_op_37(&subscriptions);
+        self.send_member_list_command(payload).await
     }
 
     pub async fn update_voice_state(
@@ -573,6 +624,16 @@ impl GatewayClient {
         Ok(())
     }
 
+    async fn send_member_list_command(&mut self, payload: String) -> BoxedResult<()> {
+        if let Some(last_command) = self.member_list_command_at {
+            tokio::time::sleep_until(last_command + MEMBER_LIST_COMMAND_INTERVAL).await;
+        }
+
+        self.send_text(payload).await?;
+        self.member_list_command_at = Some(Instant::now());
+        Ok(())
+    }
+
     pub async fn update_lobby_voice_states(
         &mut self,
         lobby_id: u64,
@@ -655,7 +716,8 @@ impl GatewayClient {
         guild_id: u64,
         channel_id: u64,
     ) -> BoxedResult<()> {
-        self.send_text(create_op_39(guild_id, channel_id)).await
+        self.send_member_list_command(create_op_39(guild_id, channel_id))
+            .await
     }
 
     pub async fn update_time_spent_session_id(
@@ -718,13 +780,7 @@ impl GatewayClient {
         nonce: Option<&str>,
     ) -> BoxedResult<()> {
         let payload = create_op_35(guild_id, query, continuation_token, nonce);
-
-        self.tx
-            .lock()
-            .await
-            .send(Message::Text(payload.into()))
-            .await?;
-        Ok(())
+        self.send_member_list_command(payload).await
     }
 
     pub async fn request_guild_members(
@@ -743,13 +799,7 @@ impl GatewayClient {
         }
 
         let payload = create_op_8(guild_id, query, limit, presences, user_ids, nonce);
-
-        self.tx
-            .lock()
-            .await
-            .send(Message::Text(payload.into()))
-            .await?;
-        Ok(())
+        self.send_member_list_command(payload).await
     }
 
     pub async fn send_remote_command<T: serde::Serialize>(

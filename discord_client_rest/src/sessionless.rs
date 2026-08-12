@@ -1,9 +1,8 @@
 use crate::api::sessionless::experiments::SessionlessExperimentsRest;
 use crate::api::sessionless::invite::SessionlessInviteRest;
 use crate::bootstrap::{DEFAULT_API_VERSION, build_emulated_client, solve_cloudflare_clearance};
-use crate::captcha::CaptchaRequiredError;
 use crate::rate_limit::{RateLimitError, RateLimiter};
-use crate::response::{parse_error_body, rate_limit_from_body};
+use crate::response::{DiscordApiError, bad_request_error, rate_limit_from_body};
 use crate::rest::RequestProperties;
 use crate::structs::context::ContextHeader;
 use crate::structs::referer::RefererHeader;
@@ -13,7 +12,7 @@ use current_locale::current_locale;
 use discord_client_structs::structs::client::{BuildNumbers, ClientSession};
 use discord_client_utils::find_build_numbers;
 use iana_time_zone::get_timezone;
-use log::{error, warn};
+use log::warn;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
@@ -50,7 +49,7 @@ impl SessionlessClient {
             Some(build_num) => build_num,
         };
 
-        let http_client = build_emulated_client(proxy.as_deref())?;
+        let http_client = build_emulated_client(proxy.as_deref())?.client;
 
         let timezone = get_timezone().unwrap_or("America/New_York".to_string());
         let locale = current_locale().unwrap_or("en-US".to_string());
@@ -140,9 +139,8 @@ impl SessionlessClient {
             self.global_rate_limiter.wait_if_needed().await;
 
             let route_limiter = self.get_route_limiter(path).await;
-            route_limiter.wait_if_needed().await;
-
-            let _route_lock = route_limiter.route_mutex.lock().await;
+            let route_guard = route_limiter.lock_route().await;
+            self.global_rate_limiter.wait_if_needed().await;
 
             let result = self
                 .make_request(
@@ -153,8 +151,6 @@ impl SessionlessClient {
                     req_properties.clone(),
                 )
                 .await;
-
-            drop(_route_lock);
 
             match result {
                 Ok(response) => return Ok(response),
@@ -177,9 +173,10 @@ impl SessionlessClient {
                             rate_limit_error.retry_after.as_secs_f64()
                         );
                         continue;
-                    } else {
-                        return Err(e);
                     }
+
+                    drop(route_guard);
+                    return Err(e);
                 }
             }
         }
@@ -208,19 +205,15 @@ impl SessionlessClient {
         T: DeserializeOwned + Default,
         B: Serialize + Send + Sync,
     {
-        let mut full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
-        if let Some(query) = query {
-            let query_string = query
-                .iter()
-                .map(|(k, v)| format!("{}={}", k, v))
-                .collect::<Vec<String>>()
-                .join("&");
-            full_url.push_str(&format!("?{}", query_string));
-        }
+        let full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
         let mut request = self
             .client
             .request(method, &full_url)
             .headers(self.build_headers(req_properties).await?);
+
+        if let Some(query) = query {
+            request = request.query(&query);
+        }
 
         if let Some(body_data) = body {
             request = request
@@ -251,21 +244,11 @@ impl SessionlessClient {
             }
             400 => {
                 let bytes = resp.bytes().await?;
-                let resp_json = parse_error_body(&bytes, status.as_u16(), url)?;
-
-                if resp_json["captcha_sitekey"].is_string() {
-                    let captcha = serde_json::from_value::<CaptchaRequiredError>(resp_json)
-                        .map_err(|e| Box::new(e) as BoxedError)?;
-                    return Err(Box::new(captcha));
-                }
-
-                error!("Bad request to {}: {}", url, resp_json.to_string());
-                return Err("Bad request".into());
+                return Err(bad_request_error(&bytes, url));
             }
             code => {
-                let body = resp.text().await?;
-                let msg = format!("Request to {} failed with code {}: {}", url, code, body);
-                return Err(msg.into());
+                let bytes = resp.bytes().await?;
+                return Err(Box::new(DiscordApiError::from_body(code, url, &bytes)));
             }
         }
 

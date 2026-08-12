@@ -105,14 +105,13 @@ impl<'a> GuildRest<'a> {
             .await
     }
 
-    pub async fn list_members(
-        &self,
-        limit: u16,
-        after: Option<u64>,
-    ) -> BoxedResult<Vec<Member>> {
+    pub async fn list_members(&self, limit: u16, after: Option<u64>) -> BoxedResult<Vec<Member>> {
         let guild_id = self.gid()?;
-        let path = format!("guilds/{}/members", guild_id);
+        if !(1..=1000).contains(&limit) {
+            return Err("Member list limit must be between 1 and 1000".into());
+        }
 
+        let path = format!("guilds/{}/members", guild_id);
         let mut query = HashMap::new();
         query.insert("limit".to_string(), limit.to_string());
         if let Some(after) = after {

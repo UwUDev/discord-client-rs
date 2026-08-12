@@ -31,10 +31,11 @@ use crate::api::user::UserRest;
 use crate::api::voice::VoiceRest;
 use crate::api::webhook::WebhookRest;
 use crate::bootstrap::{DEFAULT_API_VERSION, bootstrap_client, build_bot_client};
-use crate::captcha::{CaptchaRequiredError, SolvedCaptcha};
+use crate::captcha::SolvedCaptcha;
 use crate::mfa::{MfaRequiredError, MfaVerificationRequest};
 use crate::rate_limit::{RateLimitError, RateLimiter};
-use crate::response::{parse_error_body, rate_limit_from_body};
+pub use crate::response::DiscordApiError;
+use crate::response::{bad_request_error, parse_error_body, rate_limit_from_body};
 use crate::structs::context::{Context, ContextHeader};
 use crate::structs::referer::{
     DmChannelReferer, GuildChannelReferer, GuildReferer, HomePageReferer, Referer, RefererHeader,
@@ -51,14 +52,17 @@ use iana_time_zone::get_timezone;
 use log::{error, warn};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::Mutex;
+use wreq::cookie::{CookieStore, Cookies, Jar};
 use wreq::header::HeaderMap;
-use wreq::{Client, Method, Response};
+use wreq::{Client, Method, Response, Uri, Version};
 
 const API_BASE: &str = "https://discord.com/api/";
+const SEARCH_INDEXING_TIMEOUT: Duration = Duration::from_secs(30);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum Authentication {
@@ -116,11 +120,28 @@ fn search_indexing_retry_after(bytes: &[u8]) -> Duration {
     Duration::from_secs_f64(retry_after)
 }
 
+fn rate_limit_route(route: &str) -> Cow<'_, str> {
+    let Some(("users", user_route)) = route.split_once('/') else {
+        return Cow::Borrowed(route);
+    };
+    let (user_id, suffix) = user_route.split_once('/').unwrap_or((user_route, ""));
+    if user_id.is_empty() || !user_id.bytes().all(|byte| byte.is_ascii_digit()) {
+        return Cow::Borrowed(route);
+    }
+
+    if suffix.is_empty() {
+        Cow::Borrowed("users/:user_id")
+    } else {
+        Cow::Owned(format!("users/:user_id/{suffix}"))
+    }
+}
+
 pub struct RestClient {
     authorization: String,
     authentication: Authentication,
     pub user_id: u64,
     client: Client,
+    cookie_store: Option<Arc<Jar>>,
     pub api_version: u8,
     pub application_command_index: Option<ApplicationCommandIndex>,
     locale: String,
@@ -132,6 +153,10 @@ pub struct RestClient {
 }
 
 impl RestClient {
+    pub fn is_bot(&self) -> bool {
+        self.authentication == Authentication::Bot
+    }
+
     pub async fn connect(
         token: String,
         custom_api_version: Option<u8>,
@@ -186,13 +211,18 @@ impl RestClient {
             (Authentication::Bot, None) => BuildNumbers::new(0, None),
         };
 
-        let (client, api_version) = match authentication {
+        let (client, cookie_store, api_version) = match authentication {
             Authentication::User => {
                 let bootstrap = bootstrap_client(custom_api_version, proxy.as_deref()).await?;
-                (bootstrap.client, bootstrap.api_version)
+                (
+                    bootstrap.client,
+                    Some(bootstrap.cookie_store),
+                    bootstrap.api_version,
+                )
             }
             Authentication::Bot => (
                 build_bot_client(proxy.as_deref())?,
+                None,
                 custom_api_version.unwrap_or(DEFAULT_API_VERSION),
             ),
         };
@@ -288,6 +318,7 @@ impl RestClient {
             authentication,
             user_id,
             client,
+            cookie_store,
             api_version,
             application_command_index,
             locale,
@@ -520,13 +551,14 @@ impl RestClient {
         T: DeserializeOwned + Default + Send,
         B: Serialize + Send + Sync + Clone,
     {
+        let mut indexing_deadline = None;
+
         loop {
             self.global_rate_limiter.wait_if_needed().await;
 
             let route_limiter = self.get_route_limiter(path).await;
-            route_limiter.wait_if_needed().await;
-
-            let _route_lock = route_limiter.route_mutex.lock().await;
+            let route_guard = route_limiter.lock_route().await;
+            self.global_rate_limiter.wait_if_needed().await;
 
             let result = self
                 .make_request(
@@ -537,8 +569,6 @@ impl RestClient {
                     req_properties.clone(),
                 )
                 .await;
-
-            drop(_route_lock);
 
             match result {
                 Ok(response) => return Ok(response),
@@ -561,7 +591,31 @@ impl RestClient {
                             rate_limit_error.retry_after.as_secs_f64()
                         );
                         continue;
-                    } else if let Some(indexing_error) = e.downcast_ref::<SearchIndexingError>() {
+                    }
+
+                    drop(route_guard);
+                    if let Some(indexing_error) = e.downcast_ref::<SearchIndexingError>() {
+                        let deadline = *indexing_deadline.get_or_insert_with(|| {
+                            tokio::time::Instant::now() + SEARCH_INDEXING_TIMEOUT
+                        });
+                        let remaining =
+                            deadline.checked_duration_since(tokio::time::Instant::now());
+                        let Some(remaining) = remaining else {
+                            return Err(format!(
+                                "Message search indexing did not finish within {} seconds [{}]",
+                                SEARCH_INDEXING_TIMEOUT.as_secs(),
+                                path
+                            )
+                            .into());
+                        };
+                        if indexing_error.retry_after >= remaining {
+                            return Err(format!(
+                                "Message search indexing did not finish within {} seconds [{}]",
+                                SEARCH_INDEXING_TIMEOUT.as_secs(),
+                                path
+                            )
+                            .into());
+                        }
                         warn!(
                             "Messages are still being indexed [{}]! Retrying after {:.2} seconds",
                             path,
@@ -578,12 +632,13 @@ impl RestClient {
     }
 
     async fn get_route_limiter(&self, route: &str) -> RateLimiter {
+        let route = rate_limit_route(route);
         let mut limiters = self.route_rate_limiters.lock().await;
-        if let Some(limiter) = limiters.get(route) {
+        if let Some(limiter) = limiters.get(route.as_ref()) {
             limiter.clone()
         } else {
             let limiter = RateLimiter::new();
-            limiters.insert(route.to_string(), limiter.clone());
+            limiters.insert(route.into_owned(), limiter.clone());
             limiter
         }
     }
@@ -600,19 +655,15 @@ impl RestClient {
         T: DeserializeOwned + Default,
         B: Serialize + Send + Sync,
     {
-        let mut full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
-        if let Some(query) = query {
-            let query_string = query
-                .iter()
-                .map(|(k, v)| format!("{}={}", k, v))
-                .collect::<Vec<String>>()
-                .join("&");
-            full_url.push_str(&format!("?{}", query_string));
-        }
+        let full_url = format!("{}v{}/{}", API_BASE, self.api_version, path);
         let mut request = self
             .client
             .request(method, &full_url)
             .headers(self.build_headers(req_properties)?);
+
+        if let Some(query) = query {
+            request = request.query(&query);
+        }
 
         if let Some(body_data) = body {
             request = request
@@ -672,21 +723,11 @@ impl RestClient {
             }
             400 => {
                 let bytes = resp.bytes().await?;
-                let resp_json = parse_error_body(&bytes, 400, url)?;
-
-                if resp_json["captcha_sitekey"].is_string() {
-                    let captcha = serde_json::from_value::<CaptchaRequiredError>(resp_json)
-                        .map_err(|e| Box::new(e) as BoxedError)?;
-                    return Err(Box::new(captcha));
-                }
-
-                error!("Bad request to {}: {}", url, resp_json.to_string());
-                return Err("Bad request".into());
+                return Err(bad_request_error(&bytes, url));
             }
             code => {
-                let body = resp.text().await?;
-                let msg = format!("Request to {} failed with code {}: {}", url, code, body);
-                return Err(msg.into());
+                let bytes = resp.bytes().await?;
+                return Err(Box::new(DiscordApiError::from_body(code, url, &bytes)));
             }
         }
 
@@ -769,6 +810,13 @@ impl RestClient {
 
     pub fn get_http_client(&self) -> &Client {
         &self.client
+    }
+
+    pub fn get_cookies(&self, uri: &Uri) -> Option<wreq::header::HeaderValue> {
+        match self.cookie_store.as_ref()?.cookies(uri, Version::HTTP_11) {
+            Cookies::Compressed(cookies) => Some(cookies),
+            _ => None,
+        }
     }
 }
 

@@ -67,7 +67,7 @@ async fn main() {
                     let page_member_id = members_chunk
                         .members
                         .iter()
-                        .max_by_key(|member| member.joined_at)
+                        .min_by_key(|member| member.joined_at)
                         .unwrap()
                         .clone()
                         .user

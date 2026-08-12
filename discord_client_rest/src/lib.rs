@@ -7,6 +7,7 @@ pub mod image;
 pub mod mfa;
 pub mod rate_limit;
 mod response;
+pub use response::DiscordApiError;
 pub mod rest;
 pub mod sessionless;
 pub mod structs;

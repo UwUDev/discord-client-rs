@@ -37,6 +37,9 @@ pub struct Message {
     #[builder(default)]
     #[serde(skip_serializing)]
     pub id: u64,
+    #[builder(default)]
+    #[serde(default, skip_serializing)]
+    pub hit: bool,
     #[snowflake]
     #[builder(default)]
     #[serde(skip_serializing)]

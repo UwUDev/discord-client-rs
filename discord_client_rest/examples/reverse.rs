@@ -1,6 +1,6 @@
 use discord_client_rest::rest::RestClient;
 use log::*;
-use wreq::Url;
+use wreq::Uri;
 
 #[tokio::main]
 async fn main() {
@@ -19,9 +19,7 @@ async fn main() {
     info!("Build Number: {:?}", client.build_numbers);
     info!("Cookies :");
 
-    let cookies = client
-        .get_http_client()
-        .get_cookies(&Url::parse("https://discord.com").unwrap());
+    let cookies = client.get_cookies(&"https://discord.com".parse::<Uri>().unwrap());
     if let Some(cookie_header) = cookies {
         for cookie in cookie_header.to_str().unwrap().split("; ") {
             let key_value: Vec<&str> = cookie.split('=').collect();

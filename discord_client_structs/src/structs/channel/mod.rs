@@ -54,6 +54,7 @@ pub struct Channel {
     pub video_quality_mode: Option<u8>,
     pub message_count: Option<u32>,
     pub member_count: Option<u32>,
+    pub member_list_id: Option<String>,
     pub thread_metadata: Option<ThreadMetadata>,
     pub member: Option<ThreadMember>,
     pub default_auto_archive_duration: Option<u32>,

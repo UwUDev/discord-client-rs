@@ -1,6 +1,6 @@
 use std::fmt::{Debug, Formatter};
 use std::sync::Arc;
-use tokio::sync::{Mutex, Notify};
+use tokio::sync::{Mutex, MutexGuard, Notify};
 use tokio::time::{Duration, Instant};
 
 pub struct RateLimitError {
@@ -43,7 +43,7 @@ impl std::error::Error for RateLimitError {}
 pub(crate) struct RateLimiter {
     retry_until: Arc<Mutex<Option<Instant>>>,
     notify: Arc<Notify>,
-    pub(crate) route_mutex: Arc<Mutex<()>>,
+    route_mutex: Arc<Mutex<()>>,
 }
 
 impl RateLimiter {
@@ -79,6 +79,12 @@ impl RateLimiter {
                 return;
             }
         }
+    }
+
+    pub(crate) async fn lock_route(&self) -> MutexGuard<'_, ()> {
+        let guard = self.route_mutex.lock().await;
+        self.wait_if_needed().await;
+        guard
     }
 
     pub(crate) async fn update(&self, retry_after: Duration) {
