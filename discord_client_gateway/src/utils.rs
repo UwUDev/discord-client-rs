@@ -3,6 +3,39 @@ use discord_client_structs::structs::user::status::StatusType;
 use serde_json::{Value, json};
 use std::str::FromStr;
 
+pub(crate) fn create_op_14(
+    guild_id: u64,
+    channels: &[(u64, Vec<[u32; 2]>)],
+    typing: bool,
+    threads: bool,
+    activities: bool,
+) -> String {
+    let mut payload = json!({
+        "op": 14,
+        "d": {
+            "guild_id": guild_id.to_string(),
+            "typing": typing,
+            "threads": threads,
+            "activities": activities,
+            "channels": {},
+        }
+    });
+
+    for (channel_id, ranges) in channels {
+        payload["d"]["channels"].as_object_mut().unwrap().insert(
+            channel_id.to_string(),
+            Value::from(
+                ranges
+                    .iter()
+                    .map(|range| Value::from(range.to_vec()))
+                    .collect::<Vec<_>>(),
+            ),
+        );
+    }
+
+    payload.to_string()
+}
+
 pub(crate) fn create_op_37(guild_ids: Vec<u64>) -> String {
     let mut payload = Value::from_str(r#"{"op":37,"d":{"subscriptions":{}}}"#).unwrap();
     let guild_payload = Value::from_str(

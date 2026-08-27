@@ -474,6 +474,21 @@ impl GatewayClient {
         Ok(())
     }
 
+    pub async fn subscribe_member_list(
+        &mut self,
+        guild_id: u64,
+        channels: &[(u64, Vec<[u32; 2]>)],
+    ) -> BoxedResult<()> {
+        let payload = create_op_14(guild_id, channels, true, false, true);
+
+        self.tx
+            .lock()
+            .await
+            .send(Message::Text(payload.into()))
+            .await?;
+        Ok(())
+    }
+
     pub async fn bulk_guild_subscribe(&mut self, guild_ids: Vec<u64>) -> BoxedResult<()> {
         let payload = create_op_37(guild_ids);
 
