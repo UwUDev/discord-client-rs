@@ -1,3 +1,4 @@
+use crate::structs::misc::Versioned;
 use chrono::{DateTime, TimeZone, Utc};
 use serde::{Deserialize, Deserializer, de};
 
@@ -18,6 +19,33 @@ where
         Some(s) => s.parse::<u64>().map(Some).map_err(de::Error::custom),
         None => Ok(None),
     }
+}
+
+pub fn deserialize_versioned_or_entries<'de, D, T>(
+    deserializer: D,
+) -> Result<Option<Versioned<T>>, D::Error>
+where
+    D: Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum VersionedOrEntries<T> {
+        Versioned(Versioned<T>),
+        Entries(Vec<T>),
+    }
+
+    Ok(
+        match Option::<VersionedOrEntries<T>>::deserialize(deserializer)? {
+            Some(VersionedOrEntries::Versioned(versioned)) => Some(versioned),
+            Some(VersionedOrEntries::Entries(entries)) => Some(Versioned {
+                entries,
+                partial: false,
+                version: 0,
+            }),
+            None => None,
+        },
+    )
 }
 
 pub fn deserialize_string_to_vec_u64<'de, D>(deserializer: D) -> Result<Vec<u64>, D::Error>
