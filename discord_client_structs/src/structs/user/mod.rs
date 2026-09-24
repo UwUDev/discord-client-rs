@@ -9,6 +9,7 @@ pub mod activity;
 pub mod connection;
 pub mod experiment;
 pub mod presence;
+pub mod read_state;
 pub mod relationship;
 pub mod session;
 pub mod status;
