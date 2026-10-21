@@ -1,12 +1,9 @@
 mod compressor;
 
 use crate::BoxedResult;
+use discord_client_utils::{APP_VERSION, USER_AGENT};
 use wreq::Client;
 
-/// Must stay in sync with the wreq emulation used by the client (Chrome149 on Windows):
-/// the challenge compares what the payload claims with what the request headers said.
-const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36";
-const APP_VERSION: &str = "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36";
 const PLATFORM: &str = "Win32";
 const LANGUAGE: &str = "en-US";
 const LANGUAGES: &str = "en-US,en";

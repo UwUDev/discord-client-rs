@@ -1,19 +1,29 @@
 use discord_client_structs::structs::client::BuildNumbers;
 use std::error::Error;
-use wreq::{Client, redirect};
+use wreq::{Client, ClientBuilder, redirect};
 use wreq_util::{Emulation, Platform, Profile};
 
 type BoxedError = Box<dyn Error + Send + Sync>;
 type BoxedResult<T> = Result<T, BoxedError>;
 
-pub async fn find_build_numbers() -> BoxedResult<BuildNumbers> {
+pub const CHROME_MAJOR: &str = "154";
+pub const CHROME_VERSION: &str = "154.0.0.0";
+pub const USER_AGENT: &str =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36";
+pub const APP_VERSION: &str =
+    "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36";
+
+pub fn chrome_client_builder() -> ClientBuilder {
     let emu = Emulation::builder()
-        .profile(Profile::Chrome149)
+        .profile(Profile::Chrome154)
         .platform(Platform::Windows)
         .build();
 
-    let client = Client::builder()
-        .emulation(emu)
+    Client::builder().emulation(emu)
+}
+
+pub async fn find_build_numbers() -> BoxedResult<BuildNumbers> {
+    let client = chrome_client_builder()
         .gzip(true)
         .deflate(true)
         .brotli(true)

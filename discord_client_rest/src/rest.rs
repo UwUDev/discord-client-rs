@@ -55,6 +55,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::Mutex;
+use wreq::cookie::Jar;
 use wreq::header::HeaderMap;
 use wreq::{Client, Method, Response};
 
@@ -121,6 +122,7 @@ pub struct RestClient {
     authentication: Authentication,
     pub user_id: u64,
     client: Client,
+    cookie_jar: Option<Arc<Jar>>,
     pub api_version: u8,
     pub application_command_index: Option<ApplicationCommandIndex>,
     locale: String,
@@ -186,13 +188,14 @@ impl RestClient {
             (Authentication::Bot, None) => BuildNumbers::new(0, None),
         };
 
-        let (client, api_version) = match authentication {
+        let (client, cookie_jar, api_version) = match authentication {
             Authentication::User => {
                 let bootstrap = bootstrap_client(custom_api_version, proxy.as_deref()).await?;
-                (bootstrap.client, bootstrap.api_version)
+                (bootstrap.client, Some(bootstrap.cookie_jar), bootstrap.api_version)
             }
             Authentication::Bot => (
                 build_bot_client(proxy.as_deref())?,
+                None,
                 custom_api_version.unwrap_or(DEFAULT_API_VERSION),
             ),
         };
@@ -288,6 +291,7 @@ impl RestClient {
             authentication,
             user_id,
             client,
+            cookie_jar,
             api_version,
             application_command_index,
             locale,
@@ -769,6 +773,10 @@ impl RestClient {
 
     pub fn get_http_client(&self) -> &Client {
         &self.client
+    }
+
+    pub fn cookie_jar(&self) -> Option<&Arc<Jar>> {
+        self.cookie_jar.as_ref()
     }
 }
 
