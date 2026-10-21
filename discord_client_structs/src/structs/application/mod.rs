@@ -5,6 +5,7 @@ use crate::structs::user::activity::EmbeddedActivityConfig;
 use discord_client_macros::{EnumFromPrimitive, EnumFromString, discord_struct};
 use serde::Deserialize;
 
+pub mod detectable;
 pub mod team;
 
 #[discord_struct]

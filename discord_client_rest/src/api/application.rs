@@ -1,5 +1,8 @@
 use crate::BoxedResult;
 use crate::rest::{RequestProperties, RestClient};
+use discord_client_structs::structs::application::detectable::{
+    DetectableApplication, DetectableExclusions,
+};
 use serde_json::Value;
 
 pub struct ApplicationRest<'a> {
@@ -72,7 +75,29 @@ impl<'a> ApplicationRest<'a> {
             .await
     }
 
-    pub async fn get_detectable_applications(&self) -> BoxedResult<Value> {
-        self.home_get("applications/detectable").await
+    pub async fn get_detectable_games(&self) -> BoxedResult<Vec<DetectableApplication>> {
+        self.client
+            .get("games/detectable", None, Some(RequestProperties::home()))
+            .await
+    }
+
+    pub async fn get_detectable_non_games(&self) -> BoxedResult<Vec<DetectableApplication>> {
+        self.client
+            .get(
+                "applications/non-games/detectable",
+                None,
+                Some(RequestProperties::home()),
+            )
+            .await
+    }
+
+    pub async fn get_detectable_exclusions(&self) -> BoxedResult<DetectableExclusions> {
+        self.client
+            .get(
+                "games/detectable/exclusions",
+                None,
+                Some(RequestProperties::home()),
+            )
+            .await
     }
 }
