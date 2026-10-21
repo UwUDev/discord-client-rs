@@ -1,5 +1,6 @@
 use crate::BoxedResult;
 use crate::rest::{RequestProperties, RestClient};
+use discord_client_structs::structs::user::badge::UserBadges;
 use discord_client_structs::structs::user::connection::Connection;
 use serde_json::{Value, json};
 use std::collections::HashMap;
@@ -36,6 +37,12 @@ impl<'a> UserRest<'a> {
 
         self.client
             .get::<Value>(&path, None, Some(RequestProperties::home()))
+            .await
+    }
+
+    pub async fn get_badges(&self) -> BoxedResult<UserBadges> {
+        self.client
+            .get("users/@me/badges", None, Some(RequestProperties::home()))
             .await
     }
 

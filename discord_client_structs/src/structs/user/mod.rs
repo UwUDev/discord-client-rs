@@ -6,6 +6,7 @@ use discord_client_macros::discord_struct;
 use serde::Deserialize;
 
 pub mod activity;
+pub mod badge;
 pub mod connection;
 pub mod experiment;
 pub mod presence;
