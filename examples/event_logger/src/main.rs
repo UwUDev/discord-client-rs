@@ -18,7 +18,7 @@ async fn main() {
         .await
         .unwrap();
 
-    let mut gateway = GatewayClient::connect(token, true, 53607934, None)
+    let mut gateway = GatewayClient::connect(token, true, 1767421, None)
         .await
         .unwrap();
 

@@ -5,7 +5,7 @@ use discord_client_structs::parser::parse_id_from_token;
 use discord_client_structs::structs::user::activity::Activity;
 use discord_client_structs::structs::user::status::StatusType;
 use discord_client_structs::structs::user::status::StatusType::Unknown;
-use discord_client_utils::{chrome_client_builder, find_build_numbers};
+use discord_client_utils::{CHROME_VERSION, USER_AGENT, chrome_client_builder, find_build_numbers};
 use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt, TryStreamExt};
 use serde_json::{Value, json};
@@ -130,8 +130,14 @@ impl GatewayClient {
         };
 
         let identify = format!(
-            r#"{{"op":2,"d":{{"token":"{}","capabilities":{}{},"properties":{{"os":"Windows","browser":"Chrome","device":"","system_locale":"en-US","browser_user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36","browser_version":"154.0.0.0","os_version":"10","referrer":"","referring_domain":"","referrer_current":"","referring_domain_current":"","release_channel":"stable","client_build_number":{},"client_event_source":null,"design_id":0}},"presence":{{"status":"unknown","since":0,"activities":[],"afk":false}},"compress":false,"client_state":{{"guild_versions":{{}}}}}}}}"#,
-            token, capabilities, intents_field, build_number
+            r#"{{"op":2,"d":{{"token":"{}","capabilities":{}{},"properties":{{"os":"Windows","browser":"Chrome","device":"","device_model_name":"","system_locale":"en-US","has_client_mods":false,"browser_user_agent":"{}","browser_version":"{}","os_version":"10","referrer":"","referring_domain":"","referrer_current":"","referring_domain_current":"","release_channel":"stable","client_build_number":{},"client_event_source":null,"client_launch_id":"{}","is_fast_connect":true}},"client_state":{{"guild_versions":{{}}}}}}}}"#,
+            token,
+            capabilities,
+            intents_field,
+            USER_AGENT,
+            CHROME_VERSION,
+            build_number,
+            uuid::Uuid::new_v4() // todo: check if it's really random or related to the REST
         );
 
         tx.lock()

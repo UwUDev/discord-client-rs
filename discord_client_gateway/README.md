@@ -35,7 +35,7 @@ discord_client_gateway = "0.1.0"
 
 ```rust
 let token = "CLIENT_TOKEN".to_string();
-let capabilities = 53607934; // Best if you want to receive all events
+let capabilities = 1767421; // Same value as the official web client
 let client_build_nubmer = 402402; // You should always use the latest build number
 // you can also fetch the build number from the crate `discord_client_rest`
 

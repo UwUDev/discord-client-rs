@@ -8,10 +8,8 @@ type BoxedResult<T> = Result<T, BoxedError>;
 
 pub const CHROME_MAJOR: &str = "154";
 pub const CHROME_VERSION: &str = "154.0.0.0";
-pub const USER_AGENT: &str =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36";
-pub const APP_VERSION: &str =
-    "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36";
+pub const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36";
+pub const APP_VERSION: &str = "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36";
 
 pub fn chrome_client_builder() -> ClientBuilder {
     let emu = Emulation::builder()

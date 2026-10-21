@@ -105,11 +105,7 @@ impl<'a> GuildRest<'a> {
             .await
     }
 
-    pub async fn list_members(
-        &self,
-        limit: u16,
-        after: Option<u64>,
-    ) -> BoxedResult<Vec<Member>> {
+    pub async fn list_members(&self, limit: u16, after: Option<u64>) -> BoxedResult<Vec<Member>> {
         let guild_id = self.gid()?;
         let path = format!("guilds/{}/members", guild_id);
 

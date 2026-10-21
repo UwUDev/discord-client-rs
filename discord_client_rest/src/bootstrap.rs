@@ -1,12 +1,12 @@
 use crate::BoxedResult;
 use crate::clearance::{get_clearance_cookie, get_invisible};
+use discord_client_utils::chrome_client_builder;
 use log::warn;
 use regex::Regex;
 use std::sync::Arc;
 use std::time::Duration;
 use wreq::cookie::Jar;
 use wreq::{Client, Proxy, redirect};
-use discord_client_utils::chrome_client_builder;
 
 pub(crate) const DEFAULT_API_VERSION: u8 = 9;
 const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);

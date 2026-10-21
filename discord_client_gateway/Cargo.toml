@@ -53,3 +53,4 @@ tokio = { workspace = true, features = ["rt", "macros", "rt-multi-thread"] }
 zlib_stream = "0.1.0"
 serde = {workspace = true}
 chrono = {workspace = true}
+uuid = { version = "1.18.1", features = ["v4"] }

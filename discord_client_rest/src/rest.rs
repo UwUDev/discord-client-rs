@@ -191,7 +191,11 @@ impl RestClient {
         let (client, cookie_jar, api_version) = match authentication {
             Authentication::User => {
                 let bootstrap = bootstrap_client(custom_api_version, proxy.as_deref()).await?;
-                (bootstrap.client, Some(bootstrap.cookie_jar), bootstrap.api_version)
+                (
+                    bootstrap.client,
+                    Some(bootstrap.cookie_jar),
+                    bootstrap.api_version,
+                )
             }
             Authentication::Bot => (
                 build_bot_client(proxy.as_deref())?,

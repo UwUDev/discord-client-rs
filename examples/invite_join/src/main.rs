@@ -19,7 +19,7 @@ async fn main() {
         GatewayClient::connect(
             token,
             false,
-            53607934,
+            1767421,
             Some(rest_client.build_numbers.client_build_number),
         )
         .await

@@ -12,7 +12,7 @@ async fn main() {
 
     let token = std::fs::read_to_string("token.txt").unwrap();
 
-    let mut client = GatewayClient::connect(token.clone(), true, 53607934, None)
+    let mut client = GatewayClient::connect(token.clone(), true, 1767421, None)
         .await
         .unwrap();
 
