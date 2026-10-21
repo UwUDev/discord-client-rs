@@ -1,3 +1,9 @@
+const LAUNCH_SIGNATURE_MASK: u128 = 0x0080_1010_0810_0800_2081_0040_0100_0800;
+
+fn generate_launch_signature() -> uuid::Uuid {
+    uuid::Uuid::from_u128(uuid::Uuid::new_v4().as_u128() & !LAUNCH_SIGNATURE_MASK)
+}
+
 #[derive(Debug, Clone)]
 pub struct ClientSession {
     pub client_launch_id: uuid::Uuid,
@@ -12,7 +18,7 @@ impl ClientSession {
         Self {
             client_launch_id: uuid::Uuid::new_v4(),
             client_heartbeat_session_id: uuid::Uuid::new_v4(),
-            launch_signature: uuid::Uuid::new_v4(),
+            launch_signature: generate_launch_signature(),
             heartbeat_expiry: now + chrono::Duration::minutes(30),
         }
     }
@@ -34,6 +40,20 @@ impl BuildNumbers {
         Self {
             client_build_number,
             native_build_number,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn launch_signature_has_no_mod_bits() {
+        for _ in 0..256 {
+            let signature = ClientSession::new().launch_signature;
+            assert_eq!(signature.as_u128() & LAUNCH_SIGNATURE_MASK, 0);
+            assert_eq!(signature.get_version_num(), 4);
         }
     }
 }

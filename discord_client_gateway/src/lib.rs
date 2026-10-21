@@ -1,5 +1,6 @@
 use std::error::Error;
 
+pub(crate) mod etf;
 pub mod events;
 pub mod gateway;
 pub(crate) mod utils;

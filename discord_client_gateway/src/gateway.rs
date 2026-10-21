@@ -5,7 +5,11 @@ use discord_client_structs::parser::parse_id_from_token;
 use discord_client_structs::structs::user::activity::Activity;
 use discord_client_structs::structs::user::status::StatusType;
 use discord_client_structs::structs::user::status::StatusType::Unknown;
-use discord_client_utils::{CHROME_VERSION, USER_AGENT, chrome_client_builder, find_build_numbers};
+use discord_client_utils::{
+    CHROME_VERSION, DESKTOP_NATIVE_BUILD_NUMBER, DESKTOP_OS_SDK_VERSION, DESKTOP_OS_VERSION,
+    ELECTRON_VERSION, USER_AGENT, chrome_client_builder, desktop_client_builder,
+    desktop_client_version, desktop_user_agent, find_build_numbers,
+};
 use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt, TryStreamExt};
 use serde_json::{Value, json};
@@ -19,10 +23,25 @@ use wreq::ws::WebSocket;
 use wreq::ws::message::Message;
 use zlib_stream::{ZlibDecompressionError, ZlibStreamDecompressor};
 
-fn shared_client() -> &'static Client {
-    static CLIENT: OnceLock<Client> = OnceLock::new();
-    CLIENT.get_or_init(|| {
-        chrome_client_builder()
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum ClientMode {
+    #[default]
+    Web,
+    Desktop,
+}
+
+async fn shared_client(mode: ClientMode) -> &'static Client {
+    static WEB: OnceLock<Client> = OnceLock::new();
+    static DESKTOP: OnceLock<Client> = OnceLock::new();
+    let (cell, builder) = match mode {
+        ClientMode::Web => (&WEB, chrome_client_builder()),
+        ClientMode::Desktop => (
+            &DESKTOP,
+            desktop_client_builder(desktop_client_version().await),
+        ),
+    };
+    cell.get_or_init(|| {
+        builder
             .gzip(true)
             .deflate(true)
             .brotli(true)
@@ -30,6 +49,107 @@ fn shared_client() -> &'static Client {
             .build()
             .unwrap()
     })
+}
+
+fn gateway_url(base: &str, mode: ClientMode) -> String {
+    let encoding = match mode {
+        ClientMode::Web => "json",
+        ClientMode::Desktop => "etf",
+    };
+    format!("{base}?encoding={encoding}&v=9&compress=zlib-stream")
+}
+
+fn decode_frame(mode: ClientMode, data: Vec<u8>) -> BoxedResult<Vec<u8>> {
+    match mode {
+        ClientMode::Web => Ok(data),
+        ClientMode::Desktop => Ok(serde_json::to_vec(&crate::etf::decode(&data)?)?),
+    }
+}
+
+fn encode_frame(mode: ClientMode, payload: String) -> Message {
+    match mode {
+        ClientMode::Web => Message::Text(payload.into()),
+        ClientMode::Desktop => {
+            let value: Value = serde_json::from_str(&payload).unwrap_or(Value::Null);
+            Message::Binary(crate::etf::encode(&value).into())
+        }
+    }
+}
+
+fn identify_properties(
+    mode: ClientMode,
+    build_number: u32,
+    native_build_number: Option<u32>,
+    client_version: &str,
+) -> String {
+    let launch_id = uuid::Uuid::new_v4();
+    match mode {
+        ClientMode::Web => format!(
+            r#"{{"os":"Windows","browser":"Chrome","device":"","device_model_name":"","system_locale":"en-US","has_client_mods":false,"browser_user_agent":"{USER_AGENT}","browser_version":"{CHROME_VERSION}","os_version":"10","referrer":"","referring_domain":"","referrer_current":"","referring_domain_current":"","release_channel":"stable","client_build_number":{build_number},"client_event_source":null,"client_launch_id":"{launch_id}","is_fast_connect":true}}"#
+        ),
+        ClientMode::Desktop => {
+            let desktop_user_agent = desktop_user_agent(client_version);
+            let native_build_number = native_build_number.unwrap_or(DESKTOP_NATIVE_BUILD_NUMBER);
+            format!(
+                r#"{{"os":"Windows","browser":"Discord Client","release_channel":"stable","client_version":"{client_version}","os_version":"{DESKTOP_OS_VERSION}","os_arch":"x64","app_arch":"x64","system_locale":"en-US","has_client_mods":false,"client_launch_id":"{launch_id}","browser_user_agent":"{desktop_user_agent}","browser_version":"{ELECTRON_VERSION}","os_sdk_version":"{DESKTOP_OS_SDK_VERSION}","client_build_number":{build_number},"native_build_number":{native_build_number},"client_event_source":null,"is_fast_connect":true}}"#
+            )
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct GatewayClientBuilder {
+    token: String,
+    automatic_reconnect: bool,
+    capabilities: u32,
+    client_build_number: Option<u32>,
+    native_build_number: Option<u32>,
+    intents: Option<u64>,
+    mode: ClientMode,
+}
+
+impl GatewayClientBuilder {
+    pub fn mode(mut self, mode: ClientMode) -> Self {
+        self.mode = mode;
+        self
+    }
+
+    pub fn web(self) -> Self {
+        self.mode(ClientMode::Web)
+    }
+
+    pub fn desktop(self) -> Self {
+        self.mode(ClientMode::Desktop)
+    }
+
+    pub fn automatic_reconnect(mut self, automatic_reconnect: bool) -> Self {
+        self.automatic_reconnect = automatic_reconnect;
+        self
+    }
+
+    pub fn capabilities(mut self, capabilities: u32) -> Self {
+        self.capabilities = capabilities;
+        self
+    }
+
+    pub fn client_build_number(mut self, client_build_number: u32) -> Self {
+        self.client_build_number = Some(client_build_number);
+        self
+    }
+
+    pub fn native_build_number(mut self, native_build_number: u32) -> Self {
+        self.native_build_number = Some(native_build_number);
+        self
+    }
+
+    pub fn intents(mut self, intents: u64) -> Self {
+        self.intents = Some(intents);
+        self
+    }
+
+    pub async fn connect(self) -> BoxedResult<GatewayClient> {
+        GatewayClient::connect_with(self).await
+    }
 }
 
 pub struct GatewayClient {
@@ -46,6 +166,7 @@ pub struct GatewayClient {
     capabilities: u32,
     intents: Option<u64>,
     build_number: u32,
+    native_build_number: Option<u32>,
     last_sequence: Arc<AtomicU32>,
     heartbeat_ack: Arc<AtomicBool>,
     automatic_reconnect: bool,
@@ -54,6 +175,7 @@ pub struct GatewayClient {
     pub activities: Vec<Activity>,
     pub idling_millis: u64,
     pub afk: bool,
+    mode: ClientMode,
 }
 
 impl GatewayClient {
@@ -80,6 +202,36 @@ impl GatewayClient {
         client_build_number: Option<u32>,
         intents: Option<u64>,
     ) -> BoxedResult<Self> {
+        let mut builder = Self::builder(token)
+            .automatic_reconnect(automatic_reconnect)
+            .capabilities(capabilities);
+        builder.client_build_number = client_build_number;
+        builder.intents = intents;
+        builder.connect().await
+    }
+
+    pub fn builder(token: impl Into<String>) -> GatewayClientBuilder {
+        GatewayClientBuilder {
+            token: token.into(),
+            automatic_reconnect: true,
+            capabilities: 1767421,
+            client_build_number: None,
+            native_build_number: None,
+            intents: None,
+            mode: ClientMode::Web,
+        }
+    }
+
+    async fn connect_with(builder: GatewayClientBuilder) -> BoxedResult<Self> {
+        let GatewayClientBuilder {
+            token,
+            automatic_reconnect,
+            capabilities,
+            client_build_number,
+            native_build_number,
+            intents,
+            mode,
+        } = builder;
         let user_id = parse_id_from_token(&token).map_err(|_| BoxedError::from("Invalid token"))?;
 
         let build_number = match client_build_number {
@@ -87,8 +239,9 @@ impl GatewayClient {
             Some(build_num) => build_num,
         };
 
-        let websocket = shared_client()
-            .websocket("wss://gateway.discord.gg/?encoding=json&v=9&compress=zlib-stream")
+        let websocket = shared_client(mode)
+            .await
+            .websocket(gateway_url("wss://gateway.discord.gg/", mode))
             .send()
             .await?
             .into_websocket()
@@ -107,6 +260,7 @@ impl GatewayClient {
             match message {
                 Message::Binary(bin) => match decompress.decompress(bin) {
                     Ok(vec) => {
+                        let vec = decode_frame(mode, vec)?;
                         let json: Value = serde_json::from_slice(&vec).map_err(|e| {
                             BoxedError::from(format!("Failed to parse hello payload: {}", e))
                         })?;
@@ -129,20 +283,22 @@ impl GatewayClient {
             None => String::new(),
         };
 
+        let client_version = match mode {
+            ClientMode::Web => "",
+            ClientMode::Desktop => desktop_client_version().await,
+        };
+
         let identify = format!(
-            r#"{{"op":2,"d":{{"token":"{}","capabilities":{}{},"properties":{{"os":"Windows","browser":"Chrome","device":"","device_model_name":"","system_locale":"en-US","has_client_mods":false,"browser_user_agent":"{}","browser_version":"{}","os_version":"10","referrer":"","referring_domain":"","referrer_current":"","referring_domain_current":"","release_channel":"stable","client_build_number":{},"client_event_source":null,"client_launch_id":"{}","is_fast_connect":true}},"client_state":{{"guild_versions":{{}}}}}}}}"#,
+            r#"{{"op":2,"d":{{"token":"{}","capabilities":{}{},"properties":{},"client_state":{{"guild_versions":{{}}}}}}}}"#,
             token,
             capabilities,
             intents_field,
-            USER_AGENT,
-            CHROME_VERSION,
-            build_number,
-            uuid::Uuid::new_v4() // todo: check if it's really random or related to the REST
+            identify_properties(mode, build_number, native_build_number, client_version)
         );
 
         tx.lock()
             .await
-            .send(Message::Text(identify.into()))
+            .send(encode_frame(mode, identify))
             .await
             .map_err(|e| BoxedError::from(format!("Failed to send identify: {}", e)))?;
 
@@ -154,6 +310,7 @@ impl GatewayClient {
             Arc::clone(&last_sequence),
             Arc::clone(&heartbeat_ack),
             heartbeat_interval,
+            mode,
         );
 
         Ok(Self {
@@ -170,6 +327,7 @@ impl GatewayClient {
             capabilities,
             intents,
             build_number,
+            native_build_number,
             last_sequence,
             heartbeat_ack,
             automatic_reconnect,
@@ -178,6 +336,7 @@ impl GatewayClient {
             activities: Vec::new(),
             idling_millis: 0,
             afk: false,
+            mode,
         })
     }
 
@@ -186,6 +345,7 @@ impl GatewayClient {
         last_sequence: Arc<AtomicU32>,
         heartbeat_ack: Arc<AtomicBool>,
         heartbeat_interval: u64,
+        mode: ClientMode,
     ) -> tokio::task::JoinHandle<()> {
         tokio::spawn(async move {
             let jitter = SystemTime::now()
@@ -215,7 +375,7 @@ impl GatewayClient {
                 if tx
                     .lock()
                     .await
-                    .send(Message::Text(payload.to_string().into()))
+                    .send(encode_frame(mode, payload.to_string()))
                     .await
                     .is_err()
                 {
@@ -233,12 +393,13 @@ impl GatewayClient {
     }
 
     pub async fn resume(&mut self) -> BoxedResult<()> {
-        let websocket = shared_client()
-            .websocket(format!(
-                "{}?encoding=json&v=9&compress=zlib-stream",
+        let websocket = shared_client(self.mode)
+            .await
+            .websocket(gateway_url(
                 self.resume_gateway_url
                     .as_ref()
-                    .ok_or("wss://gateway.discord.gg/")?
+                    .ok_or("wss://gateway.discord.gg/")?,
+                self.mode,
             ))
             .send()
             .await?
@@ -258,6 +419,7 @@ impl GatewayClient {
             match message {
                 Message::Binary(bin) => match decompress.decompress(bin) {
                     Ok(vec) => {
+                        let vec = decode_frame(self.mode, vec)?;
                         let json: Value = serde_json::from_slice(&vec).map_err(|e| {
                             BoxedError::from(format!("Failed to parse hello payload: {}", e))
                         })?;
@@ -287,6 +449,7 @@ impl GatewayClient {
             Arc::clone(&self.last_sequence),
             Arc::clone(&self.heartbeat_ack),
             heartbeat_interval,
+            self.mode,
         ));
 
         let session_id = self.session_id.as_ref().ok_or("No session ID")?;
@@ -297,7 +460,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -356,6 +519,7 @@ impl GatewayClient {
                             return Err("Broken frame".into());
                         }
                     };
+                    let vec = decode_frame(self.mode, vec)?;
                     let text = String::from_utf8(vec)
                         .map_err(|e| BoxedError::from(format!("Invalid utf8 payload: {}", e)))?;
 
@@ -456,13 +620,15 @@ impl GatewayClient {
     }
 
     pub async fn reconnect(&mut self) -> BoxedResult<()> {
-        let mut new_client = Self::connect_with_intents(
-            self.token.clone(),
-            self.automatic_reconnect,
-            self.capabilities,
-            Some(self.build_number),
-            self.intents,
-        )
+        let mut new_client = Self::connect_with(GatewayClientBuilder {
+            token: self.token.clone(),
+            automatic_reconnect: self.automatic_reconnect,
+            capabilities: self.capabilities,
+            client_build_number: Some(self.build_number),
+            native_build_number: self.native_build_number,
+            intents: self.intents,
+            mode: self.mode,
+        })
         .await?;
         new_client.status = self.status.clone();
         new_client.activities = self.activities.clone();
@@ -484,7 +650,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -495,7 +661,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -513,7 +679,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -530,7 +696,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -541,7 +707,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -552,7 +718,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -563,7 +729,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -574,7 +740,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -583,7 +749,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -610,7 +776,7 @@ impl GatewayClient {
         self.send_text(create_op_42(lobby_id)).await
     }
 
-    pub async fn request_forum_unreads(&mut self, payload: serde_json::Value) -> BoxedResult<()> {
+    pub async fn request_forum_unreads(&mut self, payload: Value) -> BoxedResult<()> {
         self.send_text(create_op_28(payload)).await
     }
 
@@ -705,7 +871,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -720,7 +886,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -737,7 +903,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -762,7 +928,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -777,7 +943,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -788,7 +954,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
@@ -806,7 +972,7 @@ impl GatewayClient {
         self.tx
             .lock()
             .await
-            .send(Message::Text(payload.into()))
+            .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
     }
