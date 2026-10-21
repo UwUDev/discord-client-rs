@@ -856,12 +856,11 @@ impl GatewayClient {
     pub async fn qos_heartbeat(
         &mut self,
         seq: Option<u32>,
-        qos: serde_json::Value,
         ver: u32,
         active: bool,
         reasons: Vec<String>,
     ) -> BoxedResult<()> {
-        self.send_text(create_op_40(seq, qos, ver, active, reasons))
+        self.send_text(create_op_40(seq, ver, active, reasons))
             .await
     }
 
@@ -975,5 +974,30 @@ impl GatewayClient {
             .send(encode_frame(self.mode, payload))
             .await?;
         Ok(())
+    }
+
+    pub async fn set_game_activity(
+        &mut self,
+        name: &str,
+        application_id: u64,
+        state: Option<&str>,
+    ) -> BoxedResult<()> {
+        let status = match self.status {
+            StatusType::Unknown => StatusType::Online,
+            status => status,
+        };
+        self.send_text(create_game_presence(
+            status,
+            Some((name, application_id, state)),
+        ))
+        .await
+    }
+
+    pub async fn clear_game_activity(&mut self) -> BoxedResult<()> {
+        let status = match self.status {
+            StatusType::Unknown => StatusType::Online,
+            status => status,
+        };
+        self.send_text(create_game_presence(status, None)).await
     }
 }

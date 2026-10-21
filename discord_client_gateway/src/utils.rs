@@ -317,14 +317,50 @@ pub(crate) fn create_op_39(guild_id: u64, channel_id: u64) -> String {
 
 pub(crate) fn create_op_40(
     seq: Option<u32>,
-    qos: Value,
     ver: u32,
     active: bool,
     reasons: Vec<String>,
 ) -> String {
     json!({
         "op": 40,
-        "d": { "seq": seq, "qos": qos, "ver": ver, "active": active, "reasons": reasons }
+        "d": { "seq": seq, "qos": { "active": active, "ver": ver, "reasons": reasons } }
+    })
+    .to_string()
+}
+
+pub(crate) fn create_game_presence(
+    status: StatusType,
+    game: Option<(&str, u64, Option<&str>)>,
+) -> String {
+    let activities: Vec<Value> = game
+        .map(|(name, application_id, state)| {
+            let mut activity = json!({
+                "name": name,
+                "type": 0,
+                "application_id": application_id.to_string(),
+                "platform": "desktop",
+                "flags": 1,
+                "timestamps": {},
+                "party": {},
+                "secrets": {},
+                "metadata": {},
+            });
+            if let Some(state) = state {
+                activity["state"] = json!(state);
+            }
+            activity
+        })
+        .into_iter()
+        .collect();
+
+    json!({
+        "op": 3,
+        "d": {
+            "status": status.as_str(),
+            "since": 0,
+            "activities": activities,
+            "afk": false
+        }
     })
     .to_string()
 }
