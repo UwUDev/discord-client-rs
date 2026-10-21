@@ -5,8 +5,16 @@ use discord_client_structs::structs::client::ClientSession;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-#[tokio::main]
-async fn main() {
+fn main() {
+    tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .thread_stack_size(16 * 1024 * 1024)
+        .build()
+        .unwrap()
+        .block_on(run());
+}
+
+async fn run() {
     let token = std::fs::read_to_string("token.txt").unwrap();
 
     let client_session = ClientSession::new();
