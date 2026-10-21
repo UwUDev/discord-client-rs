@@ -548,13 +548,45 @@ impl<'a> GuildRest<'a> {
         let guild_id = self.gid()?;
         let path = format!("guilds/{}/messages/search", guild_id);
 
-        self.client
-            .get::<MessageSearchResult>(
+        let value: Value = self
+            .client
+            .get(
                 &path,
                 Some(query.to_map()),
                 Some(RequestProperties::guild(guild_id)),
             )
-            .await
+            .await?;
+
+        let analytics_id = value
+            .get("analytics_id")
+            .and_then(|v| v.as_str())
+            .unwrap_or_default()
+            .to_string();
+        let doing_deep_historical_index = value
+            .get("doing_deep_historical_index")
+            .and_then(|v| v.as_bool())
+            .unwrap_or(false);
+        let total_results = value
+            .get("total_results")
+            .and_then(|v| v.as_u64())
+            .unwrap_or(0) as u32;
+        let messages = value
+            .get("messages")
+            .and_then(|v| v.as_array())
+            .map(|outer| {
+                outer
+                    .iter()
+                    .map(|inner| crate::lenient::parse_lenient_vec(inner.clone()))
+                    .collect()
+            })
+            .unwrap_or_default();
+
+        Ok(MessageSearchResult {
+            analytics_id,
+            doing_deep_historical_index,
+            total_results,
+            messages,
+        })
     }
 
     pub async fn get_audit_log(&self, query: AuditLogQuery) -> BoxedResult<AuditLog> {

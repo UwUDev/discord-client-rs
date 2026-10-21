@@ -24,6 +24,8 @@ pub struct MessageInteractionMetadata {
     #[serde(default)]
     #[snowflake]
     pub original_response_message_id: Option<u64>,
+    #[serde(default)]
+    #[snowflake]
     pub interacted_message_id: Option<u64>,
     pub triggering_interaction_metadata: Option<Box<MessageInteractionMetadata>>,
     pub target_user: Option<User>,
