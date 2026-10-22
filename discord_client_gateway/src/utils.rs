@@ -353,13 +353,21 @@ pub(crate) fn create_game_presence(
         .into_iter()
         .collect();
 
+    let since = match status {
+        StatusType::AFK => std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|d| d.as_millis() as u64)
+            .unwrap_or(0),
+        _ => 0,
+    };
+
     json!({
         "op": 3,
         "d": {
             "status": status.as_str(),
-            "since": 0,
+            "since": since,
             "activities": activities,
-            "afk": false
+            "afk": true
         }
     })
     .to_string()

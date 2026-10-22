@@ -976,16 +976,20 @@ impl GatewayClient {
         Ok(())
     }
 
+    fn background_status(&self) -> StatusType {
+        match self.status {
+            StatusType::Unknown => StatusType::AFK,
+            status => status,
+        }
+    }
+
     pub async fn set_game_activity(
         &mut self,
         name: &str,
         application_id: u64,
         state: Option<&str>,
     ) -> BoxedResult<()> {
-        let status = match self.status {
-            StatusType::Unknown => StatusType::Online,
-            status => status,
-        };
+        let status = self.background_status();
         self.send_text(create_game_presence(
             status,
             Some((name, application_id, state)),
@@ -994,10 +998,7 @@ impl GatewayClient {
     }
 
     pub async fn clear_game_activity(&mut self) -> BoxedResult<()> {
-        let status = match self.status {
-            StatusType::Unknown => StatusType::Online,
-            status => status,
-        };
+        let status = self.background_status();
         self.send_text(create_game_presence(status, None)).await
     }
 }
