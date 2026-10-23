@@ -49,16 +49,16 @@ pub struct BadgeTier {
 #[derive(Debug, Deserialize, Clone)]
 pub struct BadgeRequirement {
     pub progress_type: u8,
-    pub threshold: u64,
+    pub threshold: Option<u64>,
     pub unit: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct BadgeProgress {
     pub progress_type: u8,
-    pub current: u64,
-    pub floor: u64,
-    pub threshold: u64,
+    pub current: Option<u64>,
+    pub floor: Option<u64>,
+    pub threshold: Option<u64>,
     pub unit: Option<String>,
     pub window: Option<serde_json::Value>,
     pub progress_helper_text: Option<String>,
