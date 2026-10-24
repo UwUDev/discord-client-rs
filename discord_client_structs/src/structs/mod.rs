@@ -6,4 +6,5 @@ pub mod guild;
 pub mod message;
 pub mod misc;
 pub mod permission;
+pub mod science;
 pub mod user;
