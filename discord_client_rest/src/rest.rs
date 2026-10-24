@@ -22,6 +22,7 @@ use crate::api::quests::QuestsRest;
 use crate::api::relationship::RelationshipRest;
 use crate::api::safety_hub::SafetyHubRest;
 use crate::api::scheduled_event::ScheduledEventRest;
+use crate::api::science::ScienceRest;
 use crate::api::self_user::SelfUserRest;
 use crate::api::soundboard::SoundboardRest;
 use crate::api::stage::StageRest;
@@ -131,6 +132,7 @@ pub struct RestClient {
     global_rate_limiter: RateLimiter,
     route_rate_limiters: Arc<Mutex<HashMap<String, RateLimiter>>>,
     client_session: ClientSession,
+    analytics_token: Mutex<Option<String>>,
 }
 
 impl RestClient {
@@ -304,6 +306,7 @@ impl RestClient {
             global_rate_limiter: RateLimiter::new(),
             route_rate_limiters: Arc::new(Mutex::new(HashMap::new())),
             client_session,
+            analytics_token: Mutex::new(None),
         })
     }
 
@@ -343,6 +346,14 @@ impl RestClient {
 
     pub fn user(&self) -> UserRest<'_> {
         UserRest { client: self }
+    }
+
+    pub fn science(&self) -> ScienceRest<'_> {
+        ScienceRest { client: self }
+    }
+
+    pub(crate) fn analytics_token(&self) -> &Mutex<Option<String>> {
+        &self.analytics_token
     }
 
     pub fn relationship(&self) -> RelationshipRest<'_> {
