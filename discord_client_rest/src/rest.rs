@@ -136,6 +136,10 @@ pub struct RestClient {
 }
 
 impl RestClient {
+    pub fn locale(&self) -> &str {
+        &self.locale
+    }
+
     pub async fn connect(
         token: String,
         custom_api_version: Option<u8>,
