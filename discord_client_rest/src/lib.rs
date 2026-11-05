@@ -4,6 +4,7 @@ mod bootstrap;
 pub mod captcha;
 pub mod clearance;
 pub mod image;
+pub mod lenient;
 pub mod mfa;
 pub mod rate_limit;
 mod response;

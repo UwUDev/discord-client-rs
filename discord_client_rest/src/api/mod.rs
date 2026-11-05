@@ -23,6 +23,7 @@ pub mod quests;
 pub mod relationship;
 pub mod safety_hub;
 pub mod scheduled_event;
+pub mod science;
 pub mod self_user;
 pub mod sessionless;
 pub mod soundboard;

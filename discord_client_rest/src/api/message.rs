@@ -103,9 +103,12 @@ impl<'a> MessageRest<'a> {
 
         let props = RequestProperties::from_referer(referer);
 
-        self.client
-            .get::<Vec<Message>>(&path, Some(query.to_map()), Some(props))
-            .await
+        let value: Value = self
+            .client
+            .get(&path, Some(query.to_map()), Some(props))
+            .await?;
+
+        Ok(crate::lenient::parse_lenient_vec(value))
     }
 
     pub async fn search_dm_messages(

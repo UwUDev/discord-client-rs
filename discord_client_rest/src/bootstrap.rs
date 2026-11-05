@@ -18,8 +18,23 @@ pub(crate) struct Bootstrap {
     pub api_version: u8,
 }
 
+fn seed_default_cookies(jar: &Jar) {
+    const DISCORD_URI: &str = "https://discord.com";
+
+    jar.add(
+        "OptanonAlertBoxClosed=2025-11-07T22:31:53.959Z; Domain=discord.com; Path=/",
+        DISCORD_URI,
+    );
+    jar.add("locale=en-US; Domain=discord.com; Path=/", DISCORD_URI);
+    jar.add(
+        "OptanonConsent=isGpcEnabled; Domain=discord.com; Path=/",
+        DISCORD_URI,
+    );
+}
+
 pub(crate) fn build_emulated_client(proxy: Option<&str>) -> BoxedResult<(Client, Arc<Jar>)> {
     let cookie_jar = Arc::new(Jar::default());
+    seed_default_cookies(&cookie_jar);
     let mut builder = chrome_client_builder()
         .gzip(true)
         .deflate(true)
