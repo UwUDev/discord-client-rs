@@ -2,23 +2,36 @@ use crate::structs::misc::Versioned;
 use chrono::{DateTime, TimeZone, Utc};
 use serde::{Deserialize, Deserializer, de};
 
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum StringOrU64 {
+    String(String),
+    Number(u64),
+}
+
+impl StringOrU64 {
+    fn into_u64<E: de::Error>(self) -> Result<u64, E> {
+        match self {
+            StringOrU64::String(s) => s.parse::<u64>().map_err(E::custom),
+            StringOrU64::Number(n) => Ok(n),
+        }
+    }
+}
+
 pub fn deserialize_string_to_u64<'de, D>(deserializer: D) -> Result<u64, D::Error>
 where
     D: Deserializer<'de>,
 {
-    let s: String = String::deserialize(deserializer)?;
-    s.parse::<u64>().map_err(de::Error::custom)
+    StringOrU64::deserialize(deserializer)?.into_u64()
 }
 
 pub fn deserialize_option_string_to_u64<'de, D>(deserializer: D) -> Result<Option<u64>, D::Error>
 where
     D: Deserializer<'de>,
 {
-    let opt = Option::<String>::deserialize(deserializer)?;
-    match opt {
-        Some(s) => s.parse::<u64>().map(Some).map_err(de::Error::custom),
-        None => Ok(None),
-    }
+    Option::<StringOrU64>::deserialize(deserializer)?
+        .map(StringOrU64::into_u64)
+        .transpose()
 }
 
 pub fn deserialize_versioned_or_entries<'de, D, T>(
