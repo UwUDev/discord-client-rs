@@ -1,7 +1,7 @@
 # Important
 
 > [!WARNING]
-> I'm pausing pause this project until they release the new Rust discord. The main reason is that [wreq](https://github.com/0x676e67/wreq) still not support H/3 and the "best" solution would be to fork the chromium project to make a library that exposes Cronet to minic 1:1 chrome H/2 and H/3 behaviour but it will be a real pain and anyone who wants to compile the project will have to clone and compile Chromium (which takes several minutes and is about 100 GB).
+> I'm pausing this project until they release the new Rust discord. The main reason is that [wreq](https://github.com/0x676e67/wreq) still not support H/3 and the "best" solution would be to fork the chromium project to make a library that exposes Cronet to minic 1:1 chrome H/2 and H/3 behaviour but it will be a real pain and anyone who wants to compile the project will have to clone and compile Chromium (which takes several minutes and is about 100 GB).
 > 
 > So the official Rust client will have to use in H/2 or H/3 with [quiche](https://github.com/cloudflare/quiche), but it will be very easy to emulate.
 
