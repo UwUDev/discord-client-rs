@@ -1,4 +1,5 @@
 use std::error::Error;
+pub mod age_gate;
 pub mod api;
 mod bootstrap;
 pub mod captcha;

@@ -1,3 +1,4 @@
+use crate::age_gate::{AGE_GATED_CODE, AgeGatedError};
 use crate::api::application::ApplicationRest;
 use crate::api::auth::AuthRest;
 use crate::api::automod::AutomodRest;
@@ -705,6 +706,19 @@ impl RestClient {
 
                 error!("Bad request to {}: {}", url, resp_json.to_string());
                 return Err("Bad request".into());
+            }
+            403 => {
+                let body = resp.text().await?;
+                if let Ok(json) = serde_json::from_str::<serde_json::Value>(&body)
+                    && json["code"].as_i64() == Some(AGE_GATED_CODE)
+                {
+                    return Err(Box::new(AgeGatedError {
+                        message: json["message"].as_str().unwrap_or_default().to_string(),
+                        code: AGE_GATED_CODE,
+                    }));
+                }
+                let msg = format!("Request to {} failed with code 403: {}", url, body);
+                return Err(msg.into());
             }
             code => {
                 let body = resp.text().await?;

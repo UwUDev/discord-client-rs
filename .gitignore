@@ -1,5 +1,5 @@
 /target/
-token*.txt
+*.txt
 .idea/
 /event.json
 /icon.png

@@ -15,6 +15,7 @@ members = [
     "examples/token_checker",
     "examples/guild_export",
     "examples/dedupe_guilds",
+    "examples/age_checker",
 ]
 
 resolver = "3"
